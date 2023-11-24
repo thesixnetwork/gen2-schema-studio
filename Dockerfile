@@ -1,10 +1,10 @@
 # base image
-FROM node:16.0.0-alpine
+FROM node:18-alpine3.17
 
 # Set environment variables.
 
-ARG NEXT_PUBLIC_CHAIN_NAME
-ENV NEXT_PUBLIC_CHAIN_NAME $NEXT_PUBLIC_CHAIN_NAME
+# ARG NEXT_PUBLIC_CHAIN_NAME
+# ENV NEXT_PUBLIC_CHAIN_NAME $NEXT_PUBLIC_CHAIN_NAME
 
 
 # Create and change to the app directory.
