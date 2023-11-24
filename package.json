@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prod": "next build && next start",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -21,17 +22,17 @@
     "react": "^18",
     "react-dom": "^18",
     "sweetalert2": "^11.7.32",
-    "tailwindcss-bg-patterns": "^0.2.0"
-  },
-  "devDependencies": {
+    "tailwindcss-bg-patterns": "^0.2.0",
+    "tailwindcss": "^3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "typescript": "^5"
+  },
+  "devDependencies": {
     "autoprefixer": "^10",
     "eslint": "^8",
     "eslint-config-next": "13.5.6",
-    "postcss": "^8",
-    "tailwindcss": "^3",
-    "typescript": "^5"
+    "postcss": "^8"
   }
 }
