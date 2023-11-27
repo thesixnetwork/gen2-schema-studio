@@ -19,7 +19,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 
         {isClient && <HomeNavBar />}
         {/* <HomeNavBar /> */}
-        <div className="flex flex-grow justify-between mt-[15vh] ">
+        <div className="flex flex-grow justify-between">
           <section>{children}</section>
           {isClient && <HomeSidebar />}
           {/* <Sidebar /> */}
