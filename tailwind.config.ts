@@ -1,15 +1,15 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       backgroundImage: {
-        'gradient-24': 'linear-gradient(24deg, var(--tw-gradient-stops))'
+        "gradient-24": "linear-gradient(24deg, var(--tw-gradient-stops))",
       },
     },
     patterns: {
@@ -32,11 +32,9 @@ const config: Config = {
         20: "5rem",
         24: "6rem",
         32: "8rem",
-      }
+      },
     },
   },
-  plugins: [
-    require('tailwindcss-bg-patterns'),
-  ],
-}
-export default config
+  plugins: [require("tailwindcss-bg-patterns")],
+};
+export default config;
