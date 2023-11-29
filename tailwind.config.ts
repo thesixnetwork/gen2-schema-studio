@@ -8,8 +8,26 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        'regal-blue': '#243c5a',
+        'main1':'#9E55BA',
+        'main2': "#44498D",
+        'Act1' : '#D9D9D9',
+        'Act2' : '#D91400',
+        'Act3' : '#FF7900',
+        'Act4' : '#39D477',
+        'Act5' : '#FFC658',
+        'Act6' : '#3980F3',
+        'Act7' : '#79A0EF',
+        'bg':'#F5F6FA',
+        '2nd1':'#141933',
+        '2nd2':'#505673',
+        '2nd3':'#878CA8',
+        '2nd4':'#DADEF2',
+      },
       backgroundImage: {
-        'gradient-24': 'linear-gradient(24deg, var(--tw-gradient-stops))'
+        'gradient-24': 'linear-gradient(24deg, var(--tw-gradient-stops))',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
     patterns: {

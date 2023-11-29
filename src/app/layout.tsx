@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 import './globals.css'
 import { Providers } from "./providers";
 import { ThemeProvider } from "@/components/theme-provider";
 
+
 const inter = Inter({ subsets: ['latin'] })
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Gen2 Studio',
@@ -18,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={montserrat.className}>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <Providers>
           {children}

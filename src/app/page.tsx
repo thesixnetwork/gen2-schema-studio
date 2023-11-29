@@ -1,72 +1,36 @@
-"use client";
-import React, { useEffect } from 'react'
-import Link from "next/link";
-import WhiteBox from '@/components/WhiteBox'
-import axios from 'axios'
-import { useAccount } from "graz";
-import { Center, HStack, Spacer, Stack, Text } from "@chakra-ui/react";
+import React from 'react'
+import Image from 'next/image';
+import p from '../../public/pic/Help_Icon.png'
+import HelpButton from '@/components/HelpButton';
+import ConnectButton from '@/components/ConnectButton';
 
-const Home = () => {
 
+
+type Props = {}
+
+function connectPage({ }: Props) {
     return (
-        <div className='w-full flex justify-center' >
-            <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
-                <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex p-4  shadow-lg shadow-black/20 dark:shadow-black/40'>
-                    <div className='h-full w-4/6 flex flex-col pl-[50px]'>
-                        <p className='text-[#FFFFFF] text-3xl mb-1'>Draft</p>
-                        <div className='w-[891px] h-[1px] bg-[#D9D9D9]'></div>
-                        <div className='flex mt-2'>
-                            <Link href={`/newintregation/1`} className='w-[197px] h-[232px] mt-[30px] ml-3 border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer'>
-                                <p className='text-white text-2xl hover:text-[#d2d3d7] duration-500 '>New Intregation</p>
-                            </Link >
-                            <Link href={`/draft`}  className='w-[197px] h-[232px] mt-[30px] ml-3 border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer'>
-                                <p>test</p>
-                            </Link>
-                        </div>
-                        <p className='text-[#FFFFFF] text-3xl mt-[80px] mb-1 '>Live</p>
-                        <div className='w-[891px] h-[1px] bg-[#D9D9D9]'></div>
-                        <div className='mt-[30px] flex '>
-                            <div className='flex flex-col justify-center items-center cursor-pointer'>
-                                <div className=' flex  items-end hover:scale-105 duration-500 shadow-lg shadow-black/20 dark:shadow-black/40'>
-                                    <img src={'/pic/buakaw_collection.png'} className='w-[197px] h-[232px] border-[#D9D9D9] border-[0.5px] rounded-2xl  '></img>
-                                    <div className='w-[197px] h-[69px] bg-[#D9D9D9]/[0.8] rounded-b-2xl absolute flex flex-row justify-center items-center'>
-                                        <img src={'/pic/eth_logo.png'} className='mr-2'></img>
-                                        <p className='text-[#100072] text-[20px]  '>2000 Items</p>
-                                    </div>
-                                </div>
-                                <p className='text-white text-2xl font-bold mt-3 hover:text-[#7A8ED7] duration-500 '>Buakaw1</p>
-                            </div>
 
-                            <div className='flex flex-col justify-center items-center ml-5 cursor-pointer'>
-                                <div className=' flex  items-end hover:scale-105 duration-500 shadow-lg shadow-black/20 dark:shadow-black/40'>
-                                    <img src={"/pic/whale_gate.png"} className='w-[197px] h-[232px] border-[#D9D9D9] border-[0.5px] rounded-2xl  '></img>
-                                    <div className='w-[197px] h-[69px] bg-[#D9D9D9]/[0.8] rounded-b-2xl absolute flex flex-row justify-center items-center'>
-                                        <img src={"/pic/klaytn.png"} className='mr-2'></img>
-                                        <p className='text-[#100072] text-[20px]  '>600 Items</p>
-                                    </div>
-                                </div>
-                                <p className='text-white text-2xl font-bold mt-3  hover:text-[#7A8ED7] duration-500 '>Whale Gate Collection</p>
-                            </div>
-                        </div>
+        <div className='w-full flex justify-center ' >
+            <div className='w-full h-full fixed  flex justify-center items-center bg-bg '>
+                <div className='absolute flex top-[25%] z-10'>
+                    <Image src='/pic/Logo_Gen2studio.png' alt={''} width={500} height={500}></Image>
+                </div>
+               
+                <div className=' w-[80rem] h-[80rem] absolute rounded-full bg-gradient-radial from-main1 via-bg left-[0%] top-[0%] z-[-10]'></div>
+                <div className=' w-[120rem] h-[120rem] absolute rounded-full bg-gradient-radial from-Act7 via-bg  left-[10%] top-[0%] z-9'></div>
+                <div className=' w-[60%] h-[60%] rounded-3xl flex justify-center items-center bg-white absolute top-[50%] z-10'>
+                    <ConnectButton></ConnectButton>
+                </div>
+                <div className='w-full h-[7.5%] absolute bottom-0 left-0 flex justify-between items-center p-10  z-0'>
+                    <div>
+                        <Image src='/pic/SIX_Network_logo.png' alt={''} width={200} height={4}></Image>
                     </div>
-                    <div className='w-2/6 h-full flex flex-col items-end  '>
-                        {/* <Conectwalet></Conectwalet> */}
-                        <div className=' mt-[30%]'></div>
-                        <div className=' mt-[70%]'>
-                            <WhiteBox
-                                title={'Choose your collection'}
-                                detail={'Create new integration, modify existing draft or manage collection which already in production.'}
-                                height={174} 
-                                width={266} 
-                                titleSize={20} 
-                                detailSize={15}>
-                            </WhiteBox>
-                        </div>
-                    </div>
+                    <HelpButton></HelpButton>
                 </div>
             </div>
         </div>
     )
 }
 
-export default Home
+export default connectPage
