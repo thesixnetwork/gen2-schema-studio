@@ -4,18 +4,16 @@ import { extendTheme, defineStyle, defineStyleConfig } from "@chakra-ui/react";
 // import badgeTheme from "./badge";
 // import tabsTheme from "./tabs";
 // import tableTheme from "./table";
+import textTheme from "./text";
 
 const theme = extendTheme({
-  // components: {
-  //   Button: buttonTheme,
-  //   Card: cardTheme,
-  //   Badge: badgeTheme,
-  //   Tabs: tabsTheme,
-  //   Table: tableTheme,
-  // },
+  components: {
+    Text: textTheme,
+  },
   colors: {
     primary: {
       50: "#F2F2F2",
+      400: "#44498D",
       500: "#3864E7",
       900: "#0A1F3D",
     },
@@ -32,6 +30,8 @@ const theme = extendTheme({
     error: "#BD4033",
     warning: "#C9762B",
     success: "#39D477",
+    brand: "#79A0EF",
+    base: "#44498D",
   },
 });
 
