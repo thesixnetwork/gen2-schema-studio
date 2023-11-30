@@ -3,7 +3,7 @@
 // import Navbar from "@/components/NavBar";
 // import Footer from "@/components/Footer";
 "use client"
-import { CircularProgress, Box, Flex } from "@chakra-ui/react";
+import { CircularProgress, Box, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState, useRef} from "react";
 import { Divider, Center } from '@chakra-ui/react'
 
@@ -31,10 +31,12 @@ export default function Layout({
         }
       }, [children]);
 
+
+
     return (
         <>
-            <HomeNavBar />
-            <Flex>
+            <HomeNavBar/>
+            <Flex bgColor="#F5F6FA">
                 <Box  ref={boxRef} width={"70%"} height={"100%"}>
                     <main>{children}</main>
                 </Box>
