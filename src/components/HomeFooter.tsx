@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const HomeFooter = () => {
   return (
-    <footer className="min-h-[5vh] w-full text-black ">
+    <footer className="min-h-[5vh] w-full text-black bg-[#F5F6FA]">
       <div className="flex justify-between items-center h-full mx-4">
         <Image src={logo} alt="logo" className="w-32" />
         <Image src={helperIcon} alt="helper" className="w-8 hover:scale-125 duration-300 cursor-pointer" />

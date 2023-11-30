@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Divider,
   Text,
   Flex,
   FormControl,
@@ -27,7 +28,18 @@ export default async function Page({
   return (
     <>
       {isDaft && (
-        <Flex p={4} flexWrap={"wrap"}>
+        <Flex p={10} flexWrap={"wrap"}>
+          <Text
+            color="#44498D"
+            fontFamily="Montserrat"
+            fontSize="32px"
+            fontStyle="normal"
+            fontWeight="400"
+            lineHeight="normal"
+          >
+            {isDaft.schema_code}
+          </Text>
+          <Divider  borderColor={"brand"}/>
           <TapState isCurren={4} />
           <Box p={6}>
             <CradNewDaft isDaft={isDaft} />
