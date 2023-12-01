@@ -201,38 +201,39 @@ export default function Flowbar(props: FlowbarProps) {
           finalFocusRef={finalRef}
           isOpen={isOpen}
           onClose={onClose}
+          colorScheme="red"
         >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader color={"black"} textAlign={"center"}>
+          <ModalOverlay  bg="blackAlpha.800"/>
+          <ModalContent  bg="rgba(0, 0, 0, 0.6)">
+            <ModalHeader color={"white"} textAlign={"center"}>
               ☻ AI Generate
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl>
-                <FormLabel fontWeight="semibold" color="black">
+                <FormLabel fontWeight="semibold" color="white">
                   Input
                 </FormLabel>
                 <Flex>
                   <Input
                     ref={initialRef}
                     placeholder="example: check_in and tier is gold"
-                    color={"black"}
+                    color={"white"}
                     onChange={(e) => {
                       handleInput(e);
                     }}
                   />
-                  <Button colorScheme="blue" onClick={processGPT}>
+                  <Button colorScheme="white" onClick={processGPT} variant={"outline"} ml={4}  _hover={{ borderColor: "blue.500", color:"blue.500" }}>
                     Process
                   </Button>
                 </Flex>
               </FormControl>
               <Box>
-                <Text fontWeight="semibold" color="black" mb="1rem">
+                <Text fontWeight="semibold" color="white" mb="1rem">
                   Output
                 </Text>
-                <Box bgColor="gray.200" padding={4} borderRadius={6}>
-                  <Text color="black" mb="1rem">
+                <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
+                  <Text color="white" mb="1rem">
                     {outputFromGPT}
                   </Text>
                 </Box>
@@ -240,10 +241,11 @@ export default function Flowbar(props: FlowbarProps) {
             </ModalBody>
 
             <ModalFooter justifyContent={"center"}>
-              <Button colorScheme="blue" onClick={handleCreate}>
+              <Button colorScheme="white" variant='outline' onClick={handleCreate} mr={4}  _hover={{ borderColor: "blue.500", color:"blue.500" }}>
                 Generate
               </Button>
-              <Button onClick={onClose} mr={3}>
+              <Button onClick={onClose} colorScheme="white"  variant='outline' mr={3} _hover={{ borderColor: "blue.500", color:"blue.500" }}
+>
                 Cancel
               </Button>
             </ModalFooter>

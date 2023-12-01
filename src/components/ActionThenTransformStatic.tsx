@@ -5,6 +5,7 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@chakra-ui/react";
 
 interface ActionThenTransformStaticProps {
   metaFunction: string;
@@ -16,6 +17,7 @@ interface ActionThenTransformStaticProps {
 const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   //   const navigate = useNavigate();
   const [imgSource, setImgSource] = useState("");
+  const [imgSourceError, setImgSourceError] = useState(false);
   const [metaFunction, setMetaFunction] = useState("");
   const [valueInput, setValueInput] = useState("");
   const [actionData, setActionData] = useState();
@@ -23,6 +25,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   const [actionThenIndex, setActionThenIndex] = useState<number | undefined>();
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [actions, setActions] = useState([]);
+  const [isPreview, setIsPreview] = useState(false);
 
   const convertFromBase64 = (str: string) => {
     console.log("str: ", str);
@@ -89,46 +92,6 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
     }
   };
 
-  useEffect(() => {
-    findSchemaCode();
-  }, []);
-
-  useEffect(() => {
-    if (isBase64(props.metaFunction)) {
-      setMetaFunction(convertFromBase64(props.metaFunction));
-      console.log("imgSource", metaFunction);
-      if (
-        getImgFromParam(metaFunction) !== ".png" &&
-        getImgFromParam(metaFunction) !== ".jpg" &&
-        getImgFromParam(metaFunction) !== ".jpeg" &&
-        getImgFromParam(metaFunction) !== ".gif"
-      ) {
-        setValueInput(getImgFromParam(metaFunction));
-        setImgSource(getImgFromParam(metaFunction));
-      }
-    } else {
-      setMetaFunction(props.metaFunction);
-    }
-
-    if (props.metaFunction === "create-new-action") {
-      setIsCreateNewAction(true);
-    }
-  }, [props.metaFunction, metaFunction]);
-
-  useEffect(() => {
-    if (actionData !== undefined) {
-      const getDataByName = (data, name) => {
-        return data.find((item) => item.name === name);
-      };
-      const result = getDataByName(actionData, props.actionName);
-      setActionThenArr(result.then);
-    }
-
-    const index = actionThenArr.indexOf(metaFunction);
-    setActionThenIndex(index);
-    console.log("actionThenArr: ", actionThenArr);
-  }, [actionData]);
-
   const convertMetaData = (imagePath: string) => {
     return `meta.SetImage('${imagePath}')`;
   };
@@ -177,31 +140,103 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
         console.error("API Error:", error);
       });
   };
+
+  useEffect(() => {
+    findSchemaCode();
+  }, []);
+
+  useEffect(() => {
+    if (isBase64(props.metaFunction)) {
+      setMetaFunction(convertFromBase64(props.metaFunction));
+      console.log("imgSource", metaFunction);
+      if (
+        getImgFromParam(metaFunction) !== ".png" &&
+        getImgFromParam(metaFunction) !== ".jpg" &&
+        getImgFromParam(metaFunction) !== ".jpeg" &&
+        getImgFromParam(metaFunction) !== ".gif"
+      ) {
+        setValueInput(getImgFromParam(metaFunction));
+        setImgSource(getImgFromParam(metaFunction));
+      }
+    } else {
+      setMetaFunction(props.metaFunction);
+    }
+
+    if (props.metaFunction === "create-new-action") {
+      setIsCreateNewAction(true);
+    }
+  }, [props.metaFunction, metaFunction]);
+
+  useEffect(() => {
+    if (actionData !== undefined) {
+      const getDataByName = (data, name) => {
+        return data.find((item) => item.name === name);
+      };
+      const result = getDataByName(actionData, props.actionName);
+      setActionThenArr(result.then);
+    }
+
+    const index = actionThenArr.indexOf(metaFunction);
+    setActionThenIndex(index);
+    console.log("actionThenArr: ", actionThenArr);
+  }, [actionData]);
+
+  useEffect(() => {
+    setImgSourceError(false);
+    setIsPreview(false);
+  }, [imgSource]);
   return (
-    <div className="h-[560px] w-[50vw] border-2 border-black rounded-lg p-8">
-      <h2>Image path</h2>
-      <div>
+    <div className="h-[full] w-[50vw] border rounded-2xl p-8">
+      <h2 className="text-[#44498D] font-semibold">Image path</h2>
+      <div className="flex items-center gap-x-4">
         <input
           id="1"
           type="text"
           autoFocus
-          className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[60%] h-[20px]"
-          placeholder={"Input your image url"}
+          className="ml-2 my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
+          placeholder={
+            "Input your image url example: https://techsauce-nft.sixprotocol.com/techsauce/1.png"
+          }
           value={valueInput}
           onChange={async (e) => {
             onChange(e);
           }}
         />
+        <Button
+          colorScheme="blue.500"
+          borderColor={"blue.500"}
+          color={"blue.500"}
+          variant="outline"
+          mr={3}
+          _hover={{ borderColor: "blue.500", color: "blue.500" }}
+          onClick={() => setIsPreview(true)}
+        >
+          Preview
+        </Button>
       </div>
       <div className="flex flex-col justify-center items-start">
-        <h2>Preview</h2>
-        <div className="my-4 h-60">
-          {imgSource !== "" && imgSource !== null && (
-            <img
-              src={imgSource}
-              alt="preview-image"
-              className="w-full h-full"
-            />
+        <h2 className="text-[#44498D] font-semibold">Preview</h2>
+        <div className="h-60 my-4">
+          {isPreview && imgSource !== "" && imgSource !== null && (
+            <div
+              className={`h-full ${
+                imgSourceError ? "" : "rounded-lg border-2 overflow-hidden"
+              }`}
+            >
+              {imgSourceError ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-red-500">Image couldn't be loaded</p>
+                </div>
+              ) : (
+                <img
+                  src={imgSource}
+                  alt="preview-image"
+                  className="w-full h-full"
+                  onLoad={() => setImgSourceError(false)} // Reset error state on successful load
+                  onError={() => setImgSourceError(true)}
+                />
+              )}
+            </div>
           )}
         </div>
         <Link
@@ -220,6 +255,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
             save
           </div>
         </Link>
+        <button onClick={() => console.log()}>logger</button>
       </div>
     </div>
   );

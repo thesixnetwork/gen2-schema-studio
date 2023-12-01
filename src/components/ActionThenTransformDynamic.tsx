@@ -5,7 +5,8 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 // import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
-import { Button } from "@chakra-ui/react";
+import { Button, Select } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 interface ActionThenTransformDynamicProps {
   actionName: string;
@@ -145,7 +146,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
     console.log("logger", props.schemaRevision);
     props.schemaRevision !== "create-new-action" &&
       props.isDraft &&
-      findImageUrl() 
+      findImageUrl();
     //   &&
     //   setIsNext(true);
   }, []);
@@ -168,15 +169,15 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
         <div>Loading</div>
       ) : (
         <>
-          <div className="border-2 border-black rounded-lg p-8 flex justify-center">
+          <div className="border rounded-2xl p-8 flex justify-center">
             <div className="w-96 flex flex-col justify-between ">
               <div className="mb-2">
-                <h2>Image Path</h2>
+                <h2 className="text-[#44498D] font-semibold">Image Path</h2>
                 <input
                   id=""
                   type="text"
                   autoFocus
-                  className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
+                  className="my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
                   placeholder="example: https://techsauce-nft.sixprotocol.com/techsauce/"
                   onChange={(e) => {
                     onChange(e);
@@ -185,31 +186,38 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                 />
               </div>
               <div className="mb-2">
-                <h2>Origin Image Format</h2>
-                <select
+                <h2 className="text-[#44498D] font-semibold">
+                  Origin Image Format
+                </h2>
+                <Select
                   onChange={(e) => {
                     setImgFormat(e.target.value);
                   }}
                   value={imgFormat}
                   defaultValue={imgFormat}
-                  className="ml-2 my-2 bg-[#A2A3AA] border-2 border-white rounded-full  px-4 hover:bg-opacity-60 text-xs"
+                  className="text-[#3980F3] px-4 py-2 my-2 bg-[#F5F6FA] border  border-[#3980F3] rounded-md hover:bg-opacity-60"
                 >
                   <option value="" disabled selected hidden>
                     -- select --
                   </option>
+                  <option value=".png">png</option>
                   <option value=".jpeg">jpeg</option>
                   <option value=".jpg">jpg</option>
-                  <option value=".png">png</option>
                   <option value=".gif">gif</option>
-                </select>
+                </Select>
               </div>
               <div className="my-4">
-                <h2>Token Id (For Preview Transformed Token)</h2>
+                <div className="flex">
+                  <h2 className="text-[#44498D] font-semibold">Token Id</h2>
+                  <span className="text-[#44498D]">
+                    (For Preview Transformed Tokens)
+                  </span>
+                </div>
                 <input
                   id=""
                   type="text"
                   autoFocus
-                  className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
+                  className=" my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
                   placeholder="example: 1"
                   onChange={(e) => {
                     handleTokenId(e.target.value);
@@ -217,12 +225,14 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                 />
               </div>
               <div className="mb-2">
-                <h2>Dynamic Image Prefix</h2>
+                <h2 className="text-[#44498D] font-semibold">
+                  Dynamic Image Prefix
+                </h2>
                 <input
                   id=""
                   type="text"
                   autoFocus
-                  className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
+                  className=" my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
                   placeholder="example: -original"
                   onChange={(e) => setPrefix(e.target.value)}
                   value={prefix}
@@ -259,17 +269,19 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                 </div>
               </div>
               <div className="mb-2">
-                <h2>Dynamic Image Posfix</h2>
+                <h2 className="text-[#44498D] font-semibold">
+                  Dynamic Image Posfix
+                </h2>
                 <input
                   id=""
                   type="text"
                   autoFocus
-                  className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
+                  className=" my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
                   placeholder="example: -transformed"
                   onChange={(e) => setPostfix(e.target.value)}
                   value={postfix}
                 />
-                <div className="flex items-center h-36]">
+                <div className="flex items-center h-36">
                   {imgAfterTransformError ? (
                     <p className="flex items-center text-center h-full">
                       Image couldn&apos;t be load
