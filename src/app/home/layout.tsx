@@ -3,7 +3,7 @@
 import HomeFooter from "@/components/HomeFooter";
 import HomeNavBar from "@/components/HomeNavbar";
 import HomeSidebar from "@/components/HomeSidebar";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 interface RootLayoutProps {
   children: React.ReactNode;
 }
@@ -15,18 +15,12 @@ const RootLayout = ({ children }: RootLayoutProps) => {
     setIsClient(true);
   }, []);
   return (
-      <main className="w-full flex flex-col justify-between item sticky h-[100vh]">
+    <main className="w-full flex flex-col justify-between item sticky h-full">
 
-        {isClient && <HomeNavBar />}
-        {/* <HomeNavBar /> */}
-        <div className="flex flex-grow justify-between">
-          <section>{children}</section>
-          {isClient && <HomeSidebar />}
-          {/* <Sidebar /> */}
-        </div>
-        {isClient && <HomeFooter />}
-        {/* <HomeFooter /> */}
-      </main>
+
+      <section>{children}</section>
+
+    </main>
   );
 };
 

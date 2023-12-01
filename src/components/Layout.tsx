@@ -1,15 +1,15 @@
-// import useSWR from "swr";
-// import { useRouter } from "next/router";
-// import Navbar from "@/components/NavBar";
-// import Footer from "@/components/Footer";
+
 "use client"
 import { CircularProgress, Box, Flex, Text } from "@chakra-ui/react";
-import { useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 import { Divider, Center } from '@chakra-ui/react'
+import { usePathname } from 'next/navigation'
+import axios from 'axios'
 
 import HomeFooter from "@/components/HomeFooter";
 import HomeNavBar from "@/components/HomeNavbar";
 import HomeSidebar from "@/components/HomeSidebar";
+import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from "@/helpers/AuthService";
 
 export default function Layout({
     children,
@@ -18,38 +18,91 @@ export default function Layout({
     children: React.ReactNode;
     //   modalstate: { isOpen: boolean; onOpen: () => void; onClose: () => void };
 }) {
-    // const router = useRouter();
-
-    //   const isHome = router.pathname === "/" || router.pathname === "/data" ? true : false;
-
+    const pathname = usePathname()
     const boxRef = useRef<HTMLHRElement>(null);
     const [childrenHeight, setChildrenHeight] = useState(800)
+
+    const [chainId, setChainId] = useState("fivenet");
+    const [token, setToken] = useState("usix");
+    const [cosmosAddress, setCosmosAddress] = useState("");
+    const [rpcEndpoint, setRpcEndpoint] = useState<string>(
+        process.env.NEXT_APP_RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value"
+    );
+    const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE
+    const [exponent, setExponent] = useState(1e6);
+
     useEffect(() => {
         if (boxRef.current) {
-          const { height } = boxRef.current.getBoundingClientRect();
-          setChildrenHeight(height);
+            const { height } = boxRef.current.getBoundingClientRect();
+            setChildrenHeight(height);
         }
-      }, [children]);
+    }, [children]);
 
+    //--------------------------------------Authen Refresh Token----------------------------------------//
+    const [refreshTokenNumber, setRefreshTokenNumber] = useState(0)
+    const RefreshToken = () => {
+        setTimeout(() => {
+            const apiUrl = `${process.env.API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`
+            const requestData = {
+                "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
+            };
+            axios.post(apiUrl, requestData, {
+                headers: {
+                    'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+                },
+            })
+                .then(response => {
+                    console.log('API Response from refresh :', response.data);
+                    saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
+                    const accessToken = getAccessTokenFromLocalStorage();
+                    const refreshToken = getRefreshTokenFromLocalStorage();
+                    console.log("New Access: ", accessToken)
+                    console.log("New Refresh: ", refreshToken)
+                    setRefreshTokenNumber(refreshTokenNumber + 1)
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                });
+        }, 600000);
+    }
 
+    useEffect(() => {
+        RefreshToken()
+    }, [refreshTokenNumber])
+    //--------------------------------------Authen Refresh Token----------------------------------------//
 
+    console.log(pathname)
     return (
         <>
-            <HomeNavBar/>
-            <Flex bgColor="#F5F6FA">
-                <Box  ref={boxRef} width={"70%"} height={"100%"}>
-                    <main>{children}</main>
-                </Box>
-                <Flex width={"30%"} height={"100%"} position="relative" >
-                    <Center position="absolute" height={childrenHeight}>
-                    <Divider orientation='vertical' borderColor={"brand"}/>
-                    </Center>
-                    <Box height={childrenHeight}>
-                        <HomeSidebar />
-                    </Box>
-                </Flex>
-            </Flex>
-            <HomeFooter />
+            {pathname !== "/" ?
+                <div className=" flex flex-col justify-center items-center" >
+                    <div className=" w-full">
+                        <HomeNavBar />
+                    </div>
+                    <div className=" w-[95%]">
+                        <Flex bgColor="" width={"100%"} height={"100%"} >
+                            <Box bgColor="" ref={boxRef} width={"75%"} height={"80%"}>
+                                <main>{children}</main>
+                            </Box>
+                            <Flex width={"25%"} height={"20%"} position="relative" >
+                                <Center position="absolute" height={childrenHeight}>
+                                    <Divider orientation='vertical' borderColor={"brand"} />
+                                </Center>
+                                <Box height={childrenHeight} width={"100%"}>
+                                    <HomeSidebar />
+                                </Box>
+                            </Flex>
+                        </Flex>
+                    </div>
+                    <div className=" h-[20%]">
+                        <HomeFooter />
+                    </div>
+                </div>
+                :
+                <>
+                    <div>{children}</div>
+                </>
+            }
         </>
     );
 }

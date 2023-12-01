@@ -1,47 +1,17 @@
-const Page = () => {
-  return (
-    <div className="h-full text-black bg-blue w-[80vw]">
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-      <h1>Hello, Next.js!</h1>
-    </div>
-  );
-};
+import React from 'react'
+import Image from "next/image";
+import logo from '../../../public/pic/buakaw_collection.png'
+type Props = {}
 
-export default Page;
+function page({}: Props) {
+  return (
+    <div className=' bg-bg w-full h-full min-h-[600px]' >
+      <Image src={logo} alt={''} width={300} ></Image>
+      <Image src={logo} alt={''} width={300}></Image>
+      <Image src={logo} alt={''} width={300}></Image>
+
+    </div>
+  )
+}
+
+export default page
