@@ -53,7 +53,7 @@ export interface ISchemaInfo {
         "value": number
       },
       "boolean_attribute_value"?: {
-        "value": false
+        "value": boolean
       },
       "string_attribute_value"?: {
         "value": string
@@ -104,7 +104,7 @@ export interface ISchemaInfo {
         "value": number
       },
       "boolean_attribute_value"?: {
-        "value": false
+        "value": boolean
       },
       "string_attribute_value"?: {
         "value": string

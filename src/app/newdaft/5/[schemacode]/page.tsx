@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import TapState from "@/components/TapState";
 import {
@@ -13,12 +13,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-// import { getDaft } from "./actions";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import { useEffect, useState, useRef} from "react";
-import { getAccessTokenFromLocalStorage } from "@/helpers/AuthService";
 
 
 export default async function Page({
@@ -26,7 +24,7 @@ export default async function Page({
 }: {
   params: { schemacode: string };
 }) {
-  const isDaft = await getSchemaInfo(schemacode,getAccessTokenFromLocalStorage());
+  const isDaft = await getSchemaInfo(schemacode);
     // console.log(JSON.stringify(isDaft, null, 2));
   return (
     <>
@@ -43,9 +41,9 @@ export default async function Page({
             {isDaft.schema_code}
           </Text>
           <Divider  borderColor={"brand"}/>
-          <TapState isCurren={4} schemaCode={schemacode} />
+          <TapState isCurren={5} schemaCode={schemacode} />
           <Box p={6}>
-            <CradNewDaft isDaft={isDaft} isState={4} />
+            <CradNewDaft isDaft={isDaft} isState={5} />
           </Box>
         </Flex>
       )}

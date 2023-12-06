@@ -30,7 +30,7 @@ const theme = extendTheme({
     error: "#BD4033",
     warning: "#C9762B",
     success: "#39D477",
-    brand: "#79A0EF",
+    brand: "#DADEF2",
     base: "#44498D",
   },
 });
