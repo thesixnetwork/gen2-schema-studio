@@ -1157,6 +1157,8 @@ const WhenFlow = (props: WhenFlowProps) => {
             ? { height: 580, width: 1200 }
             : { height: 480, width: 1200 }
         }
+
+        className="border rounded-3xl bg-white"
       >
         <div ref={reactFlowWrapper} className="h-full">
           <ReactFlow

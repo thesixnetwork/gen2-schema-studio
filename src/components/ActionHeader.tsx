@@ -3,48 +3,48 @@ import { Select } from "@chakra-ui/react";
 
 interface ActionHeaderProps {
   type: string;
-  actionThenType: string;
   actionName: string;
   metaFunction: string;
-  handleActionThenTypeChange: (newActionThenType: string) => void;
-  handleTransformTypeChange: (newActionThenType: string) => void;
+  actionThenType?: string;
+  handleActionThenTypeChange?: (newActionThenType: string) => void;
+  handleTransformTypeChange?: (newActionThenType: string) => void;
 }
 
 const ActionHeader = (props: ActionHeaderProps) => {
   return (
     <>
       <div className="text-black flex items-center">
-        <h6>
+        <h6 className="text-[#3980F3]">
           Action: <span className="font-semibold">{props.actionName}</span> |{" "}
-          {props.type == "when" ? "When" : "Then"}
+          {props.type === "when" ? "When" : "Then"}
         </h6>
-        {props.type == "then" && (
+        {props.type === "then" && (
           <Select
             w={320}
             justifyContent={"center"}
             alignContent={"center"}
-            onChange={(e) => props.handleActionThenTypeChange(e.target.value)}
+            onChange={(e) => props.handleActionThenTypeChange?.(e.target.value)}
             mx={4}
           >
-            <option value="" disabled selected hidden>
-              -- Plase select your action type --
-            </option>
-            <option value="updateAttribute">Update Attribute</option>
-            <option value="transferNumber">Transfer Number</option>
-            <option value="transform">Transform</option>
+            {/* Options for "then" type */}
           </Select>
         )}
-        {props.type == "then" && props.actionThenType === "transform" && (
-          <Select w={320} justifyContent={"center"} alignContent={"center"} onChange={(e)=>props.handleTransformTypeChange(e.target.value)}>
-            <option value="" disabled selected hidden>
-              -- Plase select your transform type --
-            </option>
-            <option value="static">Static Image Path</option>
-            <option value="dynamic">Dynamic Image Path</option>
+        {props.type === "then" && props.actionThenType === "transform" && (
+          <Select
+            w={320}
+            justifyContent={"center"}
+            alignContent={"center"}
+            onChange={(e) =>
+              props.handleTransformTypeChange?.(e.target.value)
+            }
+          >
+            {/* Options for transform type */}
           </Select>
         )}
       </div>
-      <div className="p-4 w-[75%] max-h-14 overflow-scroll bg-gray-300 rounded-md text-[#3980F3]">{props.metaFunction}</div>
+      <div className="p-4 w-[75%] max-h-14 overflow-scroll bg-gray-300 rounded-md text-[#3980F3]">
+        {props.metaFunction}
+      </div>
     </>
   );
 };
