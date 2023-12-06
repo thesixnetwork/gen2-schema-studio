@@ -264,7 +264,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           source: nodeId,
           target: processNode(node.left, nodeId, parentPositionY + 150).id,
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#79A0EF" },
           type: "smoothstep",
         });
       }
@@ -276,7 +276,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           source: nodeId,
           target: processNode(node.right, nodeId, parentPositionY + 150).id,
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#79A0EF" },
           type: "smoothstep",
         });
       }
@@ -573,7 +573,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                   source: node.id,
                   target: rightId,
                   animated: true,
-                  style: { stroke: "#FFAA9A" },
+                  style: { stroke: "#79A0EF" },
                   type: "smoothstep",
                 },
                 {
@@ -581,7 +581,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                   source: node.id,
                   target: leftId,
                   animated: true,
-                  style: { stroke: "#FFAA9A" },
+                  style: { stroke: "#79A0EF" },
                   type: "smoothstep",
                 },
               ];
@@ -1022,7 +1022,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                   source: updatedNode.id,
                   target: rightId,
                   animated: true,
-                  style: { stroke: "#FFAA9A" },
+                  style: { stroke: "#79A0EF" },
                   type: "smoothstep",
                 },
                 {
@@ -1030,7 +1030,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                   source: updatedNode.id,
                   target: leftId,
                   animated: true,
-                  style: { stroke: "#FFAA9A" },
+                  style: { stroke: "#79A0EF" },
                   type: "smoothstep",
                 },
               ];
@@ -1143,7 +1143,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   }, [nodes, setNodes]);
 
   return (
-    <div>
+    <div className="flex">
       <Flowbar
         metaData={metaData}
         setMetaData={setMetaData}

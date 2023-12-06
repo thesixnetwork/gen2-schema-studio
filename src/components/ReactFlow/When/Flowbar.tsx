@@ -19,11 +19,10 @@ import Menu from "./Sidebar/Menu";
 
 // import SyntaxHighlighter from "react-syntax-highlighter";
 import OpenAI from "openai";
-// import { Button, Modal, Box, Typography } from "@";
 import { useState, useRef } from "react";
-// import SmartToyIcon from "@mui/icons-material/SmartToy";
-// import { styled } from "@mui/material";
 import Swal from "sweetalert2";
+import GenerateGPTimg from "../../../../public/pic/GenerateGPT.png";
+import Image from "next/image";
 
 const style = {
   position: "absolute" as "absolute",
@@ -139,7 +138,7 @@ export default function Flowbar(props: MetaDataProps) {
       </div>
       <div className="flex flex-col w-90">
         <div>
-          <span className="text-sm font-bold">Operator</span>
+          <span className="text-sm font-bold text-[#44498D]">Operator</span>
           <div className="flex">
             <Menu
               nodeName="andNode"
@@ -189,7 +188,7 @@ export default function Flowbar(props: MetaDataProps) {
         </div>
         <div className="flex">
           <div className="flex flex-col">
-            <span className="text-sm font-bold">Operand</span>
+            <span className="text-sm font-bold text-[#44498D]">Operand</span>
             <div className="flex">
               <Menu
                 nodeName="valueNode"
@@ -210,12 +209,13 @@ export default function Flowbar(props: MetaDataProps) {
           </div>
         </div>
         <div>
-          <span className="text-sm font-bold">AI Generate</span>
+          <span className="text-sm font-bold text-[#44498D]">AI Generate</span>
           <button
-            className="px-4 flex items-center justify-center rounded-md border text-lg hover:scale-110 duration-300"
+            className="px-4 flex items-center justify-center rounded-md border border-[#3980F3] text-lg hover:scale-110 duration-300 text-[#3980F3]"
             onClick={onOpen}
           >
-            ☻ Generate
+            <Image src={GenerateGPTimg} alt="generate-icon" width={20} />
+            <span className="ml-1">Generate</span>
           </button>
           {/* <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
@@ -296,7 +296,7 @@ export default function Flowbar(props: MetaDataProps) {
             isOpen={isOpen}
             onClose={onClose}
           >
-            <ModalOverlay bg="blackAlpha.800"/>
+            <ModalOverlay bg="blackAlpha.800" />
             <ModalContent bg="rgba(0, 0, 0, 0.6)">
               <ModalHeader color={"white"} textAlign={"center"}>
                 ☻ AI Generate
@@ -316,7 +316,13 @@ export default function Flowbar(props: MetaDataProps) {
                         handleInput(e);
                       }}
                     />
-                    <Button colorScheme="white" onClick={processGPT} variant={"outline"} ml={4}  _hover={{ borderColor: "blue.500", color:"blue.500" }}>
+                    <Button
+                      colorScheme="white"
+                      onClick={processGPT}
+                      variant={"outline"}
+                      ml={4}
+                      _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                    >
                       Process
                     </Button>
                   </Flex>
@@ -334,10 +340,22 @@ export default function Flowbar(props: MetaDataProps) {
               </ModalBody>
 
               <ModalFooter justifyContent={"center"}>
-                <Button colorScheme="white" variant='outline' onClick={handleCreate} mr={4}  _hover={{ borderColor: "blue.500", color:"blue.500" }}>
+                <Button
+                  colorScheme="white"
+                  variant="outline"
+                  onClick={handleCreate}
+                  mr={4}
+                  _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                >
                   Generate
                 </Button>
-                <Button onClick={onClose} colorScheme="white"  variant='outline' mr={3} _hover={{ borderColor: "blue.500", color:"blue.500" }}>
+                <Button
+                  onClick={onClose}
+                  colorScheme="white"
+                  variant="outline"
+                  mr={3}
+                  _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                >
                   Cancel
                 </Button>
               </ModalFooter>

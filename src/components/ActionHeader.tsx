@@ -44,7 +44,7 @@ const ActionHeader = (props: ActionHeaderProps) => {
           </Select>
         )}
       </div>
-      <div className="p-4 w-[75%] max-h-14 overflow-scroll bg-gray-300 rounded-md ">please add item</div>
+      <div className="p-4 w-[75%] max-h-14 overflow-scroll bg-gray-300 rounded-md text-[#3980F3]">{props.metaFunction}</div>
     </>
   );
 };

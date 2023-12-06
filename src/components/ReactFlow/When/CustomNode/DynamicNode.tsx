@@ -398,37 +398,37 @@ const DynamicNode = (props: CircleNodeProps) => {
     </>
   ) : (
     <div
-      className={`w-10 h-10 rounded-full flex items-center justify-center border-2
+      className={`w-10 h-10 rounded-full flex items-center justify-center border
                 ${
                   props.data.showType === "orNode"
-                    ? "bg-[#ff6700]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "andNode"
-                    ? "bg-[#6865A5]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "equalNode"
-                    ? "bg-[#7da4f7]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "notEqualNode"
-                    ? "bg-[#ff0072]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "moreThanNode"
-                    ? "bg-[#00d7ca]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "moreThanAndEqualNode"
-                    ? "bg-[#6ede87]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "lessThanNode"
-                    ? "bg-[#9ca8b3]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "lessThanAndEqualNode"
-                    ? "bg-[#FF99C3]"
+                    ? "bg-[#DADEF2]"
                     : props.data.showType === "addNode"
-                    ? "bg-[#ffc800]"
+                    ? "bg-transparent"
                     : "bg-white"
                 }
                 ${
-                  hovered ? "border-indigo-600 opacity-80	" : "border-gray-600"
+                  hovered ? "border-indigo-600 opacity-80	" : "border-[#3980F3]"
                 }`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <Handle type="target" position={Position.Top} />
-      <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
+      <p className={`${hovered ? "text-indigo-600 font-bold" : "text-[#3980F3] font-bold"}`}>
         {props.data.showType === "orNode"
           ? "OR"
           : props.data.showType === "andNode"

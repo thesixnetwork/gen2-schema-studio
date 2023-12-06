@@ -41,15 +41,15 @@ const Menu = (props: MenuProps) => {
         }
       >
         <div
-          className="w-10 h-10 rounded-full flex items-center justify-center border-2"
+          className="w-10 h-10 rounded-full flex items-center justify-center border border-[#3980F3]"
           onDragStart={(event: DragEvent) => onDragStart(event, props.nodeName)}
           draggable
           onDoubleClick={() => props.handleDoubleClickAddNode(props.nodeName)}
         >
-          <p className="text-base">{props.title}</p>
+          <p className="text-base text-[#3980F3] font-bold">{props.title}</p>
         </div>
       </Tooltip>
-      <p className="text-xs">
+      <p className="text-xs text-[#3980F3]">
         {props.title === "V"
           ? "Value"
           : props.title === "P"
