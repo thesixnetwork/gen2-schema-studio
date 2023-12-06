@@ -19,6 +19,7 @@ const config: Config = {
         'Act5' : '#FFC658',
         'Act6' : '#3980F3',
         'Act7' : '#79A0EF',
+        'Act8' :'#878CA8',
         'bg':'#F5F6FA',
         '2nd1':'#141933',
         '2nd2':'#505673',
@@ -26,7 +27,7 @@ const config: Config = {
         '2nd4':'#DADEF2',
       },
       backgroundImage: {
-        'gradient-24': 'linear-gradient(24deg, var(--tw-gradient-stops))',
+        'gradient-24': 'linear-gradient(-45deg, var(--tw-gradient-stops))',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },

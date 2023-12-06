@@ -21,11 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {/* <ThemeProvider attribute="class" defaultTheme="dark" enableSystem> */}
-          <Providers>
+        <Providers>
+         
             <Layout>
               {children}
             </Layout>
-          </Providers>
+        </Providers>
         {/* </ThemeProvider> */}
       </body>
     </html>

@@ -70,31 +70,28 @@ export default function Layout({
         RefreshToken()
     }, [refreshTokenNumber])
     //--------------------------------------Authen Refresh Token----------------------------------------//
-
-    console.log(pathname)
+    
     return (
         <>
             {pathname !== "/" ?
-                <div className=" flex flex-col justify-center items-center" >
+                <div className=" flex flex-col justify-center items-center bg-bg" >
                     <div className=" w-full">
                         <HomeNavBar />
                     </div>
                     <div className=" w-[95%]">
                         <Flex bgColor="" width={"100%"} height={"100%"} >
-                            <Box bgColor="" ref={boxRef} width={"75%"} height={"80%"}>
+                            <Box bgColor="" ref={boxRef} width={"78%"} height={"80%"}>
                                 <main>{children}</main>
                             </Box>
-                            <Flex width={"25%"} height={"20%"} position="relative" >
-                                <Center position="absolute" height={childrenHeight}>
-                                    <Divider orientation='vertical' borderColor={"brand"} />
-                                </Center>
+                            <Flex width={"22%"} height={"20%"} position="relative" >
+                               
                                 <Box height={childrenHeight} width={"100%"}>
                                     <HomeSidebar />
                                 </Box>
                             </Flex>
                         </Flex>
                     </div>
-                    <div className=" h-[20%]">
+                    <div className=" h-[20%] w-full">
                         <HomeFooter />
                     </div>
                 </div>
