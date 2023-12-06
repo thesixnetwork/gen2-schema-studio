@@ -36,11 +36,11 @@ export default function Layout({
     return (
         <>
             <HomeNavBar/>
-            <Flex bgColor="#F5F6FA">
+            <Flex bgColor="#F5F6FA" height="650px" overflow="scroll">
                 <Box  ref={boxRef} width={"70%"} height={"100%"}>
                     <main>{children}</main>
                 </Box>
-                <Flex width={"30%"} height={"100%"} position="relative" >
+                <Flex width={"30%"} height={"100%"} >
                     <Center position="absolute" height={childrenHeight}>
                     <Divider orientation='vertical' borderColor={"brand"}/>
                     </Center>
