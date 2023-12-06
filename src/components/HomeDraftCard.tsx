@@ -28,7 +28,7 @@ function HomeDraftCard(props: Props) {
     }, []);
 
     return (
-        <div className=' w-56 h-72  rounded-2xl bg-gradient-24 from-Act7 via-bg to-Act7 p-[0.08rem]'>
+        <div className=' w-draftCardWidth h-draftCardHeight  rounded-2xl bg-gradient-24 from-Act7 via-bg to-Act7 p-[0.08rem] hover:scale-105 duration-500 cursor-pointer'>
             <div className=' w-full h-full rounded-2xl bg-bg p-3 flex flex-col  items-center'>
                 {props.CollectionImage === "" ?
                     <div>

@@ -1,10 +1,12 @@
 import { usePathname } from 'next/navigation'
-
+import { promises as fs } from 'fs';
 const HomeSidebar = () => {
   const pathname = usePathname();
+  
   const detail = {
     "/home" : "fff",
   }
+
   return (
     <aside className=" flex justify-end items-end my-8 w-full">
       <div className="border bg-white border-[#44498D]  w-96 h-fit text-[#878CA8] rounded-md  p-4 mx-8">

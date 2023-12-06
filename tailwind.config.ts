@@ -8,6 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      width: {
+        'draftCardWidth': '14rem',
+      },
+      height: {
+        'draftCardHeight': '18rem',
+      },
       colors: {
         'regal-blue': '#243c5a',
         'main1':'#9E55BA',
@@ -31,6 +37,7 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
+    
     patterns: {
       opacities: {
         100: "1",

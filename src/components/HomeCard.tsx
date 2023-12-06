@@ -66,10 +66,9 @@ export default function HomeCard({ }: Props) {
                             <div className=' h-[1px] w-full border-b border-t-transparent border-Act1'></div>
                         </div>
                     </div>
-                    <div className=' w-full h-80 flex items-end'>
+                    <div className=' w-full h-96 flex items-end'>
                         {index === 0 &&
-                            <div className='flex  w-full overflow-scroll'>
-
+                            <div className='flex items-center h-full w-full overflow-scroll'>
                                 {listDraft &&
                                     listDraft.map((item: { schema_revision: any; schema_name: any; schema_info: { schema_info: { origin_data: { origin_base_uri: any; }; }; }[]; }, index: any) => (
                                         <div className=' ml-3 flex'>
