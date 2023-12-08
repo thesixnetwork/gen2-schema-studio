@@ -8,20 +8,20 @@ import Image from "next/image";
 import { Button } from "@chakra-ui/react";
 
 interface ActionThenTransformStaticProps {
-  metaFunction: string;
-  actionName: string;
-  schemaRevision: string;
-  isDraft: boolean;
+  metaFunction?: string;
+  actionName?: string;
+  schemaRevision?: string;
+  isDraft?: boolean;
 }
 
 const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   //   const navigate = useNavigate();
   const [imgSource, setImgSource] = useState("");
   const [imgSourceError, setImgSourceError] = useState(false);
-  const [metaFunction, setMetaFunction] = useState("");
+  const [metaFunction, setMetaFunction] = useState<string>("");
   const [valueInput, setValueInput] = useState("");
   const [actionData, setActionData] = useState();
-  const [actionThenArr, setActionThenArr] = useState([]);
+  const [actionThenArr, setActionThenArr] = useState<(string | number | boolean)[]>([]);
   const [actionThenIndex, setActionThenIndex] = useState<number | undefined>();
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [actions, setActions] = useState([]);
@@ -97,10 +97,10 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   };
 
   const saveAction = async () => {
-    actionThenArr[actionThenIndex] = convertMetaData(imgSource);
+    actionThenArr[actionThenIndex!] = convertMetaData(imgSource);
     console.log(actionThenArr);
     const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
-    let requestData;
+    let requestData:any;
     if (isCreateNewAction) {
       requestData = {
         payload: {
@@ -146,8 +146,8 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   }, []);
 
   useEffect(() => {
-    if (isBase64(props.metaFunction)) {
-      setMetaFunction(convertFromBase64(props.metaFunction));
+    if (isBase64(props.metaFunction ?? "")) {
+      setMetaFunction(convertFromBase64(props.metaFunction ?? ""));
       console.log("imgSource", metaFunction);
       if (
         getImgFromParam(metaFunction) !== ".png" &&
@@ -155,11 +155,11 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
         getImgFromParam(metaFunction) !== ".jpeg" &&
         getImgFromParam(metaFunction) !== ".gif"
       ) {
-        setValueInput(getImgFromParam(metaFunction));
-        setImgSource(getImgFromParam(metaFunction));
+        setValueInput(getImgFromParam(metaFunction) ?? "");
+        setImgSource(getImgFromParam(metaFunction) ?? "");
       }
     } else {
-      setMetaFunction(props.metaFunction);
+      setMetaFunction(props.metaFunction ?? "");
     }
 
     if (props.metaFunction === "create-new-action") {
@@ -169,8 +169,8 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
 
   useEffect(() => {
     if (actionData !== undefined) {
-      const getDataByName = (data, name) => {
-        return data.find((item) => item.name === name);
+      const getDataByName = (data:any, name:string|undefined) => {
+        return data.find((item:any) => item.name === name);
       };
       const result = getDataByName(actionData, props.actionName);
       setActionThenArr(result.then);
@@ -225,7 +225,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
             >
               {imgSourceError ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-red-500">Image couldn't be loaded</p>
+                  <p className="text-red-500">Image couldn&apos;t be loaded</p>
                 </div>
               ) : (
                 <img

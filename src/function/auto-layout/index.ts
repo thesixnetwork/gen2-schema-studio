@@ -251,6 +251,7 @@ export const adjustTreePosition = async (tree:Tree,rootOriginX:number) => {
 
 export const drawTree = async(nodes:Node[],tree:Tree,node: TreeNode, x: number, y: number):Promise<BoxResult> => {
     // generate nodesMap by node.id
+    console.log("::::log",nodes)
     const nodesMap = _.keyBy(nodes,'id')
 
     if(node.id===tree.root.id) {

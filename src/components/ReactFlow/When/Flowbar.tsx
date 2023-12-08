@@ -22,6 +22,7 @@ import OpenAI from "openai";
 import { useState, useRef } from "react";
 import Swal from "sweetalert2";
 import GenerateGPTimg from "../../../../public/pic/GenerateGPT.png";
+import GenerateGPTimgWhite from "../../../../public/pic/GenerateGPT-white.png";
 import Image from "next/image";
 
 const style = {
@@ -139,51 +140,55 @@ export default function Flowbar(props: MetaDataProps) {
       <div className="flex flex-col w-90">
         <div>
           <span className="text-sm font-bold text-[#44498D]">Operator</span>
-          <div className="flex">
-            <Menu
-              nodeName="andNode"
-              title="AND"
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-            <Menu
-              nodeName="orNode"
-              title="OR"
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-          </div>
-          <div className="flex">
-            <Menu
-              nodeName="equalNode"
-              title="="
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-            <Menu
-              nodeName="notEqualNode"
-              title="≠"
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-          </div>
-          <div className="flex">
-            <Menu
-              nodeName="moreThanNode"
-              title=">"
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-            <Menu
-              nodeName="moreThanAndEqualNode"
-              title=">="
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-            <Menu
-              nodeName="lessThanNode"
-              title="<"
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
-            <Menu
-              nodeName="lessThanAndEqualNode"
-              title="<="
-              handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-            />
+          <div className="flex ">
+            <div className="flex flex-col border-r border-[#3980F3] pr-2">
+              <Menu
+                nodeName="andNode"
+                title="AND"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+              <Menu
+                nodeName="orNode"
+                title="OR"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+            </div>
+            <div className="pl-2">
+              <div className="flex">
+                <Menu
+                  nodeName="equalNode"
+                  title="="
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="moreThanNode"
+                  title=">"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="moreThanAndEqualNode"
+                  title=">="
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+              </div>
+              <div className="flex">
+                <Menu
+                  nodeName="notEqualNode"
+                  title="≠"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="lessThanNode"
+                  title="<"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="lessThanAndEqualNode"
+                  title="<="
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex">
@@ -298,8 +303,18 @@ export default function Flowbar(props: MetaDataProps) {
           >
             <ModalOverlay bg="blackAlpha.800" />
             <ModalContent bg="rgba(0, 0, 0, 0.6)">
-              <ModalHeader color={"white"} textAlign={"center"}>
-                ☻ AI Generate
+              <ModalHeader
+                color={"white"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Image
+                  src={GenerateGPTimgWhite}
+                  alt="generate-icon"
+                  width={20}
+                />{" "}
+                <Text ml={1}>AI Generate</Text>
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>

@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select } from "@chakra-ui/react";
 
 interface ActionHeaderProps {
   type: string;
-  actionName: string;
   metaFunction: string;
+  actionName: string;
   actionThenType?: string;
+  transformType?: string;
   handleActionThenTypeChange?: (newActionThenType: string) => void;
   handleTransformTypeChange?: (newActionThenType: string) => void;
 }
@@ -14,31 +15,40 @@ const ActionHeader = (props: ActionHeaderProps) => {
   return (
     <>
       <div className="text-black flex items-center">
-        <h6 className="text-[#3980F3]">
+        <h6>
           Action: <span className="font-semibold">{props.actionName}</span> |{" "}
-          {props.type === "when" ? "When" : "Then"}
+          {props.type == "when" ? "When" : "Then"}
         </h6>
-        {props.type === "then" && (
+        {props.type == "then" && (
           <Select
             w={320}
             justifyContent={"center"}
             alignContent={"center"}
             onChange={(e) => props.handleActionThenTypeChange?.(e.target.value)}
             mx={4}
+            value={props.actionThenType}
           >
-            {/* Options for "then" type */}
+            <option value="" disabled selected hidden>
+              -- Plase select your action type --
+            </option>
+            <option value="updateAttribute">Update Attribute</option>
+            <option value="transferNumber">Transfer Number</option>
+            <option value="transform">Transform</option>
           </Select>
         )}
-        {props.type === "then" && props.actionThenType === "transform" && (
+        {props.type == "then" && props.actionThenType === "transform" && (
           <Select
             w={320}
             justifyContent={"center"}
             alignContent={"center"}
-            onChange={(e) =>
-              props.handleTransformTypeChange?.(e.target.value)
-            }
+            onChange={(e) => props.handleTransformTypeChange?.(e.target.value)}
+            value={props.transformType}
           >
-            {/* Options for transform type */}
+            <option value="" disabled selected hidden>
+              -- Plase select your transform type --
+            </option>
+            <option value="static">Static Image Path</option>
+            <option value="dynamic">Dynamic Image Path</option>
           </Select>
         )}
       </div>

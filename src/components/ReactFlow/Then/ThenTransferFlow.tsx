@@ -264,7 +264,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
                 source: node.id,
                 target: onAddNodeId,
                 animated: true,
-                style: { stroke: "#FFAA9A" },
+                style: { stroke: "#3980F3" },
                 type: "smoothstep",
               },
             ];
@@ -382,7 +382,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         source: nodes[0].id,
         target: leftId,
         animated: true,
-        style: { stroke: "#FFAA9A" },
+        style: { stroke: "#3980F3" },
         type: "smoothstep",
       },
       {
@@ -390,7 +390,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         source: nodes[0].id,
         target: rightId,
         animated: true,
-        style: { stroke: "#FFAA9A" },
+        style: { stroke: "#3980F3" },
         type: "smoothstep",
       },
       {
@@ -398,7 +398,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         source: leftId,
         target: leftBottomId,
         animated: true,
-        style: { stroke: "#FFAA9A" },
+        style: { stroke: "#3980F3" },
         type: "smoothstep",
       },
       {
@@ -406,7 +406,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         source: rightId,
         target: rightBottomId,
         animated: true,
-        style: { stroke: "#FFAA9A" },
+        style: { stroke: "#3980F3" },
         type: "smoothstep",
       },
     ];
@@ -739,7 +739,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           source: nodeId.toString(),
           target: (nodeId + 1).toString(),
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#3980F3" },
           type: "smoothstep",
         };
         const edge2 = {
@@ -747,7 +747,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           source: (nodeId + 1).toString(),
           target: (nodeId + 3).toString(),
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#3980F3" },
           type: "smoothstep",
         };
 
@@ -815,7 +815,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           source: nodeId.toString(),
           target: (nodeId + 2).toString(),
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#3980F3" },
           type: "smoothstep",
         };
         const edge2 = {
@@ -823,7 +823,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           source: (nodeId + 2).toString(),
           target: (nodeId + 4).toString(),
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#3980F3" },
           type: "smoothstep",
         };
 

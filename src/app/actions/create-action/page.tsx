@@ -118,16 +118,28 @@ const Page = () => {
     //     </Link>
     //   </div>
     // </div>
+
     <div>
       <ActionInput name="Name" />
       <ActionInput name="Description" />
       <ActionInputThenWhen
-        actionType="When"
-        action="meta.GetBoolean(‘checked_in’) == false && meta.GetString(‘tier’) != ‘staff’"
+        actionType="when"
+        action={["meta.GetBoolean('check_in') == false"]}
+        actionName={"etst"}
+        schemaRevision={"monday.week"}
       />
-       <ActionInputThenWhen
-        actionType="Then"
-        action="meta.GetBoolean(‘checked_in’) == false && meta.GetString(‘tier’) != ‘staff’"
+      <ActionInputThenWhen
+        actionType="then"
+        action={[
+          "meta.SetNumber('points', 20)",
+          "meta.TransferNumber('points', params['tokenId'].GetString(), meta.GetNumber('points'))",
+          "meta.SetImage('https://i.seadn.io/s/raw/files/6fbfa229d21de3a8a59f0c72f8c273b8.png?auto=format&dpr=1&w=3840')",
+          "meta.SetImage('https://techsauce-nft.fivenet.sixprotocol.com/techsauce/1.png')",
+          "meta.SetImage(meta.ReplaceAllString(meta.GetImage(),'_og.png','_tr.png'))",
+          "meta.SetBoolean('check_in', false)"
+        ]}
+        actionName={"etst"}
+        schemaRevision={"monday.week"}
       />
     </div>
   );

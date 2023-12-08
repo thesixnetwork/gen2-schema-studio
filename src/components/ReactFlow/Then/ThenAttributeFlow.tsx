@@ -126,6 +126,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     const edgesArr = [];
 
     const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
+      console.log("log herre", node)
       const nodeId = `${nodeIdCounter++}`;
       const outputNode = {
         width: 128,
@@ -185,7 +186,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           outputNode.data.dataType = "boolean";
         }
         setSelectedAttribute(node.attributeName.dataType);
-      } else if (node.type === "constant" && node.value && !node.left) {
+      } else if (node.type === "constant" && (node.value || (node.dataType === "bool" && node.type === "constant")) && !node.left) {
         outputNode.data.showType = "setNode";
         outputNode2.data.showType = "valueNode";
         outputNode2.data.value = node.value;
@@ -235,9 +236,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       }
 
       if (
-        node.value1 &&
-        node.value1.value &&
-        node.value1.type !== "math_operation"
+        node.value1 && node.value1.type !== "math_operation"
       ) {
         console.log("<---", node.value1);
         edgesArr.push(
@@ -246,7 +245,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             source: nodeId,
             target: processNode(node.value1, nodeId, parentPositionY + 150).id,
             animated: true,
-            style: { stroke: "#FFAA9A" },
+            style: { stroke: "#79A0EF" },
             type: "smoothstep",
           },
           {
@@ -254,7 +253,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             source: `${parseInt(nodeId) + 1}`,
             target: `${parseInt(nodeId) + 2}`,
             animated: true,
-            style: { stroke: "#FFAA9A" },
+            style: { stroke: "#79A0EF" },
             type: "smoothstep",
           }
         );
@@ -268,7 +267,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             source: nodeId,
             target: processNode(node.value1, nodeId, parentPositionY + 150).id,
             animated: true,
-            style: { stroke: "#FFAA9A" },
+            style: { stroke: "#79A0EF" },
             type: "smoothstep",
           },
           {
@@ -276,7 +275,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             source: `${parseInt(nodeId) + 1}`,
             target: `${parseInt(nodeId) + 2}`,
             animated: true,
-            style: { stroke: "#FFAA9A" },
+            style: { stroke: "#79A0EF" },
             type: "smoothstep",
           }
         );
@@ -431,7 +430,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
                 source: node.id,
                 target: onAddNodeId,
                 animated: true,
-                style: { stroke: "#FFAA9A" },
+                style: { stroke: "#79A0EF" },
                 type: "smoothstep",
               },
             ];
@@ -562,7 +561,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           source: "1",
           target: onAddId,
           animated: true,
-          style: { stroke: "#FFAA9A" },
+          style: { stroke: "#79A0EF" },
           type: "smoothstep",
         },
       ];
@@ -913,7 +912,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
                   source: updatedNode.id,
                   target: onAddNodeId,
                   animated: true,
-                  style: { stroke: "#FFAA9A" },
+                  style: { stroke: "#79A0EF" },
                   type: "smoothstep",
                 },
               ];
@@ -1073,6 +1072,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             </div>
           </Link>
         </div>
+        <button onClick={()=>console.log(nodes)}>logger</button>
       </div>
       <Flowbar
         selectedAttribute={selectedAttribute}

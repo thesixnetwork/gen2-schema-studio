@@ -142,14 +142,14 @@ const WhenFlow = (props: WhenFlowProps) => {
     setEdges((eds) => addEdge(params, eds));
   const onInit = (rfi: ReactFlowInstance) => setReactFlowInstance(rfi);
 
-  const convertObject = (obj) => {
+  const convertObject = (obj:any) => {
     console.log("!", obj);
     console.log("starting convert..");
-    const outputArray = [];
-    const edgesArr = [];
+    const outputArray:any = [];
+    const edgesArr:any = [];
     let nodeIdCounter = 1;
 
-    const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
+    const processNode = (node:any, parentNodeId:null|string = null, parentPositionY = 0) => {
       const nodeId = `${nodeIdCounter++}`;
       console.log("---node>", node);
       const outputNode = {
@@ -339,7 +339,7 @@ const WhenFlow = (props: WhenFlowProps) => {
       });
 
       const isInsideLength = (
-        position: object,
+        position: any,
         startX: number,
         startY: number,
         width: number,
@@ -702,10 +702,10 @@ const WhenFlow = (props: WhenFlowProps) => {
           }
         }
       }
-      const node = data.find((item) => item.id === id);
+      const node = data.find((item:any) => item.id === id);
       if (!node) return null;
 
-      const result: ResultProps = {};
+      const result:any = {};
       if (node.showType === "andNode" || node.showType === "orNode") {
         result.type = "condition_oper";
         result.value = node.showType === "andNode" ? "AND" : "OR";
@@ -832,7 +832,7 @@ const WhenFlow = (props: WhenFlowProps) => {
     changes.forEach((element) => {
       if (element.type === "remove") {
         const nodeIndex = nodes.findIndex((node) => node.id === element.id);
-        const cloneUpdatedNodes = [...nodes];
+        const cloneUpdatedNodes:any = [...nodes];
         cloneUpdatedNodes[nodeIndex] = {
           ...nodes[nodeIndex],
           data: {
@@ -852,6 +852,7 @@ const WhenFlow = (props: WhenFlowProps) => {
     const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
     const requestData = {
       payload: {
+        // schema_code: getSCHEMA_CODE(),
         schema_code: getSCHEMA_CODE(),
         name: props.actionName,
         when: metaData,
@@ -877,7 +878,7 @@ const WhenFlow = (props: WhenFlowProps) => {
       });
   };
 
-  const removeNodeSuffix = (input) => {
+  const removeNodeSuffix = (input:string) => {
     const suffixToRemove = "node";
     if (
       input.endsWith(suffixToRemove) &&
@@ -889,7 +890,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   };
 
   const handleDoubleClickAddNode = useCallback(
-    (type) => {
+    (type:string) => {
       let dropped = false;
       const updatedNodes = [];
 
@@ -910,7 +911,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           (a, b) => parseInt(a.data.parentNode) - parseInt(b.data.parentNode)
         );
         console.log("::parent", lowestParentNode);
-        let updatedNode;
+        let updatedNode:any;
         if (nodes.length > 1) {
           updatedNode = lowestParentNode[0];
         } else {
@@ -1158,7 +1159,7 @@ const WhenFlow = (props: WhenFlowProps) => {
             : { height: 480, width: 1200 }
         }
 
-        className="border rounded-3xl bg-white"
+        className="border rounded-3xl bg-white p-2"
       >
         <div ref={reactFlowWrapper} className="h-full">
           <ReactFlow

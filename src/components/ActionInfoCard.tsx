@@ -2,7 +2,7 @@ interface ActionInfoCardProps{
     name: string;
     description: string;
     when: string;
-    then: [string];
+    then?: [string];
 }
 
 const ActionInfoCard = (props:ActionInfoCardProps) => {
