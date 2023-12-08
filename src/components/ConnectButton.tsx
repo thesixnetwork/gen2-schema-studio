@@ -6,6 +6,8 @@ import { StargateClient } from "@cosmjs/stargate";
 import axios from 'axios'
 import { saveCosmosAddress, getCosmosAddress, saveBalanceCoin, saveTokensToLocalStorage } from '../helpers/AuthService'
 import { useRouter } from 'next/navigation'
+import { setCookie } from '@/service/setCookie'
+import { useSession, signIn, signOut } from "next-auth/react"
 type Props = {}
 
 function ConnectButton({ }: Props) {
@@ -106,9 +108,16 @@ function ConnectButton({ }: Props) {
                 // Add any other headers your API requires
             },
         })
-            .then(response => {
+            .then(async (response) => {
                 saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token);
-                console.log(response.data.data.access_token, response.data.data.refresh_token)
+                setCookie(response.data.data.access_token)
+                await signIn('credentials', {
+                    redirect: false, // Do not redirect, handle redirection manually after signing in
+                    accessToken: response.data.data.access_token, // Pass the access token obtained from your API
+                  });
+                // signIn();
+                /// use next auth here
+                // console.log(response.data.data.access_token, response.data.data.refresh_token)
                 // You can handle the API response here
                 router.push('/home', { scroll: false })
             })

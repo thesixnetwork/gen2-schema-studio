@@ -9,9 +9,9 @@ import { getAccessTokenFromLocalStorage } from '@/helpers/AuthService';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
-type Props = {}
+// type Props = {}
 
-export default function HomeCard({ }: Props) {
+export default function HomeCard() {
     const items = ['Draft', 'Live', 'Testnet'];
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
@@ -28,19 +28,20 @@ export default function HomeCard({ }: Props) {
                 params: params,
                 headers: headers,
             });
-            console.log(response.data);
+            // console.log(response.data);
             setListdraft(response.data.data.sesstion);
             // return response.data.data.sesstion;
 
         } catch (error) {
-            console.error("Error:", error);
+            // console.error("Error:", error);
             // return null
         }
     }
 
     useEffect(() => {
+        console.log("testttttttt")
         getListDraft()
-    })
+    },[])
 
     
 
