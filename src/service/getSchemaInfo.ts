@@ -15,18 +15,13 @@ export async function getSchemaInfo(schemaCode: string) {
     // const ss  = await getSession({event:"session"})
     // const user: any = request.nextauth.token;
     const apiUrl = `/schema/get_schema_info/${schemaCode}`;
-    const cookieStore = cookies()
-    const token = cookieStore.get('next-auth.session-token')
-    console.log("qqqqdata" ,token?.value)
+    // const cookieStore = cookies()
+    // const token = cookieStore.get('next-auth.session-token')
+    // console.log("qqqqdata" ,token?.value)
 
     try {
         const req = await api.get(apiUrl);
         const schema_info:ISchemaInfo = req.data.data.schema_info
-        // console.log("222222")
-
-        // console.log(req)
-        // console.log(req.data)
-        // console.log("req : ", req.data.data.schema_info)
         return schema_info
     } catch (error) {
         // console.log("error ", error)
