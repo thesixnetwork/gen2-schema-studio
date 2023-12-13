@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import TapState from "@/components/TapState";
 import {
@@ -17,14 +17,52 @@ import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import { useEffect, useState, useRef} from "react";
+import { useSession } from "next-auth/react"
+import { testFunc  } from './action'
 
 
-export default async function Page({
+
+export default function Page({
   params: { schemacode },
 }: {
   params: { schemacode: string };
 }) {
-  const isDaft = await getSchemaInfo(schemacode);
+  const { data: session } = useSession()
+  console.log(session)
+  // useEffect( async () => {
+    // const cookieStore = cookies()
+    // const isToken = cookieStore.get('next-auth.session-token')
+  //   // setIsClient(true);
+  const [isDaft, setIsDaft] = useState(null)
+  // const isDaft = await getSchemaInfo(schemacode);
+  // }, []);
+  
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getSchemaInfo(schemacode);
+        testFunc();
+        // Process the response or update state as needed
+      } catch (error) {
+        // Handle errors
+        console.error('Error fetching data:', error);
+      }
+    })();
+  }, [schemacode]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const send = await getSchemaInfo(schemacode);
+        setIsDaft(send)
+        // Process the response or update state as needed
+      } catch (error) {
+        // Handle errors
+        console.error('Error fetching data:', error);
+      }
+    })();
+  }, [schemacode]);
+  // const isDaft = await getSchemaInfo(schemacode);
     // console.log(JSON.stringify(isDaft, null, 2));
   return (
     <>

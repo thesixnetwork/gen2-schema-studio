@@ -30,19 +30,20 @@ export default function HomeCard({ }: Props) {
                 params: params,
                 headers: headers,
             });
-            console.log(response.data);
+            // console.log(response.data);
             setListdraft(response.data.data.sesstion);
             // return response.data.data.sesstion;
 
         } catch (error) {
-            console.error("Error:", error);
+            // console.error("Error:", error);
             // return null
         }
     }
 
     useEffect(() => {
+        console.log("testttttttt")
         getListDraft()
-    })
+    },[])
 
     return (
         <div>

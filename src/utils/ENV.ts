@@ -12,9 +12,10 @@ dotenv.config();
 // }
 
 const ENV = {
-  API_URL: process.env.API_ENDPOINT_SCHEMA_INFO || "sss",
+  API_URL: process.env.API_ENDPOINT_SCHEMA_INFO_2 || "sss",
 //   RPC_URL: process.env.RPC_URL || "https://rpc2.fivenet.sixprotocol.net",
 };
 
+// console.log("api : ", process.env.API_ENDPOINT_SCHEMA_INFO_2 )
 
 export default ENV;

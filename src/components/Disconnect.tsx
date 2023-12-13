@@ -2,11 +2,16 @@ import React from 'react'
 import logout from '../../public/pic/Logout.png'
 import Image from "next/image";
 import { useRouter } from 'next/navigation'
+import { useSession, signIn, signOut } from "next-auth/react"
+
 type Props = {}
 
 function Disconnect({ }: Props) {
     const router = useRouter()
-    const disconnect = () => {
+    const disconnect = async() => {
+        await signOut({
+            redirect: false,
+          });
         localStorage.clear();
         router.push('/', { scroll: false })
     }

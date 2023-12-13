@@ -15,12 +15,17 @@ function HomeDraftCard(props: Props) {
     useEffect(() => {
         const getImage = async () => {
             try {
+               if(props.CollectionImage){
                 await axios.get(props.CollectionImage).then((res) => {
                     setImgUrl(res.data.image);
                     setLoading(false);
                 });
+               }else {
+                setLoading(false);
+               }
+                
             } catch (err) {
-                console.log(err);
+                // console.log(err);
                 setLoading(false);
             }
         };
@@ -48,4 +53,4 @@ function HomeDraftCard(props: Props) {
     )
 }
 
-export default HomeDraftCard
+export default React.memo(HomeDraftCard)
