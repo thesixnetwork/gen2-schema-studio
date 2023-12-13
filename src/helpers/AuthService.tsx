@@ -83,8 +83,6 @@ export const saveActionName = (ActionName: string) => {
   localStorage.setItem(ACTION_NAME, ActionName);
 };
 
-
-
 export const getActionName = () => {
   return localStorage.getItem(ACTION_NAME)
 };

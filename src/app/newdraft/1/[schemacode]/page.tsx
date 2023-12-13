@@ -1,57 +1,52 @@
-// 'use client'
+'use client'
 
 import TapState from "@/components/TapState";
 import {
-  Box,
-  Button,
-  ButtonGroup,
-  Divider,
-  Text,
-  Flex,
-  FormControl,
-  FormLabel,
-  useToast,
+    Box,
+    Button,
+    ButtonGroup,
+    Divider,
+    Text,
+    Flex,
+    FormControl,
+    FormLabel,
+    useToast,
 } from "@chakra-ui/react";
 
-import { getDaft } from "./actions";
+import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
-// import { ISchemaInfo } from "@/type/Nftmngr";
+import { ISchemaInfo } from "@/type/Nftmngr";
+import { useEffect, useState, useRef, use } from "react";
+import Stepmenu from "@/components/Stepmenu";
+import { getAccessTokenFromLocalStorage } from "@/helpers/AuthService";
 
-export default async function Page({
-  params: { schemacode },
+
+export default function Page({
+    params: { schemacode },
 }: {
-  params: { schemacode: string };
+    params: { schemacode: string };
 }) {
-  const isDaft = await getDaft(schemacode);
-  //   console.log(JSON.stringify(isDaft, null, 2));
+    const [isDraft, setIsDraft] = useState(null)
+    useEffect(() => {
+        const getIsDraft = async () => {
+            const draft = await getSchemaInfo(schemacode, getAccessTokenFromLocalStorage());
+            setIsDraft(draft)
+        }
+    }, [])
 
-  return (
-    <div className=" w-full  p-8">
-      {isDaft && (
-        <Flex p={10} flexWrap={"wrap"}>
-          <Text
-            color="#44498D"
-            fontFamily="Montserrat"
-            fontSize="32px"
-            fontStyle="normal"
-            fontWeight="400"
-            lineHeight="normal"
-          >
-            {isDaft.schema_code}
-          </Text>
-          <Divider  borderColor={"brand"}/>
-          <TapState isCurren={4} />
-          <Box p={6}>
-            <CradNewDaft isDaft={isDaft} />
-          </Box>
-        </Flex>
-      )}
+    return (
+        <>
+            {isDraft && (
+                <div className=" w-full h-full min-h-[75vh] px-8 mt-10 ">
+               
+                </div>
+            )}
 
-      {!isDaft && (
-        <Flex className=" w-full h-full" p={4} flexWrap={"wrap"}>
-          <Text>NOT FOUND SCHEMA CODE</Text>
-        </Flex>
-      )}
-    </div>
-  );
+            {!isDraft && (
+                <div className=" w-full h-full min-h-[75vh] px-8 mt-10 ">
+                  <Stepmenu schemacode="gust.io"></Stepmenu>
+                </div>
+            )}
+        </>
+    );
 }

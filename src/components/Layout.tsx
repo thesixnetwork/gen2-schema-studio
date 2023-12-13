@@ -83,22 +83,22 @@ export default function Layout({
     return (
         <>
             {pathname !== "/" ?
-                <div className=" flex flex-col justify-center items-center bg-bg" >
+                <div className=" flex flex-col justify-center items-center bg-bg overflow-x-hidden" >
                     <div className=" w-full">
                         <HomeNavBar />
                     </div>
-                    <div className=" w-[95%] min-h-[75vh]">
-                        <Flex bgColor="" width={"100%"} height={"100%"} >
+                    <div className=" w-[95%] min-h-[75vh] pt-20">
+                        <Flex bgColor="" width={"100%"} height={"100%"} className="" >
                             <Box className=" duration-500" bgColor="" ref={boxRef} width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
                             </Box>
                             <Flex className=" duration-500" width={isSideBarShow ? "22%" : "0%"} height={"20%"} position="relative" >
-                                <div onClick={closeSidebar} className={`relative `} >
+                                <div onClick={closeSidebar} className={` absolute top-[-2%] left-0`} >
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>
                                 {isSideBarShow &&
                                     <Box height={childrenHeight} width={"100%"}>
-                                        <div className=" mt-10">
+                                        <div >
                                             <HomeSidebar />
                                         </div>
                                     </Box>

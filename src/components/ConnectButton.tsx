@@ -6,15 +6,15 @@ import { StargateClient } from "@cosmjs/stargate";
 import axios from 'axios'
 import { saveCosmosAddress, getCosmosAddress, saveBalanceCoin, saveTokensToLocalStorage } from '../helpers/AuthService'
 import { useRouter } from 'next/navigation'
+import Loading from './Loading';
+
 type Props = {}
 
 function ConnectButton({ }: Props) {
     const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME);
     const [token, setToken] = useState("usix");
     const [cosmosAddress, setCosmosAddress] = useState("");
-    const [rpcEndpoint, setRpcEndpoint] = useState<string>(
-        process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value"
-    );
+    const [rpcEndpoint, setRpcEndpoint] = useState<string>(process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value");
     const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE
     const [exponent, setExponent] = useState(1e6);
     const router = useRouter()
@@ -119,9 +119,12 @@ function ConnectButton({ }: Props) {
     }
 
     useEffect(() => {
-        getKeplrBalance();
-        getSignature();
-        loginApi();
+        const connect = async () => {
+            await getKeplrBalance();
+            await getSignature();
+            await loginApi();
+        }
+        connect();
     }, [cosmosAddress])
 
     const handleConnect = async () => {

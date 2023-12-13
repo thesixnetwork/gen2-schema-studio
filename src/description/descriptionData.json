@@ -1,0 +1,31 @@
+{
+    "/home": [
+      {
+        "title": "Choose your collection",
+        "description": "Create new integration, modify existing draft or manage collection which already in production."
+      }
+    ],
+    "/aboutgen2": [
+      {
+        "title": "About Data Layer NFT Gen 2",
+        "description": "Briefly explain about NFT Gen 2, the first data layer in SIX Protocol"
+      }
+    ],
+    "/class": [
+      {
+        "title": "What is your level of programming experience?",
+        "description": "The user interface of the page will be tailored to your programming experience. Based on your selection, whether you are a beginner, intermediate, or a developer, we will customize the interface to provide you with the most suitable tools and features that align with your level of experience."
+      }
+    ],
+    "/newdraft/1": [
+      {
+        "title": "Schema Code",
+        "description": "A schema code serves as an identifier for your Gen 2 NFT definition. It can be in a formatted or free-text format.In the case of a formatted code, the initial set of characters before the full stop (\".\") represents your organization code. This organization code is unique to you and enables you to create other schemas using the same code."
+      },
+      {
+        "title": "Collection Name",
+        "description": "The term \"Collection name\" is exclusively used within the SIX Protocol Ecosystem (Gen2 Studio, SIX Scan, etc.) and does not refer to the actual collection name."
+      }
+    ]
+  }
+  

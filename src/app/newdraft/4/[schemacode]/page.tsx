@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import TapState from "@/components/TapState";
 import {
@@ -27,10 +27,11 @@ export default async function Page({
   params: { schemacode: string };
 }) {
   const isDaft = await getSchemaInfo(schemacode,getAccessTokenFromLocalStorage());
-    // console.log(JSON.stringify(isDaft, null, 2));
+  //   // console.log(JSON.stringify(isDaft, null, 2));
   return (
     <>
-      {isDaft && (
+    <div>TEST</div>
+      {/* {isDaft && (
         <Flex p={10} flexWrap={"wrap"}>
           <Text
             color="#44498D"
@@ -54,7 +55,7 @@ export default async function Page({
         <Flex p={4} flexWrap={"wrap"}>
           <Text>NOT FOUND SCHEMA CODE</Text>
         </Flex>
-      )}
+      )} */}
     </>
   );
 }
