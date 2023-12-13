@@ -7,8 +7,8 @@ export default withAuth(function middleware(request: NextRequestWithAuth) {
   console.log(11111);
   // const user: any = request.nextauth.token?.user;
   const user: any = request.nextauth.token;
-  const user2: any = request;
-  console.log(user2);
+  // const user2: any = request.headers;
+  // console.log("22222",user2);
   if (user) {
     // const exp = user.exp - 120;
     // const time = Date.now()/1000;

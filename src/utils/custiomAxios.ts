@@ -1,11 +1,11 @@
-import axios from 'axios';
+"use server";
+import axios from "axios";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { cookies } from 'next/headers'
-import jwt from "jsonwebtoken"
-import ENV from '@/utils/ENV'
-import { getServerSession } from "next-auth"
-
-
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import ENV from "@/utils/ENV";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 
 const api = axios.create({
   baseURL: ENV.API_URL,
@@ -13,19 +13,14 @@ const api = axios.create({
 
 // Add a request interceptor
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
     // Check if the token is available and not expired
     // If not, refresh the token
-    getServerSession().then(console.log)
-    const cookieStore = cookies()
-    const isToken = cookieStore.get('next-auth.session-token')
-    // console.log(isToken)
-    console.log(process.env.NEXTAUTH_SECRET)
-    const token = jwt.verify(isToken?.value, "1212121")
-    // const token = localStorage.getItem('access_token');
-    console.log("token =====>",token)
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const sesstion = await getServerSession(authOptions);
+    // console.log("sssssssss",sesstion)
+
+    if (sesstion) {
+        config.headers.Authorization = `Bearer ${sesstion.user.accessToken}`;
     }
     return config;
   },
@@ -42,7 +37,7 @@ api.interceptors.response.use(
   },
   async (error) => {
     // Check if the error is due to an expired token
-    // console.log(error)
+    // console.log(error.response.status);
     if (error.response.status === 401) {
       // Refresh the token and retry the request
       await refreshAccessToken();
@@ -55,11 +50,26 @@ api.interceptors.response.use(
 
 // Function to refresh the access token
 const refreshAccessToken = async () => {
-  // Implement your logic to refresh the token
-  // Make a request to your server to get a new token
-  // Update the localStorage with the new token
-  // Retry the failed request
-  console.log("refreshAccessToken")
+
+  const sesstion = await getServerSession(authOptions);
+  const apiUrl = `/auth/refreshToken`;
+  const requestData = {
+    "refresh_token": sesstion.user.accessToken,
+    };
+    const req = await api.post(apiUrl, requestData)
+    // console.log(req.data.data.access_token)
+  api.interceptors.request.use(
+    async (config) => {
+      if (req.data.data.access_token) {
+        config.headers.Authorization = `Bearer ${req.data.data.access_token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  console.log("refreshAccessToken");
 };
 
 export default api;
