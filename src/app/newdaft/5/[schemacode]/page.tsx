@@ -17,7 +17,9 @@ import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import { useEffect, useState, useRef} from "react";
-// import { useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { testFunc  } from './action'
+
 
 
 export default function Page({
@@ -25,17 +27,21 @@ export default function Page({
 }: {
   params: { schemacode: string };
 }) {
-  // const { data: session } = useSession()
-  // console.log(session)
+  const { data: session } = useSession()
+  console.log(session)
   // useEffect( async () => {
+    // const cookieStore = cookies()
+    // const isToken = cookieStore.get('next-auth.session-token')
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState(null)
   // const isDaft = await getSchemaInfo(schemacode);
   // }, []);
+  
   useEffect(() => {
     (async () => {
       try {
         const response = await getSchemaInfo(schemacode);
+        testFunc();
         // Process the response or update state as needed
       } catch (error) {
         // Handle errors

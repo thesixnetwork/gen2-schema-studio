@@ -56,7 +56,7 @@ export const clearBalanceCoin = () => {
 };
 
 export const getBalanceCoin = () => {
-  return localStorage.getItem(BALANCE_COIN)
+  // return localStorage.getItem(BALANCE_COIN)
 };
 
 export const saveCosmosAddress = (CosmosAddress: string) => {
@@ -68,7 +68,7 @@ export const clearCosmosAddress = () => {
 };
 
 export const getCosmosAddress = () => {
-  return localStorage.getItem(COSMOS_ADDRESS)
+  // return localStorage.getItem(COSMOS_ADDRESS)
 };
 
 
@@ -86,7 +86,7 @@ export const saveActionName = (ActionName: string) => {
 
 
 export const getActionName = () => {
-  return localStorage.getItem(ACTION_NAME)
+  // return localStorage.getItem(ACTION_NAME)
 };
 
 export const saveOriginContractAddressToLocalStorage = (OriginContractAddress: string) => {
@@ -94,7 +94,7 @@ export const saveOriginContractAddressToLocalStorage = (OriginContractAddress: s
 }
 
 export const getOriginContractAddressFromLocalStorage = () => {
-  return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
+  // return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
 }
 
 export const clearOriginContractAddressFromLocalStorage = () => {

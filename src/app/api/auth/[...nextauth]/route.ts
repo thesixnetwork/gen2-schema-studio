@@ -3,11 +3,12 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth/next";
+import jwt from "jsonwebtoken"
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: "/home",
-    signOut: "/",
-    error: "/",
+    signIn: "/",
+    // signOut: "/",
+    // error: "/",
   },
   callbacks: {
     async session({ session, token}) {
@@ -28,7 +29,15 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials) => {
         // Your custom authentication logic here
         // const user = await verifyPassword(credentials.username, credentials.password);
-        const user = credentials.accessToken;
+        // const user = credentials.accessToken;
+        const user = {
+          accessToken: credentials.accessToken,
+          address: credentials.address,
+          balance: credentials.balance,
+        }
+        // const user = credentials.accessToken
+         
+
         if (user) {
           return Promise.resolve(user);
         } else {
@@ -36,6 +45,7 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    // Add other authentication providers if needed
   ],
   session: {
     strategy: "jwt"
