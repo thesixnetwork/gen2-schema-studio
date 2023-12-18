@@ -142,7 +142,8 @@ function ConnectButton({ }: Props) {
         })
             .then(async (response) => {
                 saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token);
-                setCookie(response.data.data.access_token)
+                setCookie('test2','token')
+                setCookie('test','test')
                 await signIn('credentials', {
                     redirect: false, // Do not redirect, handle redirection manually after signing in
                     accessToken: response.data.data.access_token,

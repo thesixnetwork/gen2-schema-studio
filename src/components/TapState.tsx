@@ -14,7 +14,8 @@ import { useAccount, useConnect, useSuggestChainAndConnect } from "graz";
 import { sixCustomChain } from "@/app/defineChain";
 import type { FC } from "react";
 import React from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter,redirect } from 'next/navigation'
+import Link from 'next/link'
  
 
 const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, schemaCode }) => {
@@ -50,12 +51,19 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
   ];
 
 //   const nextpage 
-    const router = useRouter()
-  const nextpage = async (page: number) => {
-    const path = `/newdaft/${page}/${schemaCode}`
-    router.push('sss')
-    console.log(path)
-  };
+    // const router = useRouter()
+  // const nextpage = (page: number) => {
+  //   // const router = redirect(`/newdaft/${page}/${schemaCode}`)
+  //   // const router = redirect(`/newdaft/${page}/${schemaCode}`,"push")
+  //   // const currentPath = router.forward()
+
+  //   // const newPath = currentPath.replace(`/newdaft/${isCurren}/`, `/newdaft/${page}/`);
+
+  //   // ใช้ push เพื่อเปลี่ยน URL
+  //   // router.push(newPath);
+  //   // router.push();
+  //   console.log(router)
+  // };
 
   return (
     <Flex p={2}>
@@ -63,6 +71,7 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
         isState.map((item, index) => (
           <Flex key={index} width="100%">
             <Flex width="100%">
+            <Link href={`/newdaft/${index+1}/${schemaCode}`}>
               <Flex
                 border="1px solid"
                 borderColor="#79A0EF"
@@ -78,7 +87,7 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
                         isCurren === index+1 ? "#3980F3" : "#DADEF2"
                     }`,
                   }}
-                onClick={() => router.push(`/newdaft/${isCurren}/${schemaCode}`)}
+                // onClick={() => nextpage(index+1)}
               >
                 <Text 
                 fontSize="32px" 
@@ -91,6 +100,7 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
                     {item.state}
                 </Text>
               </Flex>
+              </Link>
               <Box width="60%" margin="10px">
                 <Text
                   color="#79A0EF"

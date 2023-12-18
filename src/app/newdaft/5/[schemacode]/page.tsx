@@ -18,7 +18,9 @@ import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import { useEffect, useState, useRef} from "react";
 import { useSession } from "next-auth/react"
-import { testFunc  } from './action'
+// import { testFunc  } from './action'
+// import { cookies } from 'next/headers'
+
 
 
 
@@ -28,27 +30,10 @@ export default function Page({
   params: { schemacode: string };
 }) {
   const { data: session } = useSession()
-  console.log(session)
-  // useEffect( async () => {
-    // const cookieStore = cookies()
-    // const isToken = cookieStore.get('next-auth.session-token')
+  // console.log(session)
   //   // setIsClient(true);
-  const [isDaft, setIsDaft] = useState(null)
-  // const isDaft = await getSchemaInfo(schemacode);
-  // }, []);
-  
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await getSchemaInfo(schemacode);
-        testFunc();
-        // Process the response or update state as needed
-      } catch (error) {
-        // Handle errors
-        console.error('Error fetching data:', error);
-      }
-    })();
-  }, [schemacode]);
+  const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null)
+
 
   useEffect(() => {
     (async () => {
@@ -81,7 +66,7 @@ export default function Page({
           <Divider  borderColor={"brand"}/>
           <TapState isCurren={5} schemaCode={schemacode} />
           <Box p={6}>
-            <CradNewDaft isDaft={isDaft} isState={5} />
+            <CradNewDaft isDaft={isDaft} isState={5} setIsDaft={setIsDaft} schemacode={schemacode} />
           </Box>
         </Flex>
       )}

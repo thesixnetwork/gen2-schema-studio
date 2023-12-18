@@ -1,10 +1,11 @@
 "use client";
 import { useAccount, useConnect, useSuggestChainAndConnect } from "graz";
 import { sixCustomChain } from "@/app/defineChain";
-import react, { useState } from "react";
+import react, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import React from "react";
 import { ISchemaInfo, ItokenAttributes } from "@/type/Nftmngr";
 import CardEditDaft from "./CradEditDaft";
+import CreateAttribute from "./CreateAttribute";
 import {
   Box,
   Card,
@@ -25,20 +26,55 @@ import {
 import { CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
 
-const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number }> = ({ isDaft, isState }) => {
+const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number, setIsDaft: Dispatch<SetStateAction<ISchemaInfo | null>>, schemacode: string}> = ({ isDaft, isState, setIsDaft, schemacode }) => {
   const router = useRouter();
   const [onEdit, setOnEdit] = useState(false);
+  const [onCreate, setOnCreate] = useState(false);
+  const [onAdd, setOnAdd] = useState(false);
   const [indexEdit, setIndexEdit] = useState(0);
   const [isAttribute, setIsAttribute] = useState<ItokenAttributes | null>(null);
+  const [isAttributes, setIsAttributes] = useState<ItokenAttributes[]>(isState === 4 ? isDaft.schema_info.onchain_data.nft_attributes : isDaft.schema_info.onchain_data.token_attributes);
   const handleEdit = (item: ItokenAttributes, index: number) => {
     setOnEdit(true);
     setIndexEdit(index);
     setIsAttribute(item);
   };
+  // const handleCreate = (item: ItokenAttributes[], index: number) => {
+  //   let items
+  //   if(isState)
+  //   setOnCreate(true);
+  //   setIndexEdit(index);
+  //   setIsAttributes(item);
+  // };
+  // console.log(onEdit)
+  // console.log(onCreate)
+  const handleAddAttributes = () => {
+    // isAttributes
+    // setOnEdit(true);
+    // setIndexEdit(index);
+    // setIsAttributes(item);
+  };
+
+  // const handleAddAttributes = () => {
+  //   // isAttributes
+  //   // setOnEdit(true);
+  //   // setIndexEdit(index);
+  //   // setIsAttributes(item);
+  // };
+
+  useEffect( () => {
+    if(isState === 4) {
+      setIsAttributes(isDaft.schema_info.onchain_data.nft_attributes);
+    }
+    if(isState === 5) {
+      setIsAttributes(isDaft.schema_info.onchain_data.token_attributes);
+    }
+  },[isState])
+
   return (
     <>
       <Flex flexWrap={"wrap"}>
-        {!onEdit && (
+        {!onEdit && !onCreate && (
           <Flex
             flexDirection="column"
             alignItems="center"
@@ -55,6 +91,7 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number }> = ({ isDa
               cursor: "pointer",
               transform: "scale(1.05)",
             }}
+            onClick={() => setOnCreate(true) }
           >
             <Box>
               <IconButton
@@ -70,8 +107,8 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number }> = ({ isDa
             </Box>
           </Flex>
         )}
-        {isDaft.schema_info.onchain_data.nft_attributes &&
-          !onEdit && (isState === 4 ? isDaft.schema_info.onchain_data.nft_attributes : isDaft.schema_info.onchain_data.token_attributes).map((item, index) => (
+        {isAttributes &&
+          !onEdit && !onCreate && isAttributes.map((item, index) => (
             <Card
               key={index}
               margin={"10px"}
@@ -170,7 +207,8 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number }> = ({ isDa
             // eslint-disable-next-line react/jsx-no-comment-textnodes
           ))}
 
-        {onEdit && isAttribute && <CardEditDaft isAttribute={isAttribute} rawData={isDaft} setOnEdit={setOnEdit} isState={isState} />}
+        {onEdit && !onCreate && isAttribute && <CardEditDaft isAttribute={isAttribute} isAttributes={isAttributes} setIsAttributes={setIsAttributes} indexEdit={indexEdit} rawData={isDaft} setOnEdit={setOnEdit} isState={isState} onEdit={onEdit} schemacode={schemacode}/>}
+        {onCreate && !onEdit  && <CreateAttribute   rawData={isDaft} setIsAttributes={setIsAttributes} isAttributes={isAttributes} setOnCreate={setOnCreate} isState={isState} schemacode={schemacode}/>}
       </Flex>
     </>
   );
