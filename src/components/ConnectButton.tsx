@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Loading from './Loading';
 
 import { setCookie } from '@/service/setCookie'
-import { signIn, useSession} from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 type Props = {}
 
 function ConnectButton({ }: Props) {
@@ -21,7 +21,7 @@ function ConnectButton({ }: Props) {
     const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE
     const [exponent, setExponent] = useState(1e6);
     const router = useRouter()
-    const { update:UpdateSession , data:session} = useSession();
+    const { update: UpdateSession, data: session } = useSession();
     // console.log(session)
 
     // Extend the Window interface with the 'keplr' property
@@ -120,7 +120,7 @@ function ConnectButton({ }: Props) {
         const offlineSigner = window.getOfflineSigner(chainId);
         const keplrAccounts = await offlineSigner.getAccounts();
         // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
-        // console.log("gust")
+        console.log("gust")
         const signedMessage = await offlineSigner.keplr.signArbitrary(
             chainId,
             cosmosAddress,
@@ -148,7 +148,7 @@ function ConnectButton({ }: Props) {
                     accessToken: response.data.data.access_token,
                     address: cosmosAddress,
                     balance: balance,
-                  });
+                });
                 router.push('/home')
             })
             .catch(error => {
@@ -158,12 +158,11 @@ function ConnectButton({ }: Props) {
     }
 
     useEffect(() => {
-        const connect = async () => {
-            await getKeplrBalance();
-            await getSignature();
-            await loginApi();
-        }
-        connect();
+
+        getKeplrBalance();
+        getSignature();
+        loginApi();
+
     }, [cosmosAddress])
 
     const handleConnect = async () => {
@@ -175,6 +174,7 @@ function ConnectButton({ }: Props) {
             onClick={handleConnect}
             className=' flex justify-center items-center border rounded-lg border-Act7 w-64  h-12 hover:scale-125 duration-500 cursor-pointer '>
             <p className='text-Act7 text-4xl font-light '>CONNECT</p>
+          
         </div>
     )
 }

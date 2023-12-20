@@ -25,6 +25,6 @@ export async function getSchemaInfo(schemaCode: string) {
         return schema_info
     } catch (error) {
         // console.log("error ", error)
-        return "";
+        return null;
     }
 }

@@ -26,6 +26,20 @@
         "title": "Collection Name",
         "description": "The term \"Collection name\" is exclusively used within the SIX Protocol Ecosystem (Gen2 Studio, SIX Scan, etc.) and does not refer to the actual collection name."
       }
+    ],
+    "/newdraft/2": [
+      {
+        "title": "Origin Chain",
+        "description": "A Chain that your NFT was or going to be published."
+      },
+      {
+        "title": "Origin Contract Address",
+        "description": "A deployed contract address of your NFT (aka ERC721), this is not required now in draft version. But it will be required before you deploy on testnet and mainnet"
+      },
+      {
+        "title": "Origin Base URI",
+        "description": "An existing endpoint URL you use as NFT metadata. This is not required in case you plan to create all attributes in Gen 2"
+      }
     ]
   }
   

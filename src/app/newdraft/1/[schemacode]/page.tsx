@@ -1,24 +1,15 @@
 'use client'
 
 import TapState from "@/components/TapState";
-import {
-    Box,
-    Button,
-    ButtonGroup,
-    Divider,
-    Text,
-    Flex,
-    FormControl,
-    FormLabel,
-    useToast,
-} from "@chakra-ui/react";
-
 import { getSchemaInfo } from "@/service/getSchemaInfo";
-import CradNewDaft from "@/components/CardNewDaft";
-import { ISchemaInfo } from "@/type/Nftmngr";
-import { useEffect, useState, useRef, use } from "react";
-import Stepmenu from "@/components/Stepmenu";
-import { getAccessTokenFromLocalStorage } from "@/helpers/AuthService";
+import { useEffect, useState, useRef } from "react";
+import { useSession } from "next-auth/react"
+import InputCardOneLine from "@/components/InputCardOneLine";
+import BackPageButton from "@/components/BackPageButton";
+import NextPageButton from "@/components/NextPageButton";
+import { uppercaseTest, spaceTest, specialCharsTest } from "@/validateService/validate";
+import { findSchemaCode } from "@/validateService/findSchemaCode";
+import { createSchemaCode } from "@/postDataService/createSchemaCode";
 
 
 export default function Page({
@@ -26,27 +17,106 @@ export default function Page({
 }: {
     params: { schemacode: string };
 }) {
-    const [isDraft, setIsDraft] = useState(null)
+    const { data: session } = useSession()
+    console.log(session)
+
+    const [isDaft, setIsDaft] = useState(null)
+    const [schemaCode, setSchemaCode] = useState("")
+    const [collectionName, setCollectionName] = useState("")
+    const [description, setDescription] = useState("")
+    const [validate, setValidate] = useState(true)
+    const [errorMessage, setErrorMessage] = useState("")
+
+
     useEffect(() => {
-        const getIsDraft = async () => {
-            const draft = await getSchemaInfo(schemacode, getAccessTokenFromLocalStorage());
-            setIsDraft(draft)
+        (async () => {
+            try {
+                const schemaInfo = await getSchemaInfo(schemacode);
+                console.log(schemaInfo)
+                setIsDaft(schemaInfo)
+                // Process the response or update state as needed
+            } catch (error) {
+                // Handle errors
+                console.error('Error fetching data:', error);
+            }
+        })();
+    }, [schemacode]);
+
+    const getDraftInfo = () => {
+        if (isDaft !== null) {
+            console.log("isDaft:", isDaft)
+            setSchemaCode(isDaft.schema_info.code)
+            setCollectionName(isDaft.schema_info.name)
+            setDescription(isDaft.schema_info.description)
         }
-    }, [])
+    }
+
+    useEffect(() => {
+        getDraftInfo()
+    }, [isDaft])
+    // const isDaft = await getSchemaInfo(schemacode);
+    // console.log(JSON.stringify(isDaft, null, 2));
+
+    const handleInputChangeSchemaCode = (value: string) => {
+        setSchemaCode(value);
+    };
+
+    const handleInputChangeCollectionName = (value: string) => {
+        setCollectionName(value);
+    };
+
+    const handleInputChangeDescription = (value: string) => {
+        setDescription(value);
+    };
+
+    const validateSchemaCode = async () => {
+        if (uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode)) {
+            setValidate(false)
+        } else {
+            setValidate(true)
+        };
+
+        if (uppercaseTest(schemaCode)) {
+            setErrorMessage("Uppercase is not allowed")
+        } else if (spaceTest(schemaCode)) {
+            setErrorMessage("Space is not allowed")
+        } else if (specialCharsTest(schemaCode)) {
+            setErrorMessage("Special characters i not allowed")
+        } else {
+            setErrorMessage("");
+            const findSchemaCodeStatus = await findSchemaCode(schemaCode)
+            console.log(findSchemaCode)
+            if (findSchemaCodeStatus) {
+                setErrorMessage("Schema code is Duplicate")
+                setValidate(false)
+            }
+        }
+    }
+
+    useEffect(() => {
+        validateSchemaCode()
+    }, [schemaCode])
+
+    const create_SchemaCode = async () => {
+        const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
+        console.log("createSchemaCodeStatus",createSchemaCodeStatus)
+    }
 
     return (
         <>
-            {isDraft && (
-                <div className=" w-full h-full min-h-[75vh] px-8 mt-10 ">
-               
+            <div className=" w-full h-full min-h-[75vh] flex flex-col justify-between items-center">
+                <TapState isCurren={5} schemaCode={schemacode} />
+                <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode}></InputCardOneLine>
+                <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} ></InputCardOneLine>
+                <InputCardOneLine title={"Description"} require={false} placeholder={"WhaleGate Gen2 NFT With SIX"} validate={true} errorMassage={""} value={description} onChange={handleInputChangeDescription} ></InputCardOneLine>
+                <div className=' w-[90%] h-20 flex justify-between items-center'>
+                    <BackPageButton></BackPageButton>
+                    <div onClick={create_SchemaCode}>
+                        <NextPageButton></NextPageButton>
+                    </div>
                 </div>
-            )}
-
-            {!isDraft && (
-                <div className=" w-full h-full min-h-[75vh] px-8 mt-10 ">
-                  <Stepmenu schemacode="gust.io"></Stepmenu>
-                </div>
-            )}
+            </div>
         </>
     );
 }
+

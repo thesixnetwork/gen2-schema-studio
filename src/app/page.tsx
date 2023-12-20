@@ -12,8 +12,8 @@ type Props = {}
 
 function connectPage({ }: Props) {
     return (
-        <div className='w-full flex justify-center  ' >
-            <div className='w-full h-full fixed  flex justify-center items-center bg-bg '>
+        <div className='w-full flex justify-center ' >
+            <div className='w-full h-full fixed  flex justify-center items-center bg-bg  '>
                {/* <Loading></Loading> */}
                 <div className='absolute flex top-[25%] z-10'>
                     <Image src='/pic/Logo_Gen2studio.png' alt={''} width={500} height={500}></Image>

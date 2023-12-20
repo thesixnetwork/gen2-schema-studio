@@ -7,6 +7,7 @@ export default withAuth(function middleware(request: NextRequestWithAuth) {
   console.log(11111);
   // const user: any = request.nextauth.token?.user;
   const user: any = request.nextauth.token;
+  console.log(user)
   // const user2: any = request.headers;
   // console.log("22222",user2);
   if (user) {
