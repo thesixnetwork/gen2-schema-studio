@@ -17,6 +17,7 @@ import { useEffect, useState, useRef } from "react";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import CustomButton from "@/components/CustomButton";
 import CustomCardDeploy from "@/components/CustomCardDeploy";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 
 export default function Page({
@@ -40,6 +41,7 @@ export default function Page({
         }
       })();
     }, [schemacode]);
+      
     // const isDaft = await getSchemaInfo(schemacode);
     // console.log(JSON.stringify(isDaft, null, 2));
     return (
@@ -59,8 +61,8 @@ export default function Page({
           <Divider borderColor={"brand"} />
           <TapState isCurren={7} schemaCode={schemacode} />
             <Flex id="con-card-deploy" width="100%" justifyContent="space-evenly" marginTop="85px">
-            <CustomCardDeploy text={"Testnet"}/>
-            <CustomCardDeploy text={"Mainnet"}/>
+            <CustomCardDeploy text={"Testnet"} onClick={() => {}} />
+            <CustomCardDeploy text={"Mainnet"} onClick={() => {}}/>
             </Flex>
             <Flex width="100%" justifyContent="space-between" marginTop="96px">
                 <CustomButton text={"Back"} />
