@@ -9,7 +9,8 @@ import NextPageButton from "@/components/NextPageButton";
 import InputChainTypeCard from "@/components/state2/InputChainTypeCard";
 import InputCardOneLineLarge from "@/components/state2/InputCardOneLineLarge";
 import InputToggleCard from "@/components/state2/InputToggleCard";
-import { saveState1 } from "@/postDataService/saveState1";
+import { saveState2 } from "@/postDataService/saveState2";
+import Stepmenu from "@/components/Stepmenu";
 
 
 
@@ -71,9 +72,9 @@ export default function Page({
     };
 
 
-    const save_state1 = async () => {
-        const saveState1_status = await saveState1(originContractAddress, originBaseURI, schemacode)
-        console.log("saveState1_status :", saveState1_status)
+    const save_state2 = async () => {
+        const saveState2_status = await saveState2(originContractAddress, originBaseURI, schemacode)
+        console.log("saveState1_status :", saveState2_status)
     }
 
 
@@ -81,14 +82,14 @@ export default function Page({
     return (
         <>
             <div className=" w-full h-full min-h-[100vh] flex flex-col justify-between items-center">
-                <TapState isCurren={5} schemaCode={schemacode} />
+               <Stepmenu schemacode={schemacode} currentStep={2}></Stepmenu>
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
                 <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x898bb3b662419e79366046C625A213B83fB4809B"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress}></InputCardOneLineLarge>
                 <InputToggleCard title={"Chain Type"} require={true} chainIndex={chainTypeIndex} onChangeChainIndex={handleInputChangeChainTypeIndex}></InputToggleCard>
                 <InputCardOneLineLarge title={"Origin Base URI"} require={false} placeholder={"https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/"} validate={true} errorMassage={""} value={originBaseURI} onChange={handleInputChangeOriginBaseURI}></InputCardOneLineLarge>
                 <div className=' w-[90%] h-20 flex justify-between items-center'>
                     <BackPageButton></BackPageButton>
-                    <div onClick={save_state1}>
+                    <div onClick={save_state2}>
                         <NextPageButton></NextPageButton>
                     </div>
                 </div>

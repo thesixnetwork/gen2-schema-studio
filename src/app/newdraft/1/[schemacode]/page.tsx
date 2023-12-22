@@ -4,7 +4,7 @@ import TapState from "@/components/TapState";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react"
-import InputCardOneLine from "@/components/InputCardOneLine";
+import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
 import { uppercaseTest, spaceTest, specialCharsTest } from "@/validateService/validate";
@@ -81,7 +81,7 @@ export default function Page({
         } else if (spaceTest(schemaCode)) {
             setErrorMessage("Space is not allowed")
         } else if (specialCharsTest(schemaCode)) {
-            setErrorMessage("Special characters i not allowed")
+            setErrorMessage("Special characters is not allowed")
         } else {
             setErrorMessage("");
             const findSchemaCodeStatus = await findSchemaCode(schemaCode)

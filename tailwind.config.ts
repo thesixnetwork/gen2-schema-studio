@@ -9,10 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       width: {
-        'draftCardWidth': '14rem',
+        'draftCardWidth': '16rem',
       },
       height: {
-        'draftCardHeight': '18rem',
+        'draftCardHeight': '21rem',
       },
       colors: {
         'regal-blue': '#243c5a',

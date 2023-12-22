@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import TapState from "@/components/TapState";
 import {
@@ -13,25 +13,45 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-// import { getDaft } from "./actions";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import { useEffect, useState, useRef} from "react";
-import { getAccessTokenFromLocalStorage } from "@/helpers/AuthService";
+import { useSession } from "next-auth/react"
+// import { testFunc  } from './action'
+// import { cookies } from 'next/headers'
 
 
-export default async function Page({
+
+
+export default function Page({
   params: { schemacode },
 }: {
   params: { schemacode: string };
 }) {
-  const isDaft = await getSchemaInfo(schemacode,getAccessTokenFromLocalStorage());
-  //   // console.log(JSON.stringify(isDaft, null, 2));
+  const { data: session } = useSession()
+  // console.log(session)
+  //   // setIsClient(true);
+  const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null)
+
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const send = await getSchemaInfo(schemacode);
+        setIsDaft(send)
+        // Process the response or update state as needed
+      } catch (error) {
+        // Handle errors
+        console.error('Error fetching data:', error);
+      }
+    })();
+  }, [schemacode]);
+  // const isDaft = await getSchemaInfo(schemacode);
+    // console.log(JSON.stringify(isDaft, null, 2));
   return (
     <>
-    <div>TEST</div>
-      {/* {isDaft && (
+      {isDaft && (
         <Flex p={10} flexWrap={"wrap"}>
           <Text
             color="#44498D"
@@ -46,7 +66,7 @@ export default async function Page({
           <Divider  borderColor={"brand"}/>
           <TapState isCurren={4} schemaCode={schemacode} />
           <Box p={6}>
-            <CradNewDaft isDaft={isDaft} isState={4} />
+            <CradNewDaft isDaft={isDaft} isState={4} setIsDaft={setIsDaft} schemacode={schemacode} />
           </Box>
         </Flex>
       )}
@@ -55,7 +75,7 @@ export default async function Page({
         <Flex p={4} flexWrap={"wrap"}>
           <Text>NOT FOUND SCHEMA CODE</Text>
         </Flex>
-      )} */}
+      )}
     </>
   );
 }

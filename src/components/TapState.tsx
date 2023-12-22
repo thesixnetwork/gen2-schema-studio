@@ -14,8 +14,9 @@ import { useAccount, useConnect, useSuggestChainAndConnect } from "graz";
 import { sixCustomChain } from "@/app/defineChain";
 import type { FC } from "react";
 import React from "react";
-import { useRouter } from 'next/navigation'
- 
+import { useRouter, redirect } from 'next/navigation'
+import Link from 'next/link'
+
 
 const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, schemaCode }) => {
   const isState = [
@@ -49,13 +50,20 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
     },
   ];
 
-//   const nextpage 
-    const router = useRouter()
-  const nextpage = async (page: number) => {
-    const path = `/newdaft/${page}/${schemaCode}`
-    router.push('sss')
-    console.log(path)
-  };
+  //   const nextpage 
+  // const router = useRouter()
+  // const nextpage = (page: number) => {
+  //   // const router = redirect(`/newdaft/${page}/${schemaCode}`)
+  //   // const router = redirect(`/newdaft/${page}/${schemaCode}`,"push")
+  //   // const currentPath = router.forward()
+
+  //   // const newPath = currentPath.replace(`/newdaft/${isCurren}/`, `/newdaft/${page}/`);
+
+  //   // ใช้ push เพื่อเปลี่ยน URL
+  //   // router.push(newPath);
+  //   // router.push();
+  //   console.log(router)
+  // };
 
   return (
     <Flex p={2}>
@@ -63,34 +71,35 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
         isState.map((item, index) => (
           <Flex key={index} width="100%">
             <Flex width="100%">
-              <Flex
-                border="1px solid"
-                borderColor="#79A0EF"
-                bgColor={isCurren === index+1 ?"#3980F3" : ""}
-                // width="40%"
-                width= "40px"
-                height= "56px"
-                justifyContent="center"
-                alignItems="center"
-                _hover={{
+              <Link href={`/newdaft/${index + 1}/${schemaCode}`}>
+                <Flex
+                  border="1px solid"
+                  borderColor="#79A0EF"
+                  bgColor={isCurren === index + 1 ? "#3980F3" : ""}
+                  // width="40%"
+                  width="40px"
+                  height="56px"
+                  justifyContent="center"
+                  alignItems="center"
+                  _hover={{
                     cursor: "pointer",
-                    bgColor: `${
-                        isCurren === index+1 ? "#3980F3" : "#DADEF2"
-                    }`,
+                    bgColor: `${isCurren === index + 1 ? "#3980F3" : "#DADEF2"
+                      }`,
                   }}
-                onClick={() => router.push(`/newdaft/${isCurren}/${schemaCode}`)}
-              >
-                <Text 
-                fontSize="32px" 
-                fontStyle="normal"
-                lineHeight="normal"
-                fontFamily="Montserrat"
-                fontWeight={isCurren === index+1 ? "1200": "400"} 
-                color={isCurren === index+1 ? "#F5F6FA": "#79A0EF"}
+                // onClick={() => nextpage(index+1)}
                 >
+                  <Text
+                    fontSize="32px"
+                    fontStyle="normal"
+                    lineHeight="normal"
+                    fontFamily="Montserrat"
+                    fontWeight={isCurren === index + 1 ? "1200" : "400"}
+                    color={isCurren === index + 1 ? "#F5F6FA" : "#79A0EF"}
+                  >
                     {item.state}
-                </Text>
-              </Flex>
+                  </Text>
+                </Flex>
+              </Link>
               <Box width="60%" margin="10px">
                 <Text
                   color="#79A0EF"

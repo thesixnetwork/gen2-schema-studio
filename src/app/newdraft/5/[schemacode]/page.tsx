@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import TapState from "@/components/TapState";
 import {
@@ -16,54 +16,36 @@ import {
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
-import { useEffect, useState, useRef} from "react";
-import { useSession } from "next-auth/react"
-import { testFunc  } from './action'
-
-
+import { useEffect, useState, useRef } from "react";
+import { useSession } from "next-auth/react";
+import CustomButton from "@/components/CustomButton";
+// import { testFunc  } from './action'
+// import { cookies } from 'next/headers'
 
 export default function Page({
   params: { schemacode },
 }: {
   params: { schemacode: string };
 }) {
-  const { data: session } = useSession()
-  console.log(session)
-  // useEffect( async () => {
-    // const cookieStore = cookies()
-    // const isToken = cookieStore.get('next-auth.session-token')
+  const { data: session } = useSession();
+  // console.log(session)
   //   // setIsClient(true);
-  const [isDaft, setIsDaft] = useState(null)
-  // const isDaft = await getSchemaInfo(schemacode);
-  // }, []);
-  
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await getSchemaInfo(schemacode);
-        testFunc();
-        // Process the response or update state as needed
-      } catch (error) {
-        // Handle errors
-        console.error('Error fetching data:', error);
-      }
-    })();
-  }, [schemacode]);
+  const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
         const send = await getSchemaInfo(schemacode);
-        setIsDaft(send)
+        setIsDaft(send);
         // Process the response or update state as needed
       } catch (error) {
         // Handle errors
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     })();
   }, [schemacode]);
   // const isDaft = await getSchemaInfo(schemacode);
-    // console.log(JSON.stringify(isDaft, null, 2));
+  // console.log(JSON.stringify(isDaft, null, 2));
   return (
     <>
       {isDaft && (
@@ -78,11 +60,20 @@ export default function Page({
           >
             {isDaft.schema_code}
           </Text>
-          <Divider  borderColor={"brand"}/>
+          <Divider borderColor={"brand"} />
           <TapState isCurren={5} schemaCode={schemacode} />
           <Box p={6}>
-            <CradNewDaft isDaft={isDaft} isState={5} />
+            <CradNewDaft
+              isDaft={isDaft}
+              isState={5}
+              setIsDaft={setIsDaft}
+              schemacode={schemacode}
+            />
           </Box>
+          <Flex width="100%" justifyContent="space-between" marginTop="36px">
+              <CustomButton text={"Back"} />
+              <CustomButton text={"Next"} />
+          </Flex>
         </Flex>
       )}
 

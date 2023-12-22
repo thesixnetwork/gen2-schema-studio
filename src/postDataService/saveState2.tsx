@@ -7,7 +7,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ENV from '@/utils/ENV';
 
 
-export async function saveState1(originContractAddress:string,originBaseUri:string,schemaCode:string) {
+export async function saveState2(originContractAddress:string,originBaseUri:string,schemaCode:string) {
     const apiUrl = `${ENV.API_URL}/schema/set_schema_info`;
     const sesstion = await getServerSession(authOptions);
     const requestData = {

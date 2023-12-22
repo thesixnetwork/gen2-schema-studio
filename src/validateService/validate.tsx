@@ -17,3 +17,7 @@ export function specialCharsTest(str: string) {
     return specialChars.test(str);
 }
 
+export function specialCharsTestTraitType(str: string) {
+    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,<>?~]/;
+    return specialChars.test(str);
+}

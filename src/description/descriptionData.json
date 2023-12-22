@@ -40,6 +40,34 @@
         "title": "Origin Base URI",
         "description": "An existing endpoint URL you use as NFT metadata. This is not required in case you plan to create all attributes in Gen 2"
       }
+    ],
+    "/newdraft/3": [
+      {
+        "title": "Origin Token Attributes",
+        "description": ""
+      },
+      {
+        "title": "Description",
+        "description": "Origin attributes are metadata sourced from IPFS or any external storage, providing foundational information about the NFT. These attributes are typically static and shared among all tokens of a specific type."
+      },
+      {
+        "title": "Example",
+        "description": "Information like the original background image, description, or creator details could be part of origin attributes."
+      }
+    ],
+    "/newdraft/4": [
+      {
+        "title": "On-chain Collection Attributes",
+        "description": ""
+      },
+      {
+        "title": "Description",
+        "description": "Collection attributes are global properties defined at the schema level that are shared across all tokens within the same collection. These attributes provide a common set of characteristics for all tokens belonging to a specific collection."
+      },
+      {
+        "title": "Example",
+        "description": "Collection-wide features such as a shared background theme, overall color scheme, or global event details could be part of collection attributes."
+      }
     ]
   }
   
