@@ -1,15 +1,17 @@
 import CryptoJS from "crypto-js";
 import _ from "lodash"
-import jwt_decode from 'jwt-decode';
-
-
 
 
 // cryptoService.--------------------------------------------------------
 
-const secretKey = process.env.NEXT_APP_SECRET_KEY;
+const secretKey = process.env.NEXT_PUBLIC__SECRET_KEY || "default-fallback-value";
 
-export const encryptWithAES = (text : string) => {
+export const encryptWithAES = (text: string) => {
+  if (text === undefined) {
+    // Handle the case where text is undefined, maybe throw an error or return some default value
+    throw new Error("Text is undefined");
+  }
+
   const cipherText = CryptoJS.AES.encrypt(text, secretKey).toString();
   return cipherText;
 };
@@ -36,12 +38,39 @@ export const decryptWithAES = (ciphertext: string) => {
 
 // localStorageService.--------------------------------------------------------
 
-
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
-const ORIGIN_CONTRACT_ADDRESS='origin_contract_address';
-const SCHEMA_CODE ="SCHEMA_CODE";
-const ACTION_NAME= "";
+const ORIGIN_CONTRACT_ADDRESS = 'origin_contract_address';
+const SCHEMA_CODE = "SCHEMA_CODE";
+const ACTION_NAME = "";
+const COSMOS_ADDRESS = "COSMOS_ADDRESS";
+const BALANCE_COIN = "BALANCE_COIN"
+
+
+export const saveBalanceCoin = (BalanceCoin: string) => {
+  localStorage.setItem(BALANCE_COIN, BalanceCoin);
+};
+
+export const clearBalanceCoin = () => {
+  localStorage.removeItem(BALANCE_COIN);
+};
+
+export const getBalanceCoin = () => {
+  return localStorage.getItem(BALANCE_COIN)
+};
+
+export const saveCosmosAddress = (CosmosAddress: string) => {
+  localStorage.setItem(COSMOS_ADDRESS, CosmosAddress);
+};
+
+export const clearCosmosAddress = () => {
+  localStorage.removeItem(COSMOS_ADDRESS);
+};
+
+export const getCosmosAddress = () => {
+  return localStorage.getItem(COSMOS_ADDRESS)
+};
+
 
 export const saveTokensToLocalStorage = (accessToken: string, refreshToken: string) => {
   const encryptedAccessToken = encryptWithAES(accessToken);
@@ -50,34 +79,39 @@ export const saveTokensToLocalStorage = (accessToken: string, refreshToken: stri
   localStorage.setItem(REFRESH_TOKEN_KEY, encryptedRefreshToken);
 };
 
-export const saveActionName = (ActionName :string) => {
+export const saveActionName = (ActionName: string) => {
   localStorage.setItem(ACTION_NAME, ActionName);
 };
+
+
 
 export const getActionName = () => {
   return localStorage.getItem(ACTION_NAME)
 };
 
-export const saveOriginContractAddressToLocalStorage =(OriginContractAddress :string)=>{
-  localStorage.setItem(ORIGIN_CONTRACT_ADDRESS,OriginContractAddress );
+export const saveOriginContractAddressToLocalStorage = (OriginContractAddress: string) => {
+  localStorage.setItem(ORIGIN_CONTRACT_ADDRESS, OriginContractAddress);
 }
 
-export const saveSCHEMA_CODE =(schema_code :string)=>{
-  localStorage.setItem(SCHEMA_CODE,schema_code );
+export const getOriginContractAddressFromLocalStorage = () => {
+  return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
 }
 
-export const getSCHEMA_CODE=()=>{
+export const clearOriginContractAddressFromLocalStorage = () => {
+  localStorage.removeItem(ORIGIN_CONTRACT_ADDRESS);
+};
+
+export const saveSCHEMA_CODE = (schema_code: string) => {
+  localStorage.setItem(SCHEMA_CODE, schema_code);
+}
+
+export const getSCHEMA_CODE = () => {
   return localStorage.getItem(SCHEMA_CODE)
 }
 
 export const clearSCHEMA_CODE = () => {
   localStorage.removeItem(SCHEMA_CODE);
 };
-
-
-export const getOriginContractAddressFromLocalStorage=()=>{
-  return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
-}
 
 export const getAccessTokenFromLocalStorage = () => {
   const encryptedAccessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -96,15 +130,3 @@ export const clearTokensFromLocalStorage = () => {
 
 // authService.------------------------------------------------------------------------------------
 
-export const isAccessTokenExpired = () => {
-  const accessToken = getAccessTokenFromLocalStorage();
-  if (!accessToken) {
-    return true; // No access token available, consider it expired
-  }
-
-  const decodedToken = jwt_decode(accessToken);
-  // console.log("decodedToken : ",decodedToken)
-  const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-
-  return decodedToken.exp < currentTime;
-};

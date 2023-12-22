@@ -14,7 +14,7 @@ interface ActionHeaderProps {
 const ActionHeader = (props: ActionHeaderProps) => {
   return (
     <>
-      <div className="text-black flex items-center">
+      <div className="text-black flex items-center my-4">
         <h6>
           Action: <span className="font-semibold">{props.actionName}</span> |{" "}
           {props.type == "when" ? "When" : "Then"}
@@ -26,7 +26,7 @@ const ActionHeader = (props: ActionHeaderProps) => {
             alignContent={"center"}
             onChange={(e) => props.handleActionThenTypeChange?.(e.target.value)}
             mx={4}
-            value={props.actionThenType}
+            value={props.actionThenType === "create-new-then" ? "" : props.actionThenType}
           >
             <option value="" disabled selected hidden>
               -- Plase select your action type --
@@ -52,9 +52,10 @@ const ActionHeader = (props: ActionHeaderProps) => {
           </Select>
         )}
       </div>
-      <div className="p-4 w-[75%] max-h-14 overflow-scroll bg-gray-300 rounded-md text-[#3980F3]">
-        {props.metaFunction}
+      <div className="p-4 w-full max-h-14 overflow-scroll bg-gray-300 rounded-md text-[#3980F3]">
+        {props.metaFunction === "create-new-then" ? "please select your then action and add item" : props.metaFunction === "create-new-when" ? "please add item" :  props.metaFunction}
       </div>
+
     </>
   );
 };

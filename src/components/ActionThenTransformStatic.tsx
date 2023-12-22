@@ -7,61 +7,48 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@chakra-ui/react";
 
+import ActionHeader from "@/components/ActionHeader";
+import { IActions } from "@/type/Nftmngr"
+import { getCookie } from "@/service/getCookie";
+import { setCookie } from "@/service/setCookie";
 interface ActionThenTransformStaticProps {
-  metaFunction?: string;
-  actionName?: string;
+  metaFunction: string;
+  actionName: string;
   schemaRevision?: string;
   isDraft?: boolean;
+  transformType: string;
+  actionThenType: string;
+  handleActionThenTypeChange: (newActionThenType: string) => void;
+  handleTransformTypeChange: (newActionThenType: string) => void;
 }
 
 const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
-  //   const navigate = useNavigate();
   const [imgSource, setImgSource] = useState("");
   const [imgSourceError, setImgSourceError] = useState(false);
   const [metaFunction, setMetaFunction] = useState<string>("");
   const [valueInput, setValueInput] = useState("");
   const [actionData, setActionData] = useState();
-  const [actionThenArr, setActionThenArr] = useState<(string | number | boolean)[]>([]);
+  const [actionThenArr, setActionThenArr] = useState<
+  (string | number | boolean)[]
+  >([]);
   const [actionThenIndex, setActionThenIndex] = useState<number | undefined>();
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
-  const [actions, setActions] = useState([]);
   const [isPreview, setIsPreview] = useState(false);
+  const [originalMetaFunction, setOriginalMetaFunction] = useState(
+    props.metaFunction
+  );
+  const getCookieData = getCookie("action");
+  const getActionThen = getCookie("action-then");
+  const isCreateNewActionCookie = getCookie("isCreateNewAction");
+  const getActionThanArrCookie = getCookie("action-then-arr");
+  const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
+  const [metaData, setMetaData] = useState<string>("Please input your static image path")
 
   const convertFromBase64 = (str: string) => {
     console.log("str: ", str);
     return atob(str);
   };
 
-  const findSchemaCode = async () => {
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${props.schemaRevision}`;
-    const params = {};
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    };
-    await axios
-      .get(apiUrl, {
-        params: params,
-        headers: headers,
-      })
-      .then((response) => {
-        console.log(
-          "Response:",
-          response.data.data.schema_info.schema_info.onchain_data.actions
-        );
-        setActionData(
-          response.data.data.schema_info.schema_info.onchain_data.actions
-        );
-        const actions =
-          response.data.data.schema_info.schema_info.onchain_data.actions.filter(
-            (action: { name: string }) => action.name === props.actionName
-          );
-        setActions(actions);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
 
   const onChange = (e: any) => {
     setImgSource(e.target.value);
@@ -84,70 +71,89 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
     return url;
   };
 
-  const isBase64 = (str: string) => {
-    try {
-      return btoa(atob(str)) === str;
-    } catch (error) {
-      return false;
-    }
-  };
-
   const convertMetaData = (imagePath: string) => {
     return `meta.SetImage('${imagePath}')`;
   };
 
   const saveAction = async () => {
-    actionThenArr[actionThenIndex!] = convertMetaData(imgSource);
-    console.log(actionThenArr);
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
-    let requestData:any;
-    if (isCreateNewAction) {
-      requestData = {
-        payload: {
-          schema_code: props.schemaRevision,
-          update_then: false,
-          name: props.actionName,
+    let tempArr;
 
-          then: [...actionThenArr, convertMetaData(imgSource)],
-        },
-      };
-    } else {
-      requestData = {
-        payload: {
-          schema_code: props.schemaRevision,
-          update_then: false,
-          name: props.actionName,
-          then: actionThenArr,
-        },
-      };
+    const convertStringToArray = (input:string) => {
+      const jsonArray = JSON.parse(input);
+  
+      const resultArray = jsonArray.map((item:string) => {
+        return item;
+      });
+  
+      return resultArray;
     }
 
-    await axios
-      .post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        },
-      })
-      .then((response) => {
-        console.log(
-          "API Response saveOnchainCollectionAttributes :",
-          response.data
-        );
-        console.log("Request :", requestData);
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
+    const updateActionThenByName = (array: IActions[], name:string, oldThen:string, newThen:string) => {
+      const updatedArray = array.map((action) => {
+        if (action.name === name && getIsCreateNewThenFromCookie === "false") {
+          const updatedThen =
+            action.then.length > 0
+              ? action.then.map((item) => (item === oldThen ? newThen : item))
+              : [newThen];
+          return { ...action, then: updatedThen };
+        } else if (
+          action.name === name &&
+          getIsCreateNewThenFromCookie === "true"
+        ) {
+          const updatedThen = [...action.then, newThen];
+          return { ...action, then: updatedThen };
+        }
+        return action;
       });
+
+      tempArr = updatedArray;
+    };
+
+    if (getCookieData) {
+      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+      updateActionThenByName(
+        parsedCookieData,
+        props.actionName,
+        originalMetaFunction,
+        metaData
+      );
+    }
+
+    if (isCreateNewActionCookie) {
+      const tempArrCookie = getActionThanArrCookie
+        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+        : [];
+    
+      const metaDataToAdd =
+        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+    
+      const updatedTempArrCookie = tempArrCookie.map((item:string) =>
+        item === originalMetaFunction ? metaDataToAdd : item
+      );
+
+    
+      if (originalMetaFunction === "create-new-then") {
+        if (!tempArrCookie.includes(originalMetaFunction)) {
+          updatedTempArrCookie.push(metaDataToAdd);
+        }
+      }
+    
+      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+    }
+
+    setCookie("action", JSON.stringify(tempArr));
+    setCookie("action-then", metaData);
+    setCookie("isEditAction", "true");
   };
 
   useEffect(() => {
-    findSchemaCode();
-  }, []);
+    if (getActionThen) {
+      setMetaFunction(getActionThen);
+    }
+  }, [getActionThen]);
 
   useEffect(() => {
-    if (isBase64(props.metaFunction ?? "")) {
-      setMetaFunction(convertFromBase64(props.metaFunction ?? ""));
+    if (metaFunction.startsWith("meta.SetImage('https")) {
       console.log("imgSource", metaFunction);
       if (
         getImgFromParam(metaFunction) !== ".png" &&
@@ -169,8 +175,8 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
 
   useEffect(() => {
     if (actionData !== undefined) {
-      const getDataByName = (data:any, name:string|undefined) => {
-        return data.find((item:any) => item.name === name);
+      const getDataByName = (data: any, name: string | undefined) => {
+        return data.find((item: any) => item.name === name);
       };
       const result = getDataByName(actionData, props.actionName);
       setActionThenArr(result.then);
@@ -184,80 +190,103 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   useEffect(() => {
     setImgSourceError(false);
     setIsPreview(false);
+    
+    imgSource !== "" && setMetaData(convertMetaData(imgSource))
   }, [imgSource]);
   return (
-    <div className="h-[full] w-[50vw] border rounded-2xl p-8">
-      <h2 className="text-[#44498D] font-semibold">Image path</h2>
-      <div className="flex items-center gap-x-4">
-        <input
-          id="1"
-          type="text"
-          autoFocus
-          className="ml-2 my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
-          placeholder={
-            "Input your image url example: https://techsauce-nft.sixprotocol.com/techsauce/1.png"
-          }
-          value={valueInput}
-          onChange={async (e) => {
-            onChange(e);
-          }}
-        />
-        <Button
-          colorScheme="blue.500"
-          borderColor={"blue.500"}
-          color={"blue.500"}
-          variant="outline"
-          mr={3}
-          _hover={{ borderColor: "blue.500", color: "blue.500" }}
-          onClick={() => setIsPreview(true)}
-        >
-          Preview
-        </Button>
-      </div>
-      <div className="flex flex-col justify-center items-start">
-        <h2 className="text-[#44498D] font-semibold">Preview</h2>
-        <div className="h-60 my-4">
-          {isPreview && imgSource !== "" && imgSource !== null && (
-            <div
-              className={`h-full ${
-                imgSourceError ? "" : "rounded-lg border-2 overflow-hidden"
-              }`}
-            >
-              {imgSourceError ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-red-500">Image couldn&apos;t be loaded</p>
-                </div>
-              ) : (
-                <img
-                  src={imgSource}
-                  alt="preview-image"
-                  className="w-full h-full"
-                  onLoad={() => setImgSourceError(false)} // Reset error state on successful load
-                  onError={() => setImgSourceError(true)}
+    <>
+      {props.transformType !== "dynamic" && (
+        <div>
+          <ActionHeader
+            type="then"
+            actionName={props.actionName}
+            metaFunction={metaData}
+            transformType={props.transformType}
+            actionThenType={props.actionThenType}
+            handleActionThenTypeChange={props.handleActionThenTypeChange}
+            handleTransformTypeChange={props.handleTransformTypeChange}
+          />
+          {props.transformType === "static" && (
+            <div className="h-[full] w-[50vw] border rounded-2xl p-8 bg-white m-auto mt-4">
+              <h2 className="text-[#44498D] font-semibold">Image path</h2>
+              <div className="flex items-center gap-x-4">
+                <input
+                  id="1"
+                  type="text"
+                  autoFocus
+                  className="ml-2 my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
+                  placeholder={
+                    "Input your image url example: https://techsauce-nft.sixprotocol.com/techsauce/1.png"
+                  }
+                  value={valueInput}
+                  onChange={async (e) => {
+                    onChange(e);
+                  }}
                 />
-              )}
+                <Button
+                  colorScheme="blue.500"
+                  borderColor={"blue.500"}
+                  color={"blue.500"}
+                  variant="outline"
+                  mr={3}
+                  _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                  onClick={() => setIsPreview(true)}
+                >
+                  Preview
+                </Button>
+              </div>
+              <div className="flex flex-col justify-center items-start">
+                <h2 className="text-[#44498D] font-semibold">Preview</h2>
+                <div className="h-60 my-4">
+                  {isPreview && imgSource !== "" && imgSource !== null && (
+                    <div
+                      className={`h-full ${
+                        imgSourceError
+                          ? ""
+                          : "rounded-lg border-2 overflow-hidden"
+                      }`}
+                    >
+                      {imgSourceError ? (
+                        <div className="flex items-center justify-center h-full">
+                          <p className="text-red-500">
+                            Image couldn&apos;t be loaded
+                          </p>
+                        </div>
+                      ) : (
+                        <img
+                          src={imgSource}
+                          alt="preview-image"
+                          className="w-full h-full"
+                          onLoad={() => setImgSourceError(false)}
+                          onError={() => setImgSourceError(true)}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+                <Link
+                  href={
+                    isCreateNewActionCookie === "true"
+                    ? "/actions/action-form/create-new-action"
+                    : `/actions/action-form/${props.actionName}`
+                  }
+                >
+                  <div
+                    className="flex justify-center"
+                    onClick={async () => {
+                      await saveAction();
+                    }}
+                  >
+                    save
+                  </div>
+                </Link>
+                <button onClick={() => console.log()}>loggerx</button>
+              </div>
             </div>
           )}
         </div>
-        <Link
-          href={
-            props.isDraft
-              ? `/draft/actions/${props.schemaRevision}`
-              : "/newintregation/beginer/"
-          }
-        >
-          <div
-            className="flex justify-center"
-            onClick={async () => {
-              await saveAction();
-            }}
-          >
-            save
-          </div>
-        </Link>
-        <button onClick={() => console.log()}>logger</button>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

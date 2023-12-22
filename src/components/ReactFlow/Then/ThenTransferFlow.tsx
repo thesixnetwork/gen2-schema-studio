@@ -25,6 +25,7 @@ import { Factory } from "@/function/ConvertObjectToMetadata/Factory";
 import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
 import Link from "next/link";
+import { IActions } from "@/type/Nftmngr"
 
 // import SyntaxHighlighter from "react-syntax-highlighter";
 
@@ -40,12 +41,19 @@ import {
 } from "@/helpers/AuthService";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ActionHeader from "@/components/ActionHeader";
 
+import { setCookie } from "@/service/setCookie";
+import { getCookie } from "@/service/getCookie";
 interface ThenTransferFlowProps {
   metaFunction: string;
   actionName: string;
   schemaRevision: string;
   isDraft: boolean;
+  transformType: string;
+  actionThenType: string;
+  handleActionThenTypeChange: (newActionThenType: string) => void;
+  handleTransformTypeChange: (newActionThenType: string) => void;
 }
 
 const initialNodes: Node[] = [
@@ -74,7 +82,7 @@ const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
 const ThenTransferFlow = (props: ThenTransferFlowProps) => {
-  // const param = useParams();
+  const getCookieData = getCookie("action");
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -99,6 +107,14 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
+  const [originalMetaFunction, setOriginalMetaFunction] = useState(
+    props.metaFunction
+  );
+
+  const isCreateNewActionCookie = getCookie("isCreateNewAction");
+  const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
+  const getActionThanArrCookie = getCookie("action-then-arr");
+
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -598,49 +614,75 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   };
 
   const saveAction = async () => {
-    actionThenArr[actionThenIndex] = metaData;
-    console.log("arr= ", actionThenArr);
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
-    let requestData;
-    if (isCreateNewAction) {
-      requestData = {
-        payload: {
-          schema_code: props.schemaRevision,
-          update_then: false,
-          name: props.actionName,
+    let tempArr;
 
-          then: [...actionThenArr, metaData],
-        },
-      };
-    } else {
-      requestData = {
-        payload: {
-          schema_code: props.schemaRevision,
-          update_then: false,
-          name: props.actionName,
-
-          then: actionThenArr,
-        },
-      };
+    const convertStringToArray = (input:string) => {
+      const jsonArray = JSON.parse(input);
+  
+      const resultArray = jsonArray.map((item:string) => {
+        return item;
+      });
+  
+      return resultArray;
     }
 
-    await axios
-      .post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        },
-      })
-      .then((response) => {
-        console.log(
-          "API Response saveOnchainCollectionAttributes :",
-          response.data
-        );
-        console.log("Request :", requestData);
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
+    const updateActionThenByName = (array: IActions[], name:string, oldThen:string, newThen:string) => {
+      const updatedArray = array.map((action) => {
+        if (action.name === name && getIsCreateNewThenFromCookie === "false") {
+          const updatedThen =
+            action.then.length > 0
+              ? action.then.map((item) => (item === oldThen ? newThen : item))
+              : [newThen];
+          return { ...action, then: updatedThen };
+        } else if (
+          action.name === name &&
+          getIsCreateNewThenFromCookie === "true"
+        ) {
+          const updatedThen = [...action.then, newThen];
+          return { ...action, then: updatedThen };
+        }
+        return action;
       });
+
+      tempArr = updatedArray;
+    };
+
+    if (getCookieData) {
+      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+      updateActionThenByName(
+        parsedCookieData,
+        props.actionName,
+        originalMetaFunction,
+        metaData
+      );
+    }
+
+    if (isCreateNewActionCookie) {
+      const tempArrCookie = getActionThanArrCookie
+        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+        : [];
+    
+      const metaDataToAdd =
+        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+    
+      const updatedTempArrCookie = tempArrCookie.map((item:string) =>
+        item === originalMetaFunction ? metaDataToAdd : item
+      );
+
+    
+      if (originalMetaFunction === "create-new-then") {
+        if (!tempArrCookie.includes(originalMetaFunction)) {
+          updatedTempArrCookie.push(metaDataToAdd);
+        }
+      }
+    
+      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+    }
+
+
+    setCookie("action", JSON.stringify(tempArr));
+    setCookie("action-then", metaData);
+    setCookie("isEditAction", "true");
   };
 
   const convertObjectToNode = (outputObj) => {
@@ -995,23 +1037,18 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   }, []);
 
   return (
-    <div className="flex justify-between w-full">
+    <div className="flex justify-between px-8">
       <div>
-        {/* <div className="w-[885px] h-16 overflow-scroll	">
-          <SyntaxHighlighter
-            language="go"
-            wrapLongLines={true}
-            codeTagProps={{
-              style: {
-                fontSize: "16px",
-                lineHeight: "1",
-              },
-            }}
-          >
-            {metaData}
-          </SyntaxHighlighter>
-        </div> */}
-        <div style={{ height: 536, width: "80vw" }}>
+        <ActionHeader
+          type="then"
+          actionName={props.actionName}
+          metaFunction={props.metaFunction}
+          transformType={props.transformType}
+          actionThenType={props.actionThenType}
+          handleActionThenTypeChange={props.handleActionThenTypeChange}
+          handleTransformTypeChange={props.handleTransformTypeChange}
+        />
+        <div style={{ height: 536, width: 1000 }}>
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}
@@ -1033,16 +1070,20 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         </div>
 
         <div className="flex gap-x-5 justify-center">
-          <Link
+          {/* <Link
             href={
               props.isDraft
                 ? `/draft/actions/edit/then/${props.actionName}/${props.metaFunction}/${props.schemaRevision}`
                 : "/newintregation/beginer"
             }
           >
-            <div className="flex justify-center">Back</div>
-          </Link>
-          <Link href={ props.isDraft ? `/draft/actions/${props.schemaRevision}`: "/newintregation/beginer"}>
+          </Link> */}
+            <div className="flex justify-center" onClick={()=>console.log(props.metaFunction)}>Back</div>
+          <Link href={
+              isCreateNewActionCookie === "true"
+                ? "/actions/action-form/create-new-action"
+                : `/actions/action-form/${props.actionName}`
+            }>
             <div
               className="flex justify-center"
               onClick={async () => {

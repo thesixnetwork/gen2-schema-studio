@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { useState, DragEvent, useRef, useCallback } from "react";
-
 import ReactFlow, {
   addEdge,
   ReactFlowInstance,
@@ -19,27 +18,29 @@ import "reactflow/dist/base.css";
 import { Factory } from "@/function/ConvertObjectToMetadata/Factory";
 import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
-
-// import { useParams } from "react-router-dom";
+import { IActions } from "@/type/Nftmngr"
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
-
-// import SyntaxHighlighter from "react-syntax-highlighter";
-
-// import NormalButton from "../../NormalButton";
 import {
   getAccessTokenFromLocalStorage,
   saveSCHEMA_CODE,
 } from "@/helpers/AuthService";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import ActionHeader from "@/components/ActionHeader";
 
+import { setCookie } from "@/service/setCookie";
+import { getCookie } from "@/service/getCookie";
 interface ThenAttributeFlowProps {
   metaFunction: string;
   actionName: string;
   schemaRevision: string;
   isDraft: boolean;
+  transformType: string;
+  actionThenType: string;
+  setMetaFunction: React.Dispatch<React.SetStateAction<string>>;
+  handleActionThenTypeChange: (newActionThenType: string) => void;
+  handleTransformTypeChange: (newActionThenType: string) => void;
 }
 
 const initialNodes: Node[] = [
@@ -80,6 +81,9 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       textUpdate: InputNode,
     };
   }, []);
+  const [originalMetaFunction, setOriginalMetaFunction] = useState(
+    props.metaFunction
+  );
 
   console.log("--nodeOrigin--", nodeOrigin);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -94,7 +98,10 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
-  // const navigate = useNavigate();
+  const getCookieData = getCookie("action");
+  const isCreateNewActionCookie = getCookie("isCreateNewAction");
+  const getActionThanArrCookie = getCookie("action-then-arr");
+  const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -126,7 +133,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     const edgesArr = [];
 
     const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
-      console.log("log herre", node)
+      console.log("log herre", node);
       const nodeId = `${nodeIdCounter++}`;
       const outputNode = {
         width: 128,
@@ -186,7 +193,12 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           outputNode.data.dataType = "boolean";
         }
         setSelectedAttribute(node.attributeName.dataType);
-      } else if (node.type === "constant" && (node.value || (node.dataType === "bool" && node.type === "constant")) && !node.left) {
+      } else if (
+        node.type === "constant" &&
+        (node.value ||
+          (node.dataType === "bool" && node.type === "constant")) &&
+        !node.left
+      ) {
         outputNode.data.showType = "setNode";
         outputNode2.data.showType = "valueNode";
         outputNode2.data.value = node.value;
@@ -235,9 +247,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         }
       }
 
-      if (
-        node.value1 && node.value1.type !== "math_operation"
-      ) {
+      if (node.value1 && node.value1.type !== "math_operation") {
         console.log("<---", node.value1);
         edgesArr.push(
           {
@@ -723,12 +733,12 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         }
       }
 
-      console.log("----result", result);
       return result;
     };
 
     const object = Factory.createObject(transformData(nodes)).toString();
     setMetaData(object);
+    props.setMetaFunction(object);
     return object;
   };
 
@@ -745,76 +755,100 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     return nodeSort;
   };
 
-  const findSchemaCode = async () => {
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${props.schemaRevision}`;
-    const params = {};
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    };
-    await axios
-      .get(apiUrl, {
-        params: params,
-        headers: headers,
-      })
-      .then((response) => {
-        setActionData(
-          response.data.data.schema_info.schema_info.onchain_data.actions
-        );
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+  // const findSchemaCode = async () => {
+  //   const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${props.schemaRevision}`;
+  //   const params = {};
+  //   const headers = {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+  //   };
+  //   await axios
+  //     .get(apiUrl, {
+  //       params: params,
+  //       headers: headers,
+  //     })
+  //     .then((response) => {
+  //       setActionData(
+  //         response.data.data.schema_info.schema_info.onchain_data.actions
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // };
 
   const saveAction = async () => {
-    console.log("-->", (actionThenArr[actionThenIndex] = metaData));
-    console.log("arr= ", actionThenArr);
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
-    let requestData;
-    if (isCreateNewAction) {
-      requestData = {
-        payload: {
-          schema_code: props.schemaRevision,
-          update_then: false,
-          name: props.actionName,
+    let tempArr;
 
-          then: [...actionThenArr, metaData],
-        },
-      };
-    } else {
-      requestData = {
-        payload: {
-          schema_code: props.schemaRevision,
-          update_then: false,
-          name: props.actionName,
-          then: actionThenArr,
-        },
-      };
+    const convertStringToArray = (input:string) => {
+      const jsonArray = JSON.parse(input);
+  
+      const resultArray = jsonArray.map((item:string) => {
+        return item;
+      });
+  
+      return resultArray;
     }
 
-    await axios
-      .post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        },
-      })
-      .then((response) => {
-        console.log(
-          "API Response saveOnchainCollectionAttributes :",
-          response.data
-        );
-        console.log("Request :", requestData);
-        // You can handle the API response here
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
-        // Handle errors here
+    const updateActionThenByName = (array: IActions[], name:string, oldThen:string, newThen:string) => {
+      const updatedArray = array.map((action) => {
+        if (action.name === name && getIsCreateNewThenFromCookie === "false") {
+          const updatedThen =
+            action.then.length > 0
+              ? action.then.map((item) => (item === oldThen ? newThen : item))
+              : [newThen];
+          return { ...action, then: updatedThen };
+        } else if (
+          action.name === name &&
+          getIsCreateNewThenFromCookie === "true"
+        ) {
+          const updatedThen = [...action.then, newThen];
+          return { ...action, then: updatedThen };
+        }
+        return action;
       });
+
+      tempArr = updatedArray;
+    };
+
+    if (getCookieData) {
+      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+      updateActionThenByName(
+        parsedCookieData,
+        props.actionName,
+        originalMetaFunction,
+        metaData
+      );
+    }
+
+    if (isCreateNewActionCookie) {
+      const tempArrCookie = getActionThanArrCookie
+        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+        : [];
+    
+      const metaDataToAdd =
+        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+    
+      const updatedTempArrCookie = tempArrCookie.map((item:string) =>
+        item === originalMetaFunction ? metaDataToAdd : item
+      );
+
+    
+      if (originalMetaFunction === "create-new-then") {
+        if (!tempArrCookie.includes(originalMetaFunction)) {
+          updatedTempArrCookie.push(metaDataToAdd);
+        }
+      }
+    
+      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+    }
+
+    setCookie("action", JSON.stringify(tempArr));
+    setCookie("action-then", metaData);
+    setCookie("isEditAction", "true");
   };
 
-  const removeNodeSuffix = (input) => {
+  const removeNodeSuffix = (input:string) => {
     const suffixToRemove = "node";
     if (
       input.endsWith(suffixToRemove) &&
@@ -961,7 +995,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const handleNodesLeave = () => {};
 
   useEffect(() => {
-    const convertFromBase64 = (str) => {
+    const convertFromBase64 = (str:string) => {
       console.log("str: ", str);
       return atob(str);
     };
@@ -995,10 +1029,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   }, [actionData]);
 
   useEffect(() => {
-    findSchemaCode();
-  }, []);
-
-  useEffect(() => {
     if (isGenerateGPT) {
       // console.log(`"${metaData.toString()}"`);
       convertObjectToNode(parser_then.parse(metaData.toString()));
@@ -1007,59 +1037,53 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   }, [isGenerateGPT]);
 
   return (
-    <div className="flex justify-between w-full">
+    <div className="flex justify-between px-8">
       <div>
-        {/* <div className="w-[885px] h-16 overflow-scroll	">
-          <SyntaxHighlighter
-            language="go"
-            wrapLongLines={true}
-            codeTagProps={{
-              style: {
-                fontSize: "16px",
-                lineHeight: "1",
-              },
-            }}
-          >
-            {metaData}
-          </SyntaxHighlighter>
-        </div> */}
-        <div style={{ height: 536, width: "80vw" }}>
-          <div ref={reactFlowWrapper} className="h-full">
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              nodeTypes={nodeTypes}
-              onEdgesChange={onEdgesChange}
-              onNodesChange={onNodesChange}
-              onConnect={onConnect}
-              onInit={onInit}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
-              nodeOrigin={nodeOrigin}
-              nodeDragThreshold={1}
-              onNodeMouseLeave={handleNodesLeave}
-              fitView
-            >
-              <Controls position="top-left" />
-              <MiniMap position="top-right"></MiniMap>
-            </ReactFlow>
+        <div>
+          <ActionHeader
+            type="then"
+            actionName={props.actionName}
+            metaFunction={props.metaFunction}
+            transformType={props.transformType}
+            actionThenType={props.actionThenType}
+            handleActionThenTypeChange={props.handleActionThenTypeChange}
+            handleTransformTypeChange={props.handleTransformTypeChange}
+          />
+          <div style={{ height: 536, width: 1000 }}>
+            <div ref={reactFlowWrapper} className="h-full">
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+                onEdgesChange={onEdgesChange}
+                onNodesChange={onNodesChange}
+                onConnect={onConnect}
+                onInit={onInit}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                nodeOrigin={nodeOrigin}
+                nodeDragThreshold={1}
+                onNodeMouseLeave={handleNodesLeave}
+                fitView
+              >
+                <Controls position="top-left" />
+                <MiniMap position="top-right"></MiniMap>
+              </ReactFlow>
+            </div>
           </div>
         </div>
         <div className="flex gap-x-5 justify-center">
-          <Link
-            href={
-              props.isDraft
-                ? `/draft/actions/edit/then/${props.actionName}/${props.metaFunction}/${props.schemaRevision}`
-                : "/newintregation/beginer"
-            }
+          <div
+            className="flex justify-center"
+            onClick={() => console.log(props.metaFunction)}
           >
-            <div className="flex justify-center">Back</div>
-          </Link>
+            Back
+          </div>
           <Link
             href={
-              props.isDraft
-                ? `/draft/actions/${props.schemaRevision}`
-                : "/newintregation/beginer"
+              isCreateNewActionCookie === "true"
+                ? "/actions/action-form/create-new-action"
+                : `/actions/action-form/${props.actionName}`
             }
           >
             <div
@@ -1072,7 +1096,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             </div>
           </Link>
         </div>
-        <button onClick={()=>console.log(nodes)}>logger</button>
       </div>
       <Flowbar
         selectedAttribute={selectedAttribute}

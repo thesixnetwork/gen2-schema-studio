@@ -15,12 +15,14 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/base.css";
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
-
+import ActionHeader from "@/components/ActionHeader";
 import {
   saveSCHEMA_CODE,
   getAccessTokenFromLocalStorage,
   getSCHEMA_CODE,
 } from "@/helpers/AuthService";
+
+import IActions from "../../../type/Nftmngr"
 
 import axios from "axios";
 
@@ -40,7 +42,8 @@ import {
 // import { useNavigate } from "react-router-dom";
 import Link from "next/link";
 import Swal from "sweetalert2";
-
+import { setCookie } from "@/service/setCookie";
+import { getCookie } from "@/service/getCookie";
 interface NodeProps {
   id: string;
   type: string;
@@ -71,8 +74,9 @@ interface ResultProps {
 
 interface WhenFlowProps {
   metaFunction: string;
+  setMetaFunction: React.Dispatch<React.SetStateAction<string>>;
   actionName: string;
-  schemaRevision: string;
+  schemaCode: string;
   isDraft: boolean;
 }
 
@@ -106,6 +110,8 @@ const WhenFlow = (props: WhenFlowProps) => {
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
+  const getCookieData = getCookie("action");
+  const isCreateNewActionCookie = getCookie("isCreateNewAction");
 
   const nodeTypes = useMemo(() => {
     return {
@@ -142,14 +148,18 @@ const WhenFlow = (props: WhenFlowProps) => {
     setEdges((eds) => addEdge(params, eds));
   const onInit = (rfi: ReactFlowInstance) => setReactFlowInstance(rfi);
 
-  const convertObject = (obj:any) => {
+  const convertObject = (obj: any) => {
     console.log("!", obj);
     console.log("starting convert..");
-    const outputArray:any = [];
-    const edgesArr:any = [];
+    const outputArray: any = [];
+    const edgesArr: any = [];
     let nodeIdCounter = 1;
 
-    const processNode = (node:any, parentNodeId:null|string = null, parentPositionY = 0) => {
+    const processNode = (
+      node: any,
+      parentNodeId: null | string = null,
+      parentPositionY = 0
+    ) => {
       const nodeId = `${nodeIdCounter++}`;
       console.log("---node>", node);
       const outputNode = {
@@ -702,10 +712,10 @@ const WhenFlow = (props: WhenFlowProps) => {
           }
         }
       }
-      const node = data.find((item:any) => item.id === id);
+      const node = data.find((item: any) => item.id === id);
       if (!node) return null;
 
-      const result:any = {};
+      const result: any = {};
       if (node.showType === "andNode" || node.showType === "orNode") {
         result.type = "condition_oper";
         result.value = node.showType === "andNode" ? "AND" : "OR";
@@ -818,6 +828,7 @@ const WhenFlow = (props: WhenFlowProps) => {
     console.log("!!!", generateObject);
     console.log("-->obj", result);
     setMetaData(result);
+    props.setMetaFunction(result);
   };
 
   const handleEdgesChange = (changes: NodeChange[]) => {
@@ -832,7 +843,7 @@ const WhenFlow = (props: WhenFlowProps) => {
     changes.forEach((element) => {
       if (element.type === "remove") {
         const nodeIndex = nodes.findIndex((node) => node.id === element.id);
-        const cloneUpdatedNodes:any = [...nodes];
+        const cloneUpdatedNodes: any = [...nodes];
         cloneUpdatedNodes[nodeIndex] = {
           ...nodes[nodeIndex],
           data: {
@@ -848,37 +859,34 @@ const WhenFlow = (props: WhenFlowProps) => {
     });
   };
 
-  const saveAction = async () => {
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
-    const requestData = {
-      payload: {
-        // schema_code: getSCHEMA_CODE(),
-        schema_code: getSCHEMA_CODE(),
-        name: props.actionName,
-        when: metaData,
-      },
-    };
-
-    await axios
-      .post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        },
-      })
-      .then((response) => {
-        console.log(
-          "API Response saveOnchainCollectionAttributes :",
-          response.data
-        );
-        console.log("Request :", requestData);
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
+  const handleSaveAction = async () => {
+    let tempArr;
+    const updateActionWhenByName = (array, name, newWhen) => {
+      const updatedArray = array.map((action) => {
+        if (action.name === name) {
+          return { ...action, when: newWhen };
+        }
+        return action;
       });
+      tempArr = updatedArray;
+    };
+    if (getCookieData) {
+      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+      console.log("logger", parsedCookieData);
+      const newAction = updateActionWhenByName(
+        parsedCookieData,
+        props.actionName,
+        metaData
+      );
+      setCookie("action", JSON.stringify(tempArr));
+      console.log("123", newAction);
+      console.log("===>", props.actionName);
+    }
+    setCookie("isEditAction", "true");
+    setCookie("action-when", metaData);
   };
 
-  const removeNodeSuffix = (input:string) => {
+  const removeNodeSuffix = (input: string) => {
     const suffixToRemove = "node";
     if (
       input.endsWith(suffixToRemove) &&
@@ -890,7 +898,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   };
 
   const handleDoubleClickAddNode = useCallback(
-    (type:string) => {
+    (type: string) => {
       let dropped = false;
       const updatedNodes = [];
 
@@ -911,7 +919,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           (a, b) => parseInt(a.data.parentNode) - parseInt(b.data.parentNode)
         );
         console.log("::parent", lowestParentNode);
-        let updatedNode:any;
+        let updatedNode: any;
         if (nodes.length > 1) {
           updatedNode = lowestParentNode[0];
         } else {
@@ -1080,14 +1088,14 @@ const WhenFlow = (props: WhenFlowProps) => {
   );
 
   const handleNodesLeave = () => {};
-
+  console.log("log naja", props.metaFunction);
   useEffect(() => {
     if (
       props.metaFunction !== "create-new-when" &&
       props.metaFunction !== "please add item"
     ) {
       setRedraw(true);
-      saveSCHEMA_CODE(props.schemaRevision);
+      saveSCHEMA_CODE(props.schemaCode);
       const firstMetaData = props.metaFunction;
       convertObject(parser_when.parse(firstMetaData));
       setMetaData(props.metaFunction);
@@ -1144,7 +1152,50 @@ const WhenFlow = (props: WhenFlowProps) => {
   }, [nodes, setNodes]);
 
   return (
-    <div className="flex">
+    <div className=" flex justify-between px-8">
+      <div className="flex flex-col">
+        <ActionHeader
+          type="when"
+          actionName={props.actionName}
+          metaFunction={props.metaFunction}
+        />
+        <div className="h-[580px] w-[64vw]border rounded-3xl bg-white p-2">
+          <div ref={reactFlowWrapper} className="h-full">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onEdgesChange={handleEdgesChange}
+              onNodesChange={handleNodesChange}
+              onNodeMouseLeave={handleNodesLeave}
+              onConnect={onConnect}
+              onInit={onInit}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              fitView
+            >
+              <Controls position="top-left" />
+              <MiniMap position="top-right"></MiniMap>
+            </ReactFlow>
+          </div>
+        </div>
+        <div>
+          <div className="flex justify-end gap-x-8">
+            <div>Cancle</div>
+            <Link
+              href={
+                isCreateNewActionCookie === "true"
+                  ? "/actions/action-form/create-new-action"
+                  : `/actions/action-form/${props.actionName}`
+              }
+            >
+              <div onClick={handleSaveAction}>
+                <button>Save</button>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
       <Flowbar
         metaData={metaData}
         setMetaData={setMetaData}
@@ -1152,56 +1203,6 @@ const WhenFlow = (props: WhenFlowProps) => {
         setIsGenerateGPT={setIsGenerateGPT}
         handleDoubleClickAddNode={handleDoubleClickAddNode}
       ></Flowbar>
-      <div
-        style={
-          props.isDraft
-            ? { height: 580, width: 1200 }
-            : { height: 480, width: 1200 }
-        }
-
-        className="border rounded-3xl bg-white p-2"
-      >
-        <div ref={reactFlowWrapper} className="h-full">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onEdgesChange={handleEdgesChange}
-            onNodesChange={handleNodesChange}
-            onNodeMouseLeave={handleNodesLeave}
-            onConnect={onConnect}
-            onInit={onInit}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            fitView
-          >
-            <Controls position="top-left" />
-            <MiniMap position="top-right"></MiniMap>
-          </ReactFlow>
-        </div>
-        <div>
-          <div className="flex justify-center">
-            <Link
-              href={
-                props.isDraft
-                  ? `/draft/actions/${props.schemaRevision}`
-                  : "/newintregation/beginer/"
-              }
-            >
-              <div
-                onClick={async () => {
-                  () => console.log("saving");
-                  await getDataFromNode();
-                  await saveAction();
-                }}
-              >
-                <button>Save</button>
-              </div>
-            </Link>
-          </div>
-          <button onClick={() => console.log(nodes)}>here</button>
-        </div>
-      </div>
     </div>
   );
 };

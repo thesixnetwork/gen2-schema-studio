@@ -7,6 +7,8 @@ import {
   getSCHEMA_CODE,
 } from "@/helpers/AuthService";
 import { set } from "lodash";
+import { getSchemaInfo } from "../../../../service/getSchemaInfo";
+
 
 interface CircleNodeProps {
   data: {
@@ -25,10 +27,10 @@ interface EventProps {
   };
 }
 
-const DynamicNode = (props: CircleNodeProps) => {
+const DynamicNode = (props: CircleNodeProps ) => {
   const { setNodes } = useReactFlow();
+  const schemaCode = "create.new_v1"
   const store = useStoreApi();
-
   const [hovered, setHovered] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
   const [attributeOption, setAttributeOption] = useState([]);
@@ -71,29 +73,29 @@ const DynamicNode = (props: CircleNodeProps) => {
     setHovered(false);
   };
 
-  const fetchData = async () => {
-    const apiUrl = `${
-      process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO
-    }schema/get_schema_info/${getSCHEMA_CODE()}`;
-    const params = {};
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    };
-    await axios
-      .get(apiUrl, {
-        params: params,
-        headers: headers,
-      })
-      .then((response) => {
-        setAttributesObj(
-          response.data.data.schema_info.schema_info.onchain_data
-        );
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+  // const fetchData = async () => {
+  //   const apiUrl = `${
+  //     process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO
+  //   }schema/get_schema_info/${getSCHEMA_CODE()}`;
+  //   const params = {};
+  //   const headers = {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+  //   };
+  //   await axios
+  //     .get(apiUrl, {
+  //       params: params,
+  //       headers: headers,
+  //     })
+  //     .then((response) => {
+  //       setAttributesObj(
+  //         response.data.data.schema_info.schema_info.onchain_data
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // };
 
   const onChange = (e: EventProps) => {
     const { nodeInternals } = store.getState();
@@ -189,12 +191,28 @@ const DynamicNode = (props: CircleNodeProps) => {
     }
   }, [props.data.dataType, props.data.isFetch]);
 
+  // useEffect(() => {
+  //   const asyncFetchData = async () => {
+  //     await fetchData();
+  //   };
+  //   asyncFetchData();
+  // }, [props.data.showType]);
+
   useEffect(() => {
-    const asyncFetchData = async () => {
-      await fetchData();
-    };
-    asyncFetchData();
-  }, [props.data.showType]);
+    console.log("calling");
+
+    (async () => {
+      try {
+        const response = await getSchemaInfo(schemaCode, "1");
+        console.log("res", response);
+        setAttributesObj(response.schema_info.onchain_data);
+        console.log(response.schema_info.onchain_data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    })();
+  }, [schemaCode]);
+
 
   useEffect(() => {
     if (props.data.showType === "valueNode") {

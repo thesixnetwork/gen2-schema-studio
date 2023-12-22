@@ -1,15 +1,16 @@
 import logo from "../../public/pic/footer-six-network.png";
 import helperIcon from "../../public/pic/question.png";
 import Image from "next/image";
+import HelpButton from "./HelpButton";
 
 const HomeFooter = () => {
   return (
-    <footer className="min-h-[5vh] w-full text-black border-t ">
-      <div className="flex justify-between items-center h-full mx-4">
-        <Image src={logo} alt="logo" className="w-32" />
-        <Image src={helperIcon} alt="helper" className="w-8 hover:scale-125 duration-300 cursor-pointer" />
+    <div className='w-full bottom-0 left-0 flex justify-between items-center p-10  z-0  '>
+      <div>
+        <Image src='/pic/SIX_Network_logo.png' alt={''} width={200} height={4}></Image>
       </div>
-    </footer>
+      <HelpButton></HelpButton>
+    </div>
   );
 };
 

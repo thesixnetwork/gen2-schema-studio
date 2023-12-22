@@ -108,15 +108,15 @@ export default function Flowbar(props: FlowbarProps) {
   };
 
   return (
-    <div className="w-[266px] h-[600px] bg-[#D9D9D980] rounded-2xl p-4 items-center flex flex-col justify-between">
-      <div className="flex flex-col items-center justify-between h-full">
+    <div className="w-80  bg-[#DADEF2] p-6 flex flex-col justify-between">
+      <div className="flex flex-col h-full gap-y-8">
         {props.selectedAttribute === "number" ||
         props.selectedAttribute === "float" ||
         props.selectedAttribute === "boolean" ||
         props.selectedAttribute === "string" ? (
           <>
-            <div className="flex flex-col justify-center items-center gap-y-2">
-              <h2>Function</h2>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-[#44498D]">Function</span>
               {props.selectedAttribute === "number" ||
               props.selectedAttribute === "float" ? (
                 <div className="flex">
@@ -145,8 +145,8 @@ export default function Flowbar(props: FlowbarProps) {
                 )
               )}
             </div>
-            <div className="flex flex-col justify-center items-center gap-y-2 mb-20">
-              <h2>Operand</h2>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-[#44498D]">Operand</span>
               <div className="flex">
                 <Menu
                   nodeName="valueNode"
@@ -164,9 +164,9 @@ export default function Flowbar(props: FlowbarProps) {
             </div>
           </>
         ) : props.selectedAttribute === "none" ? (
-          <div className="flex h-full flex-col justify-end items-center gap-y-2 mb-20">
-            <div className="flex flex-col items-center justify-center">
-              <h2 className="pb-2">Available Operand</h2>
+          <div className="flex h-full flex-col justify-end">
+            <div className="flex flex-col  justify-center">
+              <span className="text-sm font-bold text-[#44498D]">Operand</span>
               <div className="flex">
                 <Menu
                   nodeName="valueNode"
@@ -190,94 +190,98 @@ export default function Flowbar(props: FlowbarProps) {
             </div>
           </>
         )}
-      </div>
-      <div>
-        <span className="text-sm font-bold">AI Generate</span>
-        <button
-          className="px-4 flex items-center justify-center rounded-md border border-[#3980F3] text-lg hover:scale-110 duration-300 text-[#3980F3]"
-          onClick={onOpen}
-        >
-          <Image src={GenerateGPTimg} alt="generate-icon" width={20} />{" "}
-          <span className="ml-1">Generate</span>
-        </button>
-        <Modal
-          initialFocusRef={initialRef}
-          finalFocusRef={finalRef}
-          isOpen={isOpen}
-          onClose={onClose}
-          colorScheme="red"
-        >
-          <ModalOverlay bg="blackAlpha.800" />
-          <ModalContent bg="rgba(0, 0, 0, 0.6)">
-            <ModalHeader
-              color={"white"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Image src={GenerateGPTimgWhite} alt="generate-icon" width={20} />{" "}
-              <Text ml={1}>AI Generate</Text>
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              <FormControl>
-                <FormLabel fontWeight="semibold" color="white">
-                  Input
-                </FormLabel>
-                <Flex>
-                  <Input
-                    ref={initialRef}
-                    placeholder="example: check_in and tier is gold"
-                    color={"white"}
-                    onChange={(e) => {
-                      handleInput(e);
-                    }}
-                  />
-                  <Button
-                    colorScheme="white"
-                    onClick={processGPT}
-                    variant={"outline"}
-                    ml={4}
-                    _hover={{ borderColor: "blue.500", color: "blue.500" }}
-                  >
-                    Process
-                  </Button>
-                </Flex>
-              </FormControl>
-              <Box>
-                <Text fontWeight="semibold" color="white" mb="1rem">
-                  Output
-                </Text>
-                <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
-                  <Text color="white" mb="1rem">
-                    {outputFromGPT}
+        <div>
+        <span className="text-sm font-bold text-[#44498D]">AI Generate</span>
+          <button
+            className="px-4 flex items-center justify-center rounded-md border border-[#3980F3] text-lg hover:scale-110 duration-300 text-[#3980F3]"
+            onClick={onOpen}
+          >
+            <Image src={GenerateGPTimg} alt="generate-icon" width={20} />{" "}
+            <span className="ml-1">Generate</span>
+          </button>
+          <Modal
+            initialFocusRef={initialRef}
+            finalFocusRef={finalRef}
+            isOpen={isOpen}
+            onClose={onClose}
+            colorScheme="red"
+          >
+            <ModalOverlay bg="blackAlpha.800" />
+            <ModalContent bg="rgba(0, 0, 0, 0.6)">
+              <ModalHeader
+                color={"white"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Image
+                  src={GenerateGPTimgWhite}
+                  alt="generate-icon"
+                  width={20}
+                />{" "}
+                <Text ml={1}>AI Generate</Text>
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <FormControl>
+                  <FormLabel fontWeight="semibold" color="white">
+                    Input
+                  </FormLabel>
+                  <Flex>
+                    <Input
+                      ref={initialRef}
+                      placeholder="example: check_in and tier is gold"
+                      color={"white"}
+                      onChange={(e) => {
+                        handleInput(e);
+                      }}
+                    />
+                    <Button
+                      colorScheme="white"
+                      onClick={processGPT}
+                      variant={"outline"}
+                      ml={4}
+                      _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                    >
+                      Process
+                    </Button>
+                  </Flex>
+                </FormControl>
+                <Box>
+                  <Text fontWeight="semibold" color="white" mb="1rem">
+                    Output
                   </Text>
+                  <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
+                    <Text color="white" mb="1rem">
+                      {outputFromGPT}
+                    </Text>
+                  </Box>
                 </Box>
-              </Box>
-            </ModalBody>
+              </ModalBody>
 
-            <ModalFooter justifyContent={"center"}>
-              <Button
-                colorScheme="white"
-                variant="outline"
-                onClick={handleCreate}
-                mr={4}
-                _hover={{ borderColor: "blue.500", color: "blue.500" }}
-              >
-                Generate
-              </Button>
-              <Button
-                onClick={onClose}
-                colorScheme="white"
-                variant="outline"
-                mr={3}
-                _hover={{ borderColor: "blue.500", color: "blue.500" }}
-              >
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+              <ModalFooter justifyContent={"center"}>
+                <Button
+                  colorScheme="white"
+                  variant="outline"
+                  onClick={handleCreate}
+                  mr={4}
+                  _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                >
+                  Generate
+                </Button>
+                <Button
+                  onClick={onClose}
+                  colorScheme="white"
+                  variant="outline"
+                  mr={3}
+                  _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                >
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </div>
       </div>
     </div>
   );

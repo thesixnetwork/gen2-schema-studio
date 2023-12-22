@@ -120,25 +120,11 @@ export default function Flowbar(props: MetaDataProps) {
   };
 
   return (
-    <div className="w-fit bg-[#D9D9D980] rounded-2xl flex justify-between p-4 items-center text-3xl">
-      <div className="flex flex-col gap-y-2">
-        {/* <div className="max-w-xl h-16 overflow-scroll">
-          <SyntaxHighlighter
-            language="go"
-            wrapLongLines={true}
-            codeTagProps={{
-              style: {
-                fontSize: "16px",
-                lineHeight: "1",
-              },
-            }}
-          >
-            {props.metaData}
-          </SyntaxHighlighter>
-        </div> */}
-      </div>
-      <div className="flex flex-col w-90">
-        <div>
+    <div className="w-80 bg-[#DADEF2] flex text-3xl">
+      <div className="flex flex-col pl-6 pt-6 gap-y-8">
+        <div className="flex">
+          <div className="flex flex-col">
+
           <span className="text-sm font-bold text-[#44498D]">Operator</span>
           <div className="flex ">
             <div className="flex flex-col border-r border-[#3980F3] pr-2">
@@ -190,6 +176,7 @@ export default function Flowbar(props: MetaDataProps) {
               </div>
             </div>
           </div>
+          </div>
         </div>
         <div className="flex">
           <div className="flex flex-col">
@@ -213,7 +200,8 @@ export default function Flowbar(props: MetaDataProps) {
             </div>
           </div>
         </div>
-        <div>
+        <div className="flex">
+          <div className="flex flex-col">
           <span className="text-sm font-bold text-[#44498D]">AI Generate</span>
           <button
             className="px-4 flex items-center justify-center rounded-md border border-[#3980F3] text-lg hover:scale-110 duration-300 text-[#3980F3]"
@@ -376,6 +364,8 @@ export default function Flowbar(props: MetaDataProps) {
               </ModalFooter>
             </ModalContent>
           </Modal>
+          </div>
+
         </div>
       </div>
     </div>
