@@ -19,6 +19,8 @@ import { ISchemaInfo } from "@/type/Nftmngr";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import CustomButton from "@/components/CustomButton";
+import { Skeleton } from "@chakra-ui/react";
+
 // import { testFunc  } from './action'
 // import { cookies } from 'next/headers'
 
@@ -31,12 +33,14 @@ export default function Page({
   // console.log(session)
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
         const send = await getSchemaInfo(schemacode);
         setIsDaft(send);
+        setLoading(false);
         // Process the response or update state as needed
       } catch (error) {
         // Handle errors
@@ -48,7 +52,7 @@ export default function Page({
   // console.log(JSON.stringify(isDaft, null, 2));
   return (
     <>
-      {isDaft && (
+      {isDaft && !loading &&(
         <Flex p={10} flexWrap={"wrap"}>
           <Text
             color="#44498D"
@@ -71,15 +75,43 @@ export default function Page({
             />
           </Box>
           <Flex width="100%" justifyContent="space-between" marginTop="36px">
-              <CustomButton text={"Back"} />
-              <CustomButton text={"Next"} />
+            <CustomButton text={"Back"} isCurren={5} schemaCode={schemacode} />
+            <CustomButton text={"Next"} isCurren={5} schemaCode={schemacode} />
           </Flex>
         </Flex>
       )}
 
-      {!isDaft && (
+      {!isDaft && !loading && (
         <Flex p={4} flexWrap={"wrap"}>
           <Text>NOT FOUND SCHEMA CODE</Text>
+        </Flex>
+      )}
+
+      {loading && !isDaft && (
+        <Flex p={10} flexWrap={"wrap"}>
+          <Text
+            color="#44498D"
+            fontFamily="Montserrat"
+            fontSize="32px"
+            fontStyle="normal"
+            fontWeight="400"
+            lineHeight="normal"
+          >
+            {schemacode}
+          </Text>
+          <Divider borderColor={"brand"} />
+          <TapState isCurren={5} schemaCode={schemacode} />
+          {Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton
+              key={index}
+              margin="10px"
+              maxW="200px"
+              bgColor="#F5F6FA"
+              width="200px"
+              height="265px"
+              borderRadius="8px"
+            ></Skeleton>
+          ))}
         </Flex>
       )}
     </>

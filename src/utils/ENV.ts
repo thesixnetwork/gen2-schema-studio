@@ -14,6 +14,7 @@ dotenv.config();
 const ENV = {
   API_URL: process.env.API_ENDPOINT_SCHEMA_INFO_2 || "",
   Client_API_URL: process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO || "",
+  RPC_FIVENET: process.env. NEXT_PUBLIC__RPC2_ENDPOINT_SIX_FIVENET || ""
 //   RPC_URL: process.env.RPC_URL || "https://rpc2.fivenet.sixprotocol.net",
 };
 

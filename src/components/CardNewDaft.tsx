@@ -39,28 +39,7 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number, setIsDaft: 
     setIndexEdit(index);
     setIsAttribute(item);
   };
-  // const handleCreate = (item: ItokenAttributes[], index: number) => {
-  //   let items
-  //   if(isState)
-  //   setOnCreate(true);
-  //   setIndexEdit(index);
-  //   setIsAttributes(item);
-  // };
-  // console.log(onEdit)
-  // console.log(onCreate)
-  const handleAddAttributes = () => {
-    // isAttributes
-    // setOnEdit(true);
-    // setIndexEdit(index);
-    // setIsAttributes(item);
-  };
 
-  // const handleAddAttributes = () => {
-  //   // isAttributes
-  //   // setOnEdit(true);
-  //   // setIndexEdit(index);
-  //   // setIsAttributes(item);
-  // };
 
   useEffect( () => {
     if(isState === 4) {

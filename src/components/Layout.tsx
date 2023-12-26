@@ -57,12 +57,12 @@ export default function Layout({
                 },
             })
                 .then(response => {
-                    console.log('API Response from refresh :', response.data);
+                    // console.log('API Response from refresh :', response.data);
                     saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
                     const accessToken = getAccessTokenFromLocalStorage();
                     const refreshToken = getRefreshTokenFromLocalStorage();
-                    console.log("New Access: ", accessToken)
-                    console.log("New Refresh: ", refreshToken)
+                    // console.log("New Access: ", accessToken)
+                    // console.log("New Refresh: ", refreshToken)
                     setRefreshTokenNumber(refreshTokenNumber + 1)
                 })
                 .catch(error => {
