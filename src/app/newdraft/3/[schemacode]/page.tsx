@@ -298,10 +298,11 @@ export default function Page({
         console.log(isNewAttribute)
     }, [isNewAttribute])
     return (
-        <>  {isLoadingSaveState3 &&
+        <>  
+        {/* {isLoadingSaveState3 &&
             <Loading></Loading>
-        }
-            <div className=" w-full  min-h-[75vh] flex flex-col justify-between items-center">
+        } */}
+            <div className=" w-full   flex flex-col justify-between items-center">
                 <Stepmenu schemacode={schemaCode} currentStep={3}></Stepmenu>
                 {isMain ?
                     <div className=" w-full h-[70vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
@@ -355,4 +356,3 @@ export default function Page({
         </>
     );
 }
-

@@ -68,6 +68,20 @@
         "title": "Example",
         "description": "Collection-wide features such as a shared background theme, overall color scheme, or global event details could be part of collection attributes."
       }
+    ],
+    "/newdraft/5": [
+      {
+        "title": "On-chain token Attributes",
+        "description": ""
+      },
+      {
+        "title": "Description",
+        "description": "Token attributes are dynamic properties specific to individual tokens. They allow for customization and variation among tokens within the same collection, enabling unique features for each token."
+      },
+      {
+        "title": "Example",
+        "description": "Token-specific details such as a unique background image, individualized color preferences, or attendance status for an event could be considered token attributes."
+      }
     ]
   }
   

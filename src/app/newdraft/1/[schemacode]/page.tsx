@@ -163,7 +163,7 @@ export default function Page({
         <>
             {/* {isLoading && <Loading></Loading>} */}
             <div className=" w-full h-full min-h-[75vh] flex flex-col justify-between items-center">
-                <Stepmenu schemacode={schemacode} currentStep={1}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={1}></Stepmenu>
                 <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode} loading={isLoadingFindSchemaCode}></InputCardOneLine>
                 <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} loading={false} ></InputCardOneLine>
                 <InputCardOneLine title={"Description"} require={false} placeholder={"WhaleGate Gen2 NFT With SIX"} validate={true} errorMassage={""} value={description} onChange={handleInputChangeDescription} loading={false} ></InputCardOneLine>
@@ -179,4 +179,3 @@ export default function Page({
         </>
     );
 }
-
