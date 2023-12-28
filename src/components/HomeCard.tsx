@@ -30,7 +30,7 @@ export default function HomeCard({ }: Props) {
                 params: params,
                 headers: headers,
             });
-            // console.log(response.data);
+            console.log("list :",response.data.data.sesstion);
             setListdraft(response.data.data.sesstion);
             // return response.data.data.sesstion;
 
@@ -41,9 +41,8 @@ export default function HomeCard({ }: Props) {
     }
 
     useEffect(() => {
-        console.log("testttttttt")
         getListDraft()
-    },[])
+    }, [])
 
     return (
         <div>
@@ -74,20 +73,22 @@ export default function HomeCard({ }: Props) {
                                     listDraft.map((item: { schema_revision: any; schema_name: any; schema_info: { schema_info: { origin_data: { origin_base_uri: any; }; }; }[]; }, index: any) => (
                                         <div className=' ml-3 flex'>
                                             {index === 0 &&
-                                                <div className=' mr-3' onClick={()=>{router.push(`/newdraft/1/`, { scroll: false })}}>
+                                                <div className=' mr-3' onClick={() => { router.push(`/class`, { scroll: false }) }}>
                                                     <HomeNewintregationCard></HomeNewintregationCard>
                                                 </div>
                                             }
-                                            <HomeDraftCard
-                                                schema_revision={item.schema_revision}
-                                                CollectionName={item.schema_name}
-                                                CollectionImage={
-                                                    item.schema_info &&
-                                                    item.schema_info[0] &&
-                                                    item.schema_info[0].schema_info.origin_data
-                                                        .origin_base_uri
-                                                }
-                                            ></HomeDraftCard>
+                                            <div onClick={() => { router.push(`/newdraft/1/${item.schema_revision}`, { scroll: false }) }}>
+                                                <HomeDraftCard
+                                                    schema_revision={item.schema_revision}
+                                                    CollectionName={item.schema_name}
+                                                    CollectionImage={
+                                                        item.schema_info &&
+                                                        item.schema_info[0] &&
+                                                        item.schema_info[0].schema_info.origin_data
+                                                            .origin_base_uri
+                                                    }
+                                                ></HomeDraftCard>
+                                            </div>
                                         </div>
                                     ))
                                 }

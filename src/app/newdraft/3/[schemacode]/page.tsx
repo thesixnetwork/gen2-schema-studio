@@ -16,6 +16,10 @@ import SaveButton from "@/components/button/SaveButton";
 import deleate_icon from '../../../../../public/pic/deleate_attribute_card.png'
 import Image from 'next/image'
 import { spaceTest, specialCharsTest, specialCharsTestTraitType, uppercaseTest } from "@/validateService/validate";
+import { saveState3 } from "@/postDataService/saveState3";
+import { useRouter } from 'next/navigation'
+import { tree } from "next/dist/build/templates/app-page";
+import Loading from "@/components/Loading";
 
 export default function Page({
     params: { schemacode },
@@ -27,6 +31,7 @@ export default function Page({
     const [isNewAttribute, setIsNewAttribute] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
     const [name, setName] = useState("")
+    const [schemaCode, setSchemaCode] = useState("")
     const [traitType, setTraitType] = useState("")
     const [dataType, setDataType] = useState("")
     const [attributeIndex, setAttributeIndex] = useState(0)
@@ -34,6 +39,8 @@ export default function Page({
     const [validateStateTraitType, setValidateStateTraitType] = useState(true)
     const [errorMessageTraitType, setErrorMessageTraitType] = useState("")
     const [errorMessageName, setErrorMessageName] = useState("")
+    const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false)
+    const router = useRouter()
 
 
     useEffect(() => {
@@ -50,8 +57,9 @@ export default function Page({
     }, [schemacode]);
 
     const getDraftInfo = () => {
-        if (isDaft !== "") {
+        if (isDaft !== "" && isDaft !== null) {
             console.log("isDaft:", isDaft)
+            setSchemaCode(isDaft.schema_info.code)
         }
     }
 
@@ -92,35 +100,45 @@ export default function Page({
 
     const saveAttribute = () => {
         if (isDaft !== null) {
-            const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes];
-            const updatedAttribute = {
-                ...updatedAttributes[attributeIndex],
-                name: name,
-                data_type: dataType,
-                display_option: {
-                    opensea: {
-                        ...updatedAttributes[attributeIndex].display_option.opensea,
-                        trait_type: traitType,
+            if (name !== "" && traitType !== "" && validateStateName !== false && validateStateTraitType !== false) {
+                const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes];
+                const updatedAttribute = {
+                    ...updatedAttributes[attributeIndex],
+                    name: name,
+                    data_type: dataType,
+                    display_option: {
+                        opensea: {
+                            ...updatedAttributes[attributeIndex].display_option.opensea,
+                            trait_type: traitType,
+                        },
+                        bool_true_value: "",
+                        bool_false_value: "",
                     },
-                    bool_true_value: "",
-                    bool_false_value: "",
-                },
-            };
+                };
 
-            updatedAttributes[attributeIndex] = updatedAttribute;
+                updatedAttributes[attributeIndex] = updatedAttribute;
 
-            setIsDaft({
-                ...isDaft,
-                schema_info: {
-                    ...isDaft.schema_info,
-                    origin_data: {
-                        ...isDaft.schema_info.origin_data,
-                        origin_attributes: updatedAttributes,
+                setIsDaft({
+                    ...isDaft,
+                    schema_info: {
+                        ...isDaft.schema_info,
+                        origin_data: {
+                            ...isDaft.schema_info.origin_data,
+                            origin_attributes: updatedAttributes,
+                        },
                     },
-                },
-            });
-
-            setIsMain(true); // Set back to the main view after saving
+                });
+                setIsMain(true); // Set back to the main view after saving
+                setIsNewAttribute(false)
+            }
+            else if (name === "") {
+                setValidateStateName(false)
+                setErrorMessageName("Name is empthy")
+            }
+            else if (traitType === "") {
+                setValidateStateTraitType(false)
+                setErrorMessageTraitType("Traittype is empthy")
+            }
         }
     };
 
@@ -257,10 +275,34 @@ export default function Page({
 
     // ------------------------Validate Data -----------------------------------------------//
 
+    //------------------------Post data to base --------------------------------------------//
+    const save_state3 = async () => {
+        setIsLoadingSaveState3(true)
+        const saveState3_status = await saveState3(isDaft.schema_info.origin_data.origin_attributes, schemacode)
+        console.log("saveState1_status :", saveState3_status)
+        router.push(`/newdraft/4/${schemacode}`)
+        setIsLoadingSaveState3(false)
+    }
+
+    const backPage = () => {
+        // if (originBaseURI !== "" || originContractAddress !== "") {
+        //     alert("You are working")
+        // } else {
+        router.push(`/newdraft/2/${schemacode}`, { scroll: false })
+        // }
+    }
+
+    //------------------------Post data to base --------------------------------------------//
+
+    useEffect(() => {
+        console.log(isNewAttribute)
+    }, [isNewAttribute])
     return (
-        <>
-            <div className=" w-full h-full min-h-[100vh] flex flex-col justify-between items-center">
-                <Stepmenu schemacode={schemacode} currentStep={3}></Stepmenu>
+        <>  {isLoadingSaveState3 &&
+            <Loading></Loading>
+        }
+            <div className=" w-full  min-h-[75vh] flex flex-col justify-between items-center">
+                <Stepmenu schemacode={schemaCode} currentStep={3}></Stepmenu>
                 {isMain ?
                     <div className=" w-full h-[70vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
                         <div onClick={() => { createNewAttribute() }}>
@@ -285,9 +327,9 @@ export default function Page({
 
                     :
                     <div className=" w-full h-full min-h-[70vh] flex flex-col justify-between items-center">
-                        <InputCardOneLine title={"Name"} require={true} placeholder={"Add attribute name"} validate={validateStateName} errorMassage={errorMessageName} value={name} onChange={handleInputChangeName} ></InputCardOneLine>
+                        <InputCardOneLine title={"Name"} require={true} placeholder={"Add attribute name"} validate={validateStateName} errorMassage={errorMessageName} value={name} onChange={handleInputChangeName} loading={false} ></InputCardOneLine>
                         <InputSelectCard title={"Data type"} require={true} value={dataType} onChange={handleInputChangeChaDataType}></InputSelectCard>
-                        <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} ></InputCardOneLine>
+                        <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} loading={false} ></InputCardOneLine>
                         <div className=" w-full flex justify-end items-center">
                             <div onClick={() => { canCel() }}>
                                 <CancelButton></CancelButton>
@@ -301,8 +343,10 @@ export default function Page({
                 {isMain &&
 
                     <div className=' w-[90%] h-20 flex justify-between items-center'>
-                        <BackPageButton></BackPageButton>
-                        <div >
+                        <div onClick={backPage}>
+                            <BackPageButton></BackPageButton>
+                        </div>
+                        <div onClick={() => { save_state3() }} >
                             <NextPageButton></NextPageButton>
                         </div>
                     </div>

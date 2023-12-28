@@ -1,29 +1,27 @@
 'use server'
 import React from 'react'
-import api from "@/utils/custiomAxios";
 import axios from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ENV from '@/utils/ENV';
 
 
-export async function saveState3(originAttributes : [], schemaCode: string) {
+export async function editSchemaCode(schemaCode: string,newSchemaCode: string, collectionName: string, description: string,) {
     const apiUrl = `${ENV.API_URL}/schema/set_schema_info`;
     const sesstion = await getServerSession(authOptions);
     const requestData = {
         "payload": {
             "schema_info": {
-                "origin_data": {
-                    "origin_attributes": originAttributes
-                }
+                "name": `${collectionName}`,
+                "description": `${description}`,
+                "owner": `${sesstion.user.address}`,
+                "code": `${newSchemaCode}`,
             },
             "schema_code": `${schemaCode}`,
             "status": "Draft",
-            "current_state": "3"
+            "current_state": "1"
         }
     };
-
-
     try {
         const req = await axios.post(apiUrl, requestData, {
             headers: {

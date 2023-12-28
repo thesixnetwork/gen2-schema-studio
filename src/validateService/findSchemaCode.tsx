@@ -1,17 +1,36 @@
 'use server'
 import React from 'react'
-import api from "@/utils/custiomAxios";
+import axios from "axios";
+import { getServerSession } from "next-auth";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ENV from '@/utils/ENV';
 
 
 export async function findSchemaCode(schemaCode: string) {
-    const apiUrl = `/schema/validate_schema_code/${schemaCode}`;
-    try {
-        const req = await api.get(apiUrl);
-        console.log(req.data.data)
-        // const schema_info:ISchemaInfo = req.data.data.schema_info
-        return req.data.data.status
-    } catch (error) {
-        // console.log("error ", error)
-        return null;
+    const apiUrl = `${ENV.API_URL}/schema/validate_schema_code`;
+    const sesstion = await getServerSession(authOptions);
+    const params = {
+        schema_code: `${schemaCode}`,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sesstion.user.accessToken}`,
     }
+
+    // Make a GET request with parameters
+    const res =  await axios.get(apiUrl, {
+        params: params, // Pass parameters as an object
+        headers: headers, // Pass headers as an object
+    })
+        .then((response) => {
+            console.log("response :",response.data.data.status);
+            return response.data.data.status
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        });
+
+    return res
+       
 }

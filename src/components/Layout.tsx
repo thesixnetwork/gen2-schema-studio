@@ -12,6 +12,7 @@ import HomeNavBar from "@/components/HomeNavbar";
 import HomeSidebar from "@/components/HomeSidebar";
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from "@/helpers/AuthService";
 import CloseDetailButton from "./CloseDetailButton";
+import Loading from "./Loading";
 
 export default function Layout({
     children,
@@ -87,7 +88,7 @@ export default function Layout({
                     <div className=" w-full">
                         <HomeNavBar />
                     </div>
-                    <div className=" w-[95%] min-h-[75vh] pt-20">
+                    <div className=" w-[95%] min-h-[75vh] pt-10">
                         <Flex bgColor="" width={"100%"} height={"100%"} className="" >
                             <Box className=" duration-500" bgColor="" ref={boxRef} width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
