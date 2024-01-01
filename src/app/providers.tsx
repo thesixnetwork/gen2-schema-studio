@@ -4,7 +4,8 @@
 import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from "@/styles/theme";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider} from "next-auth/react"
+import { Session } from 'inspector';
 
 
 export function Providers({ 

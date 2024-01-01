@@ -22,14 +22,14 @@ const Menu = (props: MenuProps) => {
       props.nodeName === "attributeNode" ? (
         <div className="flex flex-col items-center w-12">
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center border border-[#3980F3]"
+            className="w-10 h-10 rounded-full flex items-center justify-center border border-Act6"
             onDragStart={(event: DragEvent) =>
               onDragStart(event, props.nodeName)
             }
             draggable
             onDoubleClick={() => props.handleDoubleClickAddNode(props.nodeName)}
           >
-            <p className="text-base text-[#3980F3] font-bold">
+            <p className="text-base text-Act6 font-bold">
               {props.nodeName === "valueNode"
                 ? "V"
                 : props.nodeName === "paramNode"
@@ -45,7 +45,7 @@ const Menu = (props: MenuProps) => {
                 : null}
             </p>
           </div>
-          <p className="text-xs text-[#3980F3]">
+          <p className="text-xs text-Act6">
             {props.nodeName === "valueNode"
               ? "Value"
               : props.nodeName === "paramNode"

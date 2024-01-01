@@ -5,32 +5,10 @@ import UserDashboard from "./UserDashboard";
 
 const HomeNavbar = () => {
   return (
-    <nav className="flex justify-center w-full min-h-[15vh] relative">
-      {/* <Box
-        w="1630px"
-        h="374px"
-        borderRadius="1630px"
-        bgGradient="radial-gradient(42.96% 42.96% at 50% 50%, #9E55BA 0%, rgba(218, 222, 242, 0.00) 82.81%)"
-        mixBlendMode="multiply"
-        position={"absolute"}
-        top={"-140%"}
-        left={"0%"}
-        zIndex={-1}
-        overflow={"hidden"}
-      />
-      <Box
-        w="1630px"
-        h="374px"
-        borderRadius="1630px"
-        bgGradient="radial-gradient(42.96% 42.96% at 50% 50%, #79A0EF 0%, rgba(218, 222, 242, 0.00) 82.81%)"
-        mixBlendMode="multiply"
-        position={"absolute"}
-        top={"-140%"}
-        left={"24%"}
-        zIndex={-1}
-        overflow={"hidden"}
-      /> */}
-      <div className="border  rounded-b-lg text-black w-[95%] bg-white flex justify-between items-center px-8">
+    <nav className="flex justify-center w-full min-h-[15vh] relative ">
+      {/* <div className='mix-blend-multiply  w-[90rem] h-[40rem] absolute rounded-full bg-gradient-radial from-main1 via-transparent to-transparent right-[5%] top-[-240%] z-[0]'></div>
+      <div className='mix-blend-multiply  w-[90rem] h-[50rem] absolute rounded-full bg-gradient-radial from-Act7 via-transparent to-transparent  right-[-15%] top-[-290%] z-[0]'></div> */}
+      <div className="border  rounded-b-lg text-black w-[95%] bg-white flex justify-between items-center px-8 z-[1]">
         <Image src={logo} alt="logo" className=" w-60" />
         <UserDashboard></UserDashboard>
       </div>

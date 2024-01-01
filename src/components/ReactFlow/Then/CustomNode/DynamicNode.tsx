@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
-import {
-  getAccessTokenFromLocalStorage,
-  getSCHEMA_CODE,
-} from "@/helpers/AuthService";
-import axios from "axios";
+import { getCookie } from "@/service/getCookie";
 
 interface CircleNodeProps {
   data: {
@@ -35,8 +31,9 @@ const DynamicNode = (props: CircleNodeProps) => {
   const [inputValue, setInputValue] = useState(props.data.value);
   const [isSelected, setIsSelected] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [attributeOption, setAttributeOption] = useState<{ name: string; dataType: string }[]>([]);
-  const [attributesObj, setAttributesObj] = useState();
+  const attributeOption = JSON.parse(
+    decodeURIComponent(getCookie("action-attribute") ?? "")
+  );
   const [valueNodeType, setValueNodeType] = useState(props.data.dataType);
   const [selectedValueNode, setSelectedValueNode] = useState(
     props.data.value === true ? "yes" : "no"
@@ -49,9 +46,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     name: props.data.value,
     dataType: props.data.dataType,
   });
-  // console.log("props-->", props.data.value);
-  // console.log("-->atb", typeof props.data.value + ">" + props.data.value);
-  // console.log("atbot--->", selectAttributeValue);
+
 
   console.log(":: valueNodeType :: ", valueNodeType);
   const handleDragEnter = () => {
@@ -66,45 +61,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     setHovered(false);
   };
 
-  const getAttributeOption = (arr1: Attribute[], arr2: Attribute[]) => {
-    const  tempArr: { name: string; dataType: string }[] = [];
 
-    arr1.forEach((item) => {
-      tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
-    });
-
-    arr2.forEach((item) => {
-      tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
-    });
-
-    setAttributeOption(tempArr);
-  };
-
-  const fetchData = async () => {
-    const apiUrl = `${
-      process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO
-    }schema/get_schema_info/${getSCHEMA_CODE()}`;
-    const params = {};
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    };
-    await axios
-      .get(apiUrl, {
-        params: params,
-        headers: headers,
-      })
-      .then((response) => {
-        // console.log("Response:", response.data);
-        setAttributesObj(
-          response.data.data.schema_info.schema_info.onchain_data
-        );
-        console.log("actionName:", attributesObj);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
 
   const onChange = (e: EventProps) => {
     const { nodeInternals } = store.getState();
@@ -198,13 +155,6 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   useEffect(() => {
-    const asyncFetchData = async () => {
-      await fetchData();
-    };
-    asyncFetchData();
-  }, []);
-
-  useEffect(() => {
     setSelectAttributeValue({
       name: props.data.value,
       dataType: props.data.dataType,
@@ -216,13 +166,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   }, [props.data.value]);
 
-  useEffect(() => {
-    if (attributesObj !== undefined) {
-      const tokenAttributes = attributesObj.token_attributes;
-      const nftAttributes = attributesObj.nft_attributes;
-      getAttributeOption(tokenAttributes, nftAttributes);
-    }
-  }, [attributesObj]);
+
 
   useEffect(() => {
     if (props.data.showType === "valueNode") {
@@ -300,7 +244,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     <div
       className={`w-full py-2 px-6 rounded-md flex items-center justify-center border bg-[#DADEF2]
                 ${
-                  hovered ? "border-indigo-600 opacity-80 " : "border-[#3980F3]"
+                  hovered ? "border-indigo-600 opacity-80 " : "border-Act6"
                 }`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -308,8 +252,8 @@ const DynamicNode = (props: CircleNodeProps) => {
     >
       <div className="flex flex-col items-center justify-center">
         <p
-          className={`text-[#3980F3] font-bold ${
-            hovered ? "text-indigo-600 " : "border-[#3980F3]"
+          className={`text-Act6 font-bold ${
+            hovered ? "text-indigo-600 " : "border-Act6"
           }`}
         >
           Select Your Attribute
@@ -319,7 +263,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           id=""
           name=""
           form=""
-          className="rounded-sm text-[#44498D] bg-white w-full"
+          className="rounded-sm text-main2 bg-white w-full"
           onChange={handleSelectAttribute}
         >
           <option value={selectAttributeValue.name} disabled selected hidden>
@@ -349,7 +293,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     props.data.showType === "toNode" ||
     props.data.showType === "amountNode" ? (
     <div
-      className={`w-32 h-12 flex justify-center items-center font-bold text-[#3980F3] border border-[#3980F3] ${
+      className={`w-32 h-12 flex justify-center items-center font-bold text-Act6 border border-Act6 ${
         props.data.showType === "increaseNode"
           ? "bg-[#DADEF2]"
           : props.data.showType === "decreaseNode"
@@ -384,7 +328,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     <div
       className={`w-full p-2 rounded-md flex items-center justify-center border text-black 
         ${props.data.showType === "valueNode" ? "bg-[#DADEF2]" : "bg-white"}
-        ${hovered ? "border-indigo-600 opacity-80" : "border-[#3980F3]"}`}
+        ${hovered ? "border-indigo-600 opacity-80" : "border-Act6"}`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -410,7 +354,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       <div className="flex items-center justify-center">
         {valueNodeType === "boolean" ? (
           <>
-            <p className={`font-bold ${hovered ? "text-indigo-600" : "text-[#3980F3]"}`}>
+            <p className={`font-bold ${hovered ? "text-indigo-600" : "text-Act6"}`}>
               {" "}
               V:&nbsp;{" "}
             </p>
@@ -418,9 +362,9 @@ const DynamicNode = (props: CircleNodeProps) => {
               <div
                 onClick={(e) => handleClickValueNode(e)}
                 id="yes"
-                className={`cursor-pointer rounded-l-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-center border border-[#3980F3] text-[#3980F3] ${
+                className={`cursor-pointer rounded-l-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-center border border-Act6 text-Act6 ${
                   selectedValueNode === "yes"
-                    ? "bg-[#3980F3] text-white"
+                    ? "bg-Act6 text-white"
                     : "bg-white"
                 }`}
               >
@@ -437,9 +381,9 @@ const DynamicNode = (props: CircleNodeProps) => {
               <div
                 onClick={(e) => handleClickValueNode(e)}
                 id="no"
-                className={`cursor-pointer rounded-r-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-centerborder border-[#3980F3] text-[#3980F3] ${
+                className={`cursor-pointer rounded-r-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-centerborder border-Act6 text-Act6 ${
                   selectedValueNode === "no"
-                  ? "bg-[#3980F3] text-white"
+                  ? "bg-Act6 text-white"
                   : "bg-white"
                 }`}
               >
@@ -457,7 +401,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           </>
         ) : (
           <>
-            <p className={`font-bold ${hovered ? "text-indigo-600" : "text-[#3980F3]"}`}>
+            <p className={`font-bold ${hovered ? "text-indigo-600" : "text-Act6"}`}>
               {" "}
               V:&nbsp;{" "}
             </p>
@@ -465,7 +409,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               type="text"
               name=""
               id=""
-              className="w-16 rounded-sm pl-1 bg-white text-[#44498D]"
+              className="w-16 rounded-sm pl-1 bg-white text-main2"
               onChange={(e) => {
                 onChange(e);
               }}
@@ -480,7 +424,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       className={`w-full p-2 rounded-md flex items-center justify-center border bg-[#DADEF2]
 
                 ${
-                  hovered ? "border-indigo-600 opacity-80" : "border-[#3980F3]"
+                  hovered ? "border-indigo-600 opacity-80" : "border-Act6"
                 }`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -488,14 +432,14 @@ const DynamicNode = (props: CircleNodeProps) => {
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
-        <p className={`font-bold ${hovered ? "text-indigo-600 " : "text-[#3980F3]"}`}>
+        <p className={`font-bold ${hovered ? "text-indigo-600 " : "text-Act6"}`}>
           @:&nbsp;
         </p>
         <select
           id=""
           name=""
           form=""
-          className="rounded-sm text-[#44498D] bg-white w-24"
+          className="rounded-sm text-main2 bg-white w-24"
           onChange={handleSelect}
           value={selectValue.name}
         >
@@ -524,17 +468,17 @@ const DynamicNode = (props: CircleNodeProps) => {
       <div
         className={`w-full p-2 rounded-md flex flex-col items-center justify-between border bg-[#DADEF2]
 
-      ${hovered ? "border-indigo-600 opacity-80" : "border-[#3980F3]"}`}
+      ${hovered ? "border-indigo-600 opacity-80" : "border-Act6"}`}
         onDragOver={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         <div className="flex h-full w-32 items-center justify-between flex-col">
-          <p className={`font-bold ${hovered ? "text-indigo-600 " : "text-[#3980F3]"} `}>
+          <p className={`font-bold ${hovered ? "text-indigo-600 " : "text-Act6"} `}>
             Param:
           </p>
           <select
-            className="text-[#3980F3] rounded-sm bg-white w-32 my-2"
+            className="text-Act6 rounded-sm bg-white w-32 my-2"
             onChange={handleSelectParamNode}
           >
             <option value={selectValue.dataType} disabled selected hidden>
@@ -559,7 +503,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               type="text"
               name=""
               id=""
-              className="w-32 text-[#3980F3] rounded-sm bg-white"
+              className="w-32 text-Act6 rounded-sm bg-white"
               onChange={onChange}
               placeholder="  Input param name"
               value={inputValue}

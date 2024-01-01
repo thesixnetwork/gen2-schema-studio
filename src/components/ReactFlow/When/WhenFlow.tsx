@@ -22,13 +22,12 @@ import {
   getSCHEMA_CODE,
 } from "@/helpers/AuthService";
 
-import IActions from "../../../type/Nftmngr"
-
 import axios from "axios";
 
 import InputNode from "./CustomNode/InputNode";
 
-// import NormalButton from "../../NormalButton";
+import SaveButton from "@/components/button/SaveButton";
+import CancelButton from "@/components/button/CancelButton";
 import Flowbar from "./Flowbar";
 import { Factory } from "@/function/ConvertObjectToMetadata/Factory";
 import parser_when from "@/function/ConvertMetadataToObject/action_when";
@@ -106,11 +105,12 @@ const initialNodes: Node[] = [
 ];
 
 const WhenFlow = (props: WhenFlowProps) => {
-  const [metaData, setMetaData] = useState("please add item");
+  const [metaData, setMetaData] = useState("");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
   const getCookieData = getCookie("action");
+  const schemacode = getCookie("schemaCode");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
 
   const nodeTypes = useMemo(() => {
@@ -829,6 +829,7 @@ const WhenFlow = (props: WhenFlowProps) => {
     console.log("-->obj", result);
     setMetaData(result);
     props.setMetaFunction(result);
+    console.log("wtf!!", props.metaFunction);
   };
 
   const handleEdgesChange = (changes: NodeChange[]) => {
@@ -860,7 +861,6 @@ const WhenFlow = (props: WhenFlowProps) => {
   };
 
   const handleSaveAction = async () => {
-    let tempArr;
     const updateActionWhenByName = (array, name, newWhen) => {
       const updatedArray = array.map((action) => {
         if (action.name === name) {
@@ -868,19 +868,26 @@ const WhenFlow = (props: WhenFlowProps) => {
         }
         return action;
       });
-      tempArr = updatedArray;
+      return updatedArray;
     };
     if (getCookieData) {
       const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-      console.log("logger", parsedCookieData);
-      const newAction = updateActionWhenByName(
-        parsedCookieData,
-        props.actionName,
-        metaData
+      // console.log("logger", parsedCookieData);
+      const newAction = JSON.stringify(
+        updateActionWhenByName(parsedCookieData, props.actionName, metaData)
       );
-      setCookie("action", JSON.stringify(tempArr));
-      console.log("123", newAction);
-      console.log("===>", props.actionName);
+      console.log("123--", newAction);
+      console.log("setted already");
+      setCookie("action", newAction);
+      console.log("1", parsedCookieData);
+      console.log("2", props.actionName);
+      console.log("3", metaData);
+      console.log(
+        "4",
+        JSON.stringify(
+          updateActionWhenByName(parsedCookieData, props.actionName, metaData)
+        )
+      );
     }
     setCookie("isEditAction", "true");
     setCookie("action-when", metaData);
@@ -1090,10 +1097,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   const handleNodesLeave = () => {};
   console.log("log naja", props.metaFunction);
   useEffect(() => {
-    if (
-      props.metaFunction !== "create-new-when" &&
-      props.metaFunction !== "please add item"
-    ) {
+    if (props.metaFunction !== "create-new-when" && props.metaFunction !== "") {
       setRedraw(true);
       saveSCHEMA_CODE(props.schemaCode);
       const firstMetaData = props.metaFunction;
@@ -1152,14 +1156,14 @@ const WhenFlow = (props: WhenFlowProps) => {
   }, [nodes, setNodes]);
 
   return (
-    <div className=" flex justify-between px-8">
+    <div className="flex justify-between px-8">
       <div className="flex flex-col">
         <ActionHeader
           type="when"
           actionName={props.actionName}
           metaFunction={props.metaFunction}
         />
-        <div className="h-[580px] w-[64vw]border rounded-3xl bg-white p-2">
+        <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}
@@ -1180,18 +1184,25 @@ const WhenFlow = (props: WhenFlowProps) => {
           </div>
         </div>
         <div>
-          <div className="flex justify-end gap-x-8">
-            <div>Cancle</div>
+          <div className="flex justify-end gap-x-8 mt-4">
             <Link
               href={
                 isCreateNewActionCookie === "true"
-                  ? "/actions/action-form/create-new-action"
-                  : `/actions/action-form/${props.actionName}`
+                  ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                  : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
               }
             >
-              <div onClick={handleSaveAction}>
-                <button>Save</button>
-              </div>
+              <CancelButton />
+            </Link>
+            <Link
+              href={
+                isCreateNewActionCookie === "true"
+                  ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                  : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+              }
+              onClick={handleSaveAction}
+            >
+              <SaveButton />
             </Link>
           </div>
         </div>

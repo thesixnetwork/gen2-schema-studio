@@ -6,20 +6,23 @@ import { StargateClient } from "@cosmjs/stargate";
 import axios from 'axios'
 import { saveCosmosAddress, getCosmosAddress, saveBalanceCoin, saveTokensToLocalStorage } from '../helpers/AuthService'
 import { useRouter } from 'next/navigation'
+import Loading from './Loading';
+
 import { setCookie } from '@/service/setCookie'
-import { useSession, signIn, signOut } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 type Props = {}
 
 function ConnectButton({ }: Props) {
     const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME);
     const [token, setToken] = useState("usix");
+    const [balance, setBalance] = useState(0);
     const [cosmosAddress, setCosmosAddress] = useState("");
-    const [rpcEndpoint, setRpcEndpoint] = useState<string>(
-        process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value"
-    );
+    const [rpcEndpoint, setRpcEndpoint] = useState<string>(process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value");
     const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE
     const [exponent, setExponent] = useState(1e6);
     const router = useRouter()
+    const { update: UpdateSession, data: session } = useSession();
+    // console.log(session)
 
     // Extend the Window interface with the 'keplr' property
     interface Window {
@@ -35,8 +38,10 @@ function ConnectButton({ }: Props) {
             const offlineSigner = await window.getOfflineSigner(chainId);
             const keplrAccounts = await offlineSigner.getAccounts();
             // Set state value as first address.
+            await getKeplrBalance2(keplrAccounts[0].address)
             saveCosmosAddress(keplrAccounts[0].address)
             setCosmosAddress(keplrAccounts[0].address)
+            // await UpdateSession({address:keplrAccounts[0].address})
             console.log("Keplr connect :", keplrAccounts[0].address)
         } else {
             alert("Keplr extension is not installed.");
@@ -54,6 +59,18 @@ function ConnectButton({ }: Props) {
             const balance = (parseInt(balanceAsCoin.amount) * 1) / exponent;
             saveBalanceCoin(balance.toFixed(2));
             console.log(balance.toFixed(2));
+        } else {
+            console.error("Cosmos address is null.");
+            // Handle the case where cosmosAddress is null, maybe show an error message or take appropriate action.
+        }
+    };
+    const getKeplrBalance2 = async (address: string) => {
+        if (address) {
+            const client = await StargateClient.connect(rpcEndpoint);
+            const balanceAsCoin = await client.getBalance(address, token);
+            const balance = (parseFloat(balanceAsCoin.amount) * 1) / exponent;
+            setBalance(balance);
+            console.log(balance);
         } else {
             console.error("Cosmos address is null.");
             // Handle the case where cosmosAddress is null, maybe show an error message or take appropriate action.
@@ -84,11 +101,26 @@ function ConnectButton({ }: Props) {
         }
     };
 
+    // const handdleAccount = async () => {
+    //     if (cosmosAddress && session) {
+    //         await UpdateSession({address:cosmosAddress})
+    //         session.user = {
+    //             ...session.user,
+    //             address: '123456',
+    //           };
+    //         // session.user = "33"
+    //         const updatedSession = await useSession().update(session);
+
+    //         console.log('Session updated with address:', updatedSession);
+
+    //     }
+    // };
+
     const loginApi = async () => {
         const offlineSigner = window.getOfflineSigner(chainId);
         const keplrAccounts = await offlineSigner.getAccounts();
         // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
-        // console.log("gust")
+        console.log("gust")
         const signedMessage = await offlineSigner.keplr.signArbitrary(
             chainId,
             cosmosAddress,
@@ -113,13 +145,11 @@ function ConnectButton({ }: Props) {
                 setCookie("token",`Bearer ${response.data.data.access_token}`)
                 await signIn('credentials', {
                     redirect: false, // Do not redirect, handle redirection manually after signing in
-                    accessToken: response.data.data.access_token, // Pass the access token obtained from your API
-                  });
-                // signIn();
-                /// use next auth here
-                // console.log(response.data.data.access_token, response.data.data.refresh_token)
-                // You can handle the API response here
-                router.push('/home', { scroll: false })
+                    accessToken: response.data.data.access_token,
+                    address: cosmosAddress,
+                    balance: balance,
+                });
+                router.push('/home')
             })
             .catch(error => {
                 console.error('API Error:', error);
@@ -128,9 +158,11 @@ function ConnectButton({ }: Props) {
     }
 
     useEffect(() => {
+
         getKeplrBalance();
         getSignature();
         loginApi();
+
     }, [cosmosAddress])
 
     const handleConnect = async () => {
@@ -142,6 +174,7 @@ function ConnectButton({ }: Props) {
             onClick={handleConnect}
             className=' flex justify-center items-center border rounded-lg border-Act7 w-64  h-12 hover:scale-125 duration-500 cursor-pointer '>
             <p className='text-Act7 text-4xl font-light '>CONNECT</p>
+          
         </div>
     )
 }

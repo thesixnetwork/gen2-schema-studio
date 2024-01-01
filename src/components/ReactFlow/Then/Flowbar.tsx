@@ -116,7 +116,7 @@ export default function Flowbar(props: FlowbarProps) {
         props.selectedAttribute === "string" ? (
           <>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-[#44498D]">Function</span>
+              <span className="text-sm font-bold text-main2">Function</span>
               {props.selectedAttribute === "number" ||
               props.selectedAttribute === "float" ? (
                 <div className="flex">
@@ -146,7 +146,7 @@ export default function Flowbar(props: FlowbarProps) {
               )}
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-[#44498D]">Operand</span>
+              <span className="text-sm font-bold text-main2">Operand</span>
               <div className="flex">
                 <Menu
                   nodeName="valueNode"
@@ -164,9 +164,8 @@ export default function Flowbar(props: FlowbarProps) {
             </div>
           </>
         ) : props.selectedAttribute === "none" ? (
-          <div className="flex h-full flex-col justify-end">
-            <div className="flex flex-col  justify-center">
-              <span className="text-sm font-bold text-[#44498D]">Operand</span>
+          <div className="flex flex-col">
+              <span className="text-sm font-bold text-main2">Operand</span>
               <div className="flex">
                 <Menu
                   nodeName="valueNode"
@@ -181,7 +180,6 @@ export default function Flowbar(props: FlowbarProps) {
                   handleDoubleClickAddNode={props.handleDoubleClickAddNode}
                 />
               </div>
-            </div>
           </div>
         ) : (
           <>
@@ -191,9 +189,9 @@ export default function Flowbar(props: FlowbarProps) {
           </>
         )}
         <div>
-        <span className="text-sm font-bold text-[#44498D]">AI Generate</span>
+        <span className="text-sm font-bold text-main2">AI Generate</span>
           <button
-            className="px-4 flex items-center justify-center rounded-md border border-[#3980F3] text-lg hover:scale-110 duration-300 text-[#3980F3]"
+            className="px-4 flex items-center justify-center rounded-md border border-Act6 text-lg hover:scale-110 duration-300 text-Act6"
             onClick={onOpen}
           >
             <Image src={GenerateGPTimg} alt="generate-icon" width={20} />{" "}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getCookie } from "@/service/getCookie";
 interface ActionInfoCardProps {
   name: string;
   description: string;
@@ -9,10 +10,10 @@ interface ActionInfoCardProps {
 }
 
 const ActionInfoCard = (props: ActionInfoCardProps) => {
-  console.log("::props name", props.name);
-
+  console.log("props name", props.name);
+  const schemacode = getCookie("schemaCode");
   return (
-    <Link href={`/actions/action-form/${props.name}`}>
+    <Link href={`/newdraft/6/${schemacode}/action-form/${props.name}`}>
       <div className="text-black w-96 border rounded-xl p-4 relative bg-white">
         <div
           className="border border-red-600 rounded-full h-4 w-4 flex items-center justify-center text-red-600 text-xs absolute right-2 top-2 hover:scale-110 duration-300 cursor-pointer"
@@ -25,25 +26,25 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
         </div>
         <div className="flex flex-col gap-y-3">
           <div>
-            <h6 className="text-[#44498D] font-light">Name</h6>
-            <p className="text-[#3980F3] font-semibold">{props.name}</p>
+            <h6 className="text-main2 font-light">Name</h6>
+            <p className="text-Act6 font-semibold">{props.name}</p>
           </div>
           <div>
-            <h6 className="text-[#44498D] font-light">Description</h6>
+            <h6 className="text-main2 font-light">Description</h6>
             <p
               className={`${
-                props.description === "" ? "text-gray-400" : "text-[#3980F3]"
+                props.description === "" ? "text-gray-400" : "text-Act6"
               } font-semibold`}
             >
               {props.description === "" ? "Empty" : props.description}
             </p>
           </div>
           <div>
-            <h6 className="text-[#44498D] font-light">When</h6>
-            <p className="text-[#3980F3] font-semibold">{props.when}</p>
+            <h6 className="text-main2 font-light">When</h6>
+            <p className="text-Act6 font-semibold">{props.when}</p>
           </div>
-          <div className="text-[#3980F3] font-semibold">
-            <h6 className="text-[#44498D] font-light">Then</h6>
+          <div className="text-Act6 font-semibold">
+            <h6 className="text-main2 font-light">Then</h6>
             {props.then === undefined ||
             props.then === null ||
             props.then.length === 0 ? (

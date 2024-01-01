@@ -25,14 +25,14 @@ import { Factory } from "@/function/ConvertObjectToMetadata/Factory";
 import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
 import Link from "next/link";
-import { IActions } from "@/type/Nftmngr"
+import { IActions } from "@/type/Nftmngr";
 
 // import SyntaxHighlighter from "react-syntax-highlighter";
 
 // import { useParams } from "react-router-dom";
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
-// import NormalButton from "../../NormalButton";
-// import { useNavigate } from "react-router-dom";
+import SaveButton from "@/components/button/SaveButton";
+import CancelButton from "@/components/button/CancelButton";
 import {
   getAccessTokenFromLocalStorage,
   getActionName,
@@ -52,6 +52,7 @@ interface ThenTransferFlowProps {
   isDraft: boolean;
   transformType: string;
   actionThenType: string;
+  setMetaFunction: React.Dispatch<React.SetStateAction<string>>;
   handleActionThenTypeChange: (newActionThenType: string) => void;
   handleTransformTypeChange: (newActionThenType: string) => void;
 }
@@ -97,7 +98,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
-  const [metaData, setMetaData] = useState("please add item");
+  const [metaData, setMetaData] = useState("");
   const { setCenter, project } = useReactFlow();
   // const navigate = useNavigate();
   const [isDraft, setIsDraft] = useState(false);
@@ -114,7 +115,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const getActionThanArrCookie = getCookie("action-then-arr");
-
+  const schemacode = getCookie("schemaCode");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -597,6 +598,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     const object = Factory.createObject(transformData(nodes)).toString();
     console.log(">", object);
     setMetaData(object);
+    props.setMetaFunction(object);
     return object;
   };
 
@@ -616,17 +618,22 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const saveAction = async () => {
     let tempArr;
 
-    const convertStringToArray = (input:string) => {
+    const convertStringToArray = (input: string) => {
       const jsonArray = JSON.parse(input);
-  
-      const resultArray = jsonArray.map((item:string) => {
+
+      const resultArray = jsonArray.map((item: string) => {
         return item;
       });
-  
-      return resultArray;
-    }
 
-    const updateActionThenByName = (array: IActions[], name:string, oldThen:string, newThen:string) => {
+      return resultArray;
+    };
+
+    const updateActionThenByName = (
+      array: IActions[],
+      name: string,
+      oldThen: string,
+      newThen: string
+    ) => {
       const updatedArray = array.map((action) => {
         if (action.name === name && getIsCreateNewThenFromCookie === "false") {
           const updatedThen =
@@ -661,24 +668,22 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       const tempArrCookie = getActionThanArrCookie
         ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
         : [];
-    
+
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-    
-      const updatedTempArrCookie = tempArrCookie.map((item:string) =>
+
+      const updatedTempArrCookie = tempArrCookie.map((item: string) =>
         item === originalMetaFunction ? metaDataToAdd : item
       );
 
-    
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
-    
+
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
-
 
     setCookie("action", JSON.stringify(tempArr));
     setCookie("action-then", metaData);
@@ -694,8 +699,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       const nodeId = tempNodeArray.length + 1;
 
       const newNode = {
-        width: 150,
-        height: 57,
         id: nodeId.toString(),
         type: "customInputNode",
         position: { x: 0, y: parentPositionY },
@@ -717,13 +720,10 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         newNode.data.showType = "selectAttributeNode";
         newNode.data.value = node.attributeName.value;
         newNode.data.dataType = node.attributeName.dataType;
-        newNode.width = 202;
       }
 
       if (node.value1) {
         const toNode = {
-          width: 150,
-          height: 57,
           id: (nodeId + 1).toString(),
           type: "customInputNode",
           position: { x: -150, y: parentPositionY + 150 },
@@ -740,8 +740,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
         if (node.value1.type === "param_function") {
           const paramNode = {
-            width: 150,
-            height: 57,
             id: (nodeId + 3).toString(),
             type: "customInputNode",
             position: { x: -150, y: parentPositionY + 300 },
@@ -758,8 +756,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           tempNodeArray.push(toNode, paramNode);
         } else {
           const attributeNode = {
-            width: 150,
-            height: 57,
             id: (nodeId + 3).toString(),
             type: "customInputNode",
             position: { x: -150, y: parentPositionY + 300 },
@@ -798,8 +794,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
       if (node.value2) {
         const amountNode = {
-          width: 150,
-          height: 57,
           id: (nodeId + 2).toString(),
           type: "customInputNode",
           position: { x: 150, y: parentPositionY + 150 },
@@ -816,8 +810,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
         if (node.value2.type === "meta_function") {
           const attributeNode = {
-            width: 150,
-            height: 57,
             id: (nodeId + 4).toString(),
             type: "customInputNode",
             position: { x: 150, y: parentPositionY + 300 },
@@ -834,8 +826,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           tempNodeArray.push(amountNode, attributeNode);
         } else {
           const valueNode = {
-            width: 150,
-            height: 57,
             id: (nodeId + 4).toString(),
             type: "customInputNode",
             position: { x: 150, y: parentPositionY + 300 },
@@ -1037,8 +1027,8 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   }, []);
 
   return (
-    <div className="flex justify-between px-8">
-      <div>
+    <div className="flex justify-between px-8 ">
+      <div className="flex flex-col">
         <ActionHeader
           type="then"
           actionName={props.actionName}
@@ -1048,7 +1038,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           handleActionThenTypeChange={props.handleActionThenTypeChange}
           handleTransformTypeChange={props.handleTransformTypeChange}
         />
-        <div style={{ height: 536, width: 1000 }}>
+        <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}
@@ -1069,29 +1059,27 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           </div>
         </div>
 
-        <div className="flex gap-x-5 justify-center">
-          {/* <Link
+        <div className="flex justify-end gap-x-8 mt-4">
+        <Link
             href={
-              props.isDraft
-                ? `/draft/actions/edit/then/${props.actionName}/${props.metaFunction}/${props.schemaRevision}`
-                : "/newintregation/beginer"
+              isCreateNewActionCookie === "true"
+                ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
             }
           >
-          </Link> */}
-            <div className="flex justify-center" onClick={()=>console.log(props.metaFunction)}>Back</div>
-          <Link href={
+            <CancelButton />
+          </Link>
+          <Link
+            href={
               isCreateNewActionCookie === "true"
-                ? "/actions/action-form/create-new-action"
-                : `/actions/action-form/${props.actionName}`
-            }>
-            <div
-              className="flex justify-center"
-              onClick={async () => {
-                await saveAction();
-              }}
-            >
-              Save
-            </div>
+                ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+            }
+            onClick={async () => {
+              await saveAction();
+            }}
+          >
+            <SaveButton />
           </Link>
         </div>
       </div>

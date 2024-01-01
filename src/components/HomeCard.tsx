@@ -9,9 +9,11 @@ import { getAccessTokenFromLocalStorage } from '@/helpers/AuthService';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
-// type Props = {}
+import { useRouter } from 'next/navigation'
+type Props = {}
 
-export default function HomeCard() {
+export default function HomeCard({ }: Props) {
+    const router = useRouter()
     const items = ['Draft', 'Live', 'Testnet'];
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
@@ -43,12 +45,10 @@ export default function HomeCard() {
         getListDraft()
     },[])
 
-    
-
     return (
         <div>
             {items.map((item, index) => (
-                <div className=' flex flex-col mt-8'>
+                <div className=' flex flex-col'>
                     <div className=' w-full h-10 flex justify-center items-center relative'>
                         <div className=' w-24 '>
                             {index === 0 &&
@@ -74,7 +74,7 @@ export default function HomeCard() {
                                     listDraft.map((item: { schema_revision: any; schema_name: any; schema_info: { schema_info: { origin_data: { origin_base_uri: any; }; }; }[]; }, index: any) => (
                                         <div className=' ml-3 flex'>
                                             {index === 0 &&
-                                                <div className=' mr-3'>
+                                                <div className=' mr-3' onClick={()=>{router.push(`/newdraft/1/`, { scroll: false })}}>
                                                     <HomeNewintregationCard></HomeNewintregationCard>
                                                 </div>
                                             }
@@ -97,8 +97,5 @@ export default function HomeCard() {
                 </div>
             ))}
         </div>
-
-
-
     )
 }

@@ -10,6 +10,8 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import ActionHeader from "@/components/ActionHeader";
 import { getDynamicImage } from "@/service/getDynamicImage";
 
+import SaveButton from "./button/SaveButton";
+import CancelButton from "./button/CancelButton";
 import { IActions } from "@/type/Nftmngr";
 import { getCookie } from "@/service/getCookie";
 import { setCookie } from "@/service/setCookie";
@@ -25,7 +27,6 @@ interface ActionThenTransformDynamicProps {
 }
 
 const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
-  const schemacode = "create.new_v1";
   const [imgSource, setImgSource] = useState("");
   const [postfix, setPostfix] = useState("");
   const [prefix, setPrefix] = useState("");
@@ -35,14 +36,13 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
   const [loading, setLoading] = useState(false);
   const [imgBeforeTransformError, setImgBeforeTransformError] = useState(false);
   const [imgAfterTransformError, setImgAfterTransformError] = useState(false);
-  const [metaData, setMetaData] = useState(
-    "Please input your dynamic image path"
-  );
+  const [metaData, setMetaData] = useState("");
   const getCookieData = getCookie("action");
   const getActionThen = getCookie("action-then");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
+  const schemacode = getCookie("schemaCode");
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );
@@ -237,7 +237,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
   }, [imgSource, imgFormat, prefix, postfix, tokenId]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col  px-8">
       <ActionHeader
         type="then"
         actionName={props.actionName}
@@ -259,16 +259,15 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
             // ></CircularProgress>
             <div>Loading</div>
           ) : (
-            <>
+            <div className="flex flex-col">
               <div className="border rounded-2xl p-8 flex justify-center bg-white">
                 <div className="w-[40vw] flex flex-col justify-between ">
                   <div className="mb-2">
-                    <h2 className="text-[#44498D] font-semibold">Image Path</h2>
+                    <h2 className="text-main2 font-semibold">Image Path</h2>
                     <input
                       id=""
                       type="text"
-                      autoFocus
-                      className="my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
+                      className="my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
                       placeholder="example: https://techsauce-nft.sixprotocol.com/techsauce/"
                       onChange={(e) => {
                         onChange(e);
@@ -277,7 +276,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                     />
                   </div>
                   <div className="mb-2">
-                    <h2 className="text-[#44498D] font-semibold">
+                    <h2 className="text-main2 font-semibold">
                       Origin Image Format
                     </h2>
                     <Select
@@ -286,7 +285,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                       }}
                       value={imgFormat}
                       defaultValue={imgFormat}
-                      className="text-[#3980F3] px-4 py-2 my-2 bg-[#F5F6FA] border  border-[#3980F3] rounded-md hover:bg-opacity-60"
+                      className="text-Act6 px-4 py-2 my-2 bg-[#F5F6FA] border  border-Act6 rounded-md hover:bg-opacity-60"
                     >
                       <option value="" disabled selected hidden>
                         -- select --
@@ -299,16 +298,15 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                   </div>
                   <div className="my-4">
                     <div className="flex">
-                      <h2 className="text-[#44498D] font-semibold">Token Id</h2>
-                      <span className="text-[#44498D]">
+                      <h2 className="text-main2 font-semibold">Token Id</h2>
+                      <span className="text-main2">
                         (For Preview Transformed Tokens)
                       </span>
                     </div>
                     <input
                       id=""
                       type="text"
-                      autoFocus
-                      className=" my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
+                      className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
                       placeholder="example: 1"
                       onChange={(e) => {
                         handleTokenId(e.target.value);
@@ -316,27 +314,26 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                     />
                   </div>
                   <div className="mb-2">
-                    <h2 className="text-[#44498D] font-semibold">
+                    <h2 className="text-main2 font-semibold">
                       Dynamic Image Prefix
                     </h2>
                     <input
                       id=""
                       type="text"
-                      autoFocus
-                      className=" my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
+                      className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
                       placeholder="example: -original"
                       onChange={(e) => setPrefix(e.target.value)}
                       value={prefix}
                     />
                     {imgSource !== "" && (
                       <div className="bg-[#F5F6FA] rounded-md p-3 mb-2">
-                        <span className="text-[#3980F3]">
+                        <span className="text-Act6">
                           {checkBackslash(imgSource)}
                         </span>
                         <span className="text-red-600">
                           &#123;&#123;token_id&#125;&#125;
                         </span>
-                        <span className="text-[#3980F3]">
+                        <span className="text-Act6">
                           {prefix}
                           {imgFormat}
                         </span>
@@ -364,27 +361,26 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                     </div>
                   </div>
                   <div className="mb-2">
-                    <h2 className="text-[#44498D] font-semibold">
+                    <h2 className="text-main2 font-semibold">
                       Dynamic Image Posfix
                     </h2>
                     <input
                       id=""
                       type="text"
-                      autoFocus
-                      className=" my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
+                      className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
                       placeholder="example: -transformed"
                       onChange={(e) => setPostfix(e.target.value)}
                       value={postfix}
                     />
                     {imgSource !== "" && (
                       <div className="bg-[#F5F6FA] rounded-md p-3 mb-2">
-                        <span className="text-[#3980F3]">
+                        <span className="text-Act6">
                           {checkBackslash(imgSource)}
                         </span>
                         <span className="text-red-600">
                           &#123;&#123;token_id&#125;&#125;
                         </span>
-                        <span className="text-[#3980F3]">
+                        <span className="text-Act6">
                           {postfix}
                           {imgFormat}
                         </span>
@@ -413,23 +409,30 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                   </div>
                 </div>
               </div>
-              <Link
-                href={
-                  isCreateNewActionCookie === "true"
-                    ? "/actions/action-form/create-new-action"
-                    : `/actions/action-form/${props.actionName}`
-                }
-              >
-                <div
-                  className="flex justify-center"
+              <div className="flex justify-end gap-x-8 mt-4">
+                <Link
+                  href={
+                    isCreateNewActionCookie === "true"
+                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+                  }
+                >
+                  <CancelButton />
+                </Link>
+                <Link
+                  href={
+                    isCreateNewActionCookie === "true"
+                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+                  }
                   onClick={async () => {
                     await saveAction();
                   }}
                 >
-                  save
-                </div>
-              </Link>
-            </>
+                  <SaveButton />
+                </Link>
+              </div>
+            </div>
           )}
         </div>
       )}

@@ -7,8 +7,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@chakra-ui/react";
 
+import SaveButton from "./button/SaveButton";
+import CancelButton from "./button/CancelButton";
 import ActionHeader from "@/components/ActionHeader";
-import { IActions } from "@/type/Nftmngr"
+import { IActions } from "@/type/Nftmngr";
 import { getCookie } from "@/service/getCookie";
 import { setCookie } from "@/service/setCookie";
 interface ActionThenTransformStaticProps {
@@ -29,7 +31,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   const [valueInput, setValueInput] = useState("");
   const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState<
-  (string | number | boolean)[]
+    (string | number | boolean)[]
   >([]);
   const [actionThenIndex, setActionThenIndex] = useState<number | undefined>();
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
@@ -42,13 +44,13 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
-  const [metaData, setMetaData] = useState<string>("Please input your static image path")
+  const schemacode = getCookie("schemaCode");
+  const [metaData, setMetaData] = useState<string>("");
 
   const convertFromBase64 = (str: string) => {
     console.log("str: ", str);
     return atob(str);
   };
-
 
   const onChange = (e: any) => {
     setImgSource(e.target.value);
@@ -78,17 +80,22 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   const saveAction = async () => {
     let tempArr;
 
-    const convertStringToArray = (input:string) => {
+    const convertStringToArray = (input: string) => {
       const jsonArray = JSON.parse(input);
-  
-      const resultArray = jsonArray.map((item:string) => {
+
+      const resultArray = jsonArray.map((item: string) => {
         return item;
       });
-  
-      return resultArray;
-    }
 
-    const updateActionThenByName = (array: IActions[], name:string, oldThen:string, newThen:string) => {
+      return resultArray;
+    };
+
+    const updateActionThenByName = (
+      array: IActions[],
+      name: string,
+      oldThen: string,
+      newThen: string
+    ) => {
       const updatedArray = array.map((action) => {
         if (action.name === name && getIsCreateNewThenFromCookie === "false") {
           const updatedThen =
@@ -123,21 +130,20 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
       const tempArrCookie = getActionThanArrCookie
         ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
         : [];
-    
+
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-    
-      const updatedTempArrCookie = tempArrCookie.map((item:string) =>
+
+      const updatedTempArrCookie = tempArrCookie.map((item: string) =>
         item === originalMetaFunction ? metaDataToAdd : item
       );
 
-    
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
-    
+
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
 
@@ -190,13 +196,13 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   useEffect(() => {
     setImgSourceError(false);
     setIsPreview(false);
-    
-    imgSource !== "" && setMetaData(convertMetaData(imgSource))
+
+    imgSource !== "" && setMetaData(convertMetaData(imgSource));
   }, [imgSource]);
   return (
     <>
       {props.transformType !== "dynamic" && (
-        <div>
+        <div className="px-8 flex flex-col">
           <ActionHeader
             type="then"
             actionName={props.actionName}
@@ -207,80 +213,88 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
             handleTransformTypeChange={props.handleTransformTypeChange}
           />
           {props.transformType === "static" && (
-            <div className="h-[full] w-[50vw] border rounded-2xl p-8 bg-white m-auto mt-4">
-              <h2 className="text-[#44498D] font-semibold">Image path</h2>
-              <div className="flex items-center gap-x-4">
-                <input
-                  id="1"
-                  type="text"
-                  autoFocus
-                  className="ml-2 my-2 rounded-sm bg-[#F5F6FA] text-[#3980F3] text-[14px] border-[1px] border-[#3980F3] focus:border-[#3980F3] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-full h-[40px]"
-                  placeholder={
-                    "Input your image url example: https://techsauce-nft.sixprotocol.com/techsauce/1.png"
-                  }
-                  value={valueInput}
-                  onChange={async (e) => {
-                    onChange(e);
-                  }}
-                />
-                <Button
-                  colorScheme="blue.500"
-                  borderColor={"blue.500"}
-                  color={"blue.500"}
-                  variant="outline"
-                  mr={3}
-                  _hover={{ borderColor: "blue.500", color: "blue.500" }}
-                  onClick={() => setIsPreview(true)}
-                >
-                  Preview
-                </Button>
-              </div>
-              <div className="flex flex-col justify-center items-start">
-                <h2 className="text-[#44498D] font-semibold">Preview</h2>
-                <div className="h-60 my-4">
-                  {isPreview && imgSource !== "" && imgSource !== null && (
-                    <div
-                      className={`h-full ${
-                        imgSourceError
-                          ? ""
-                          : "rounded-lg border-2 overflow-hidden"
-                      }`}
-                    >
-                      {imgSourceError ? (
-                        <div className="flex items-center justify-center h-full">
-                          <p className="text-red-500">
-                            Image couldn&apos;t be loaded
-                          </p>
-                        </div>
-                      ) : (
-                        <img
-                          src={imgSource}
-                          alt="preview-image"
-                          className="w-full h-full"
-                          onLoad={() => setImgSourceError(false)}
-                          onError={() => setImgSourceError(true)}
-                        />
-                      )}
-                    </div>
-                  )}
+            <div className="w-fit m-auto">
+              <div className="h-[full] w-[50vw] border rounded-2xl p-8 bg-white mt-4">
+                <h2 className="text-main2 font-semibold">Image path</h2>
+                <div className="flex items-center gap-x-4">
+                  <input
+                    id="1"
+                    type="text"
+                    autoFocus
+                    className="ml-2 my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
+                    placeholder={
+                      "Input your image url example: https://techsauce-nft.sixprotocol.com/techsauce/1.png"
+                    }
+                    value={valueInput}
+                    onChange={async (e) => {
+                      onChange(e);
+                    }}
+                  />
+                  <Button
+                    colorScheme="blue.500"
+                    borderColor={"blue.500"}
+                    color={"blue.500"}
+                    variant="outline"
+                    mr={3}
+                    _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                    onClick={() => setIsPreview(true)}
+                  >
+                    Preview
+                  </Button>
                 </div>
+                <div className="flex flex-col justify-center items-start">
+                  <h2 className="text-main2 font-semibold">Preview</h2>
+                  <div className="h-60 my-4">
+                    {isPreview && imgSource !== "" && imgSource !== null && (
+                      <div
+                        className={`h-full ${
+                          imgSourceError
+                            ? ""
+                            : "rounded-lg border-2 overflow-hidden"
+                        }`}
+                      >
+                        {imgSourceError ? (
+                          <div className="flex items-center justify-center h-full">
+                            <p className="text-red-500">
+                              Image couldn&apos;t be loaded
+                            </p>
+                          </div>
+                        ) : (
+                          <img
+                            src={imgSource}
+                            alt="preview-image"
+                            className="w-full h-full"
+                            onLoad={() => setImgSourceError(false)}
+                            onError={() => setImgSourceError(true)}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-x-8 mt-4">
                 <Link
                   href={
                     isCreateNewActionCookie === "true"
-                    ? "/actions/action-form/create-new-action"
-                    : `/actions/action-form/${props.actionName}`
+                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
                   }
                 >
-                  <div
-                    className="flex justify-center"
-                    onClick={async () => {
-                      await saveAction();
-                    }}
-                  >
-                    save
-                  </div>
+                  <CancelButton />
                 </Link>
-                <button onClick={() => console.log()}>loggerx</button>
+                <Link
+                  href={
+                    isCreateNewActionCookie === "true"
+                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+                  }
+                  onClick={async () => {
+                    await saveAction();
+                  }}
+                >
+                  <SaveButton />
+                </Link>
               </div>
             </div>
           )}

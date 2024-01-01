@@ -125,9 +125,9 @@ export default function Flowbar(props: MetaDataProps) {
         <div className="flex">
           <div className="flex flex-col">
 
-          <span className="text-sm font-bold text-[#44498D]">Operator</span>
+          <span className="text-sm font-bold text-main2">Operator</span>
           <div className="flex ">
-            <div className="flex flex-col border-r border-[#3980F3] pr-2">
+            <div className="flex flex-col border-r border-Act6 pr-2">
               <Menu
                 nodeName="andNode"
                 title="AND"
@@ -180,7 +180,7 @@ export default function Flowbar(props: MetaDataProps) {
         </div>
         <div className="flex">
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-[#44498D]">Operand</span>
+            <span className="text-sm font-bold text-main2">Operand</span>
             <div className="flex">
               <Menu
                 nodeName="valueNode"
@@ -202,9 +202,9 @@ export default function Flowbar(props: MetaDataProps) {
         </div>
         <div className="flex">
           <div className="flex flex-col">
-          <span className="text-sm font-bold text-[#44498D]">AI Generate</span>
+          <span className="text-sm font-bold text-main2">AI Generate</span>
           <button
-            className="px-4 flex items-center justify-center rounded-md border border-[#3980F3] text-lg hover:scale-110 duration-300 text-[#3980F3]"
+            className="px-4 flex items-center justify-center rounded-md border border-Act6 text-lg hover:scale-110 duration-300 text-Act6"
             onClick={onOpen}
           >
             <Image src={GenerateGPTimg} alt="generate-icon" width={20} />

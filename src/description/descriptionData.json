@@ -1,0 +1,95 @@
+{
+    "/home": [
+      {
+        "title": "Choose your collection",
+        "description": "Create new integration, modify existing draft or manage collection which already in production."
+      }
+    ],
+    "/aboutgen2": [
+      {
+        "title": "About Data Layer NFT Gen 2",
+        "description": "Briefly explain about NFT Gen 2, the first data layer in SIX Protocol"
+      }
+    ],
+    "/class": [
+      {
+        "title": "What is your level of programming experience?",
+        "description": "The user interface of the page will be tailored to your programming experience. Based on your selection, whether you are a beginner, intermediate, or a developer, we will customize the interface to provide you with the most suitable tools and features that align with your level of experience."
+      }
+    ],
+    "/newdraft/1": [
+      {
+        "title": "Schema Code",
+        "description": "A schema code serves as an identifier for your Gen 2 NFT definition. It can be in a formatted or free-text format.In the case of a formatted code, the initial set of characters before the full stop (\".\") represents your organization code. This organization code is unique to you and enables you to create other schemas using the same code."
+      },
+      {
+        "title": "Collection Name",
+        "description": "The term \"Collection name\" is exclusively used within the SIX Protocol Ecosystem (Gen2 Studio, SIX Scan, etc.) and does not refer to the actual collection name."
+      }
+    ],
+    "/newdraft/2": [
+      {
+        "title": "Origin Chain",
+        "description": "A Chain that your NFT was or going to be published."
+      },
+      {
+        "title": "Origin Contract Address",
+        "description": "A deployed contract address of your NFT (aka ERC721), this is not required now in draft version. But it will be required before you deploy on testnet and mainnet"
+      },
+      {
+        "title": "Origin Base URI",
+        "description": "An existing endpoint URL you use as NFT metadata. This is not required in case you plan to create all attributes in Gen 2"
+      }
+    ],
+    "/newdraft/3": [
+      {
+        "title": "Origin Token Attributes",
+        "description": ""
+      },
+      {
+        "title": "Description",
+        "description": "Origin attributes are metadata sourced from IPFS or any external storage, providing foundational information about the NFT. These attributes are typically static and shared among all tokens of a specific type."
+      },
+      {
+        "title": "Example",
+        "description": "Information like the original background image, description, or creator details could be part of origin attributes."
+      }
+    ],
+    "/newdraft/4": [
+      {
+        "title": "On-chain Collection Attributes",
+        "description": ""
+      },
+      {
+        "title": "Description",
+        "description": "Collection attributes are global properties defined at the schema level that are shared across all tokens within the same collection. These attributes provide a common set of characteristics for all tokens belonging to a specific collection."
+      },
+      {
+        "title": "Example",
+        "description": "Collection-wide features such as a shared background theme, overall color scheme, or global event details could be part of collection attributes."
+      }
+    ],
+    "/newdraft/6": [
+      {
+        "title": "Action Name",
+        "description": "Name: Descriptive identifier for the action and must be unique."
+      },
+      {
+        "title": "Description",
+        "description": "Brief explanation of what the action does."
+      },
+      {
+        "title": "Parameters",
+        "description": "Some action might require parameter to perform it."
+      },
+      {
+        "title": "When",
+        "description": ""
+      },
+      {
+        "title": "Then",
+        "description": ""
+      }
+    ]
+  }
+  

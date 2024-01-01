@@ -18,7 +18,7 @@ import "reactflow/dist/base.css";
 import { Factory } from "@/function/ConvertObjectToMetadata/Factory";
 import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
-import { IActions } from "@/type/Nftmngr"
+import { IActions } from "@/type/Nftmngr";
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
 import {
   getAccessTokenFromLocalStorage,
@@ -28,7 +28,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import ActionHeader from "@/components/ActionHeader";
-
+import SaveButton from "@/components/button/SaveButton";
+import CancelButton from "@/components/button/CancelButton";
 import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
 interface ThenAttributeFlowProps {
@@ -89,7 +90,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
-  const [metaData, setMetaData] = useState("please add item");
+  const [metaData, setMetaData] = useState("");
   const { setCenter, project } = useReactFlow();
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
@@ -102,6 +103,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
+  const schemacode = getCookie("schemaCode");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -136,8 +138,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       console.log("log herre", node);
       const nodeId = `${nodeIdCounter++}`;
       const outputNode = {
-        width: 128,
-        height: 57,
         id: nodeId,
         type: "customInputNode",
         position: { x: 0, y: parentPositionY },
@@ -154,8 +154,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       };
 
       const outputNode2 = {
-        width: 124,
-        height: 57,
         id: `${parseInt(nodeId) + 1}`,
         type: "customInputNode",
         position: { x: 0, y: parentPositionY + 150 },
@@ -184,7 +182,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       ) {
         outputNode.data.showType = "selectAttributeNode";
         outputNode.data.value = node.attributeName.value;
-        outputNode.width = 202;
         if (node.functionName === "SetNumber") {
           outputNode.data.dataType = "number";
         } else if (node.functionName === "SetString") {
@@ -780,17 +777,22 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const saveAction = async () => {
     let tempArr;
 
-    const convertStringToArray = (input:string) => {
+    const convertStringToArray = (input: string) => {
       const jsonArray = JSON.parse(input);
-  
-      const resultArray = jsonArray.map((item:string) => {
+
+      const resultArray = jsonArray.map((item: string) => {
         return item;
       });
-  
-      return resultArray;
-    }
 
-    const updateActionThenByName = (array: IActions[], name:string, oldThen:string, newThen:string) => {
+      return resultArray;
+    };
+
+    const updateActionThenByName = (
+      array: IActions[],
+      name: string,
+      oldThen: string,
+      newThen: string
+    ) => {
       const updatedArray = array.map((action) => {
         if (action.name === name && getIsCreateNewThenFromCookie === "false") {
           const updatedThen =
@@ -825,21 +827,20 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       const tempArrCookie = getActionThanArrCookie
         ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
         : [];
-    
+
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-    
-      const updatedTempArrCookie = tempArrCookie.map((item:string) =>
+
+      const updatedTempArrCookie = tempArrCookie.map((item: string) =>
         item === originalMetaFunction ? metaDataToAdd : item
       );
 
-    
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
-    
+
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
 
@@ -848,7 +849,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     setCookie("isEditAction", "true");
   };
 
-  const removeNodeSuffix = (input:string) => {
+  const removeNodeSuffix = (input: string) => {
     const suffixToRemove = "node";
     if (
       input.endsWith(suffixToRemove) &&
@@ -995,7 +996,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const handleNodesLeave = () => {};
 
   useEffect(() => {
-    const convertFromBase64 = (str:string) => {
+    const convertFromBase64 = (str: string) => {
       console.log("str: ", str);
       return atob(str);
     };
@@ -1037,8 +1038,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   }, [isGenerateGPT]);
 
   return (
-    <div className="flex justify-between px-8">
-      <div>
+    <div className="flex justify-between px-8 ">
+      <div className="flex flex-col">
         <div>
           <ActionHeader
             type="then"
@@ -1049,7 +1050,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             handleActionThenTypeChange={props.handleActionThenTypeChange}
             handleTransformTypeChange={props.handleTransformTypeChange}
           />
-          <div style={{ height: 536, width: 1000 }}>
+          <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
             <div ref={reactFlowWrapper} className="h-full">
               <ReactFlow
                 nodes={nodes}
@@ -1072,28 +1073,27 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-x-5 justify-center">
-          <div
-            className="flex justify-center"
-            onClick={() => console.log(props.metaFunction)}
-          >
-            Back
-          </div>
+        <div className="flex justify-end gap-x-8 mt-4">
           <Link
             href={
               isCreateNewActionCookie === "true"
-                ? "/actions/action-form/create-new-action"
-                : `/actions/action-form/${props.actionName}`
+                ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
             }
           >
-            <div
-              className="flex justify-center"
-              onClick={async () => {
-                await saveAction();
-              }}
-            >
-              Save
-            </div>
+            <CancelButton />
+          </Link>
+          <Link
+            href={
+              isCreateNewActionCookie === "true"
+                ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+            }
+            onClick={async () => {
+              await saveAction();
+            }}
+          >
+            <SaveButton />
           </Link>
         </div>
       </div>

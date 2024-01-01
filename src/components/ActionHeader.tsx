@@ -12,6 +12,7 @@ interface ActionHeaderProps {
 }
 
 const ActionHeader = (props: ActionHeaderProps) => {
+  console.log("log", props.actionThenType, ">", props.metaFunction);
   return (
     <>
       <div className="text-black flex items-center my-4">
@@ -26,7 +27,11 @@ const ActionHeader = (props: ActionHeaderProps) => {
             alignContent={"center"}
             onChange={(e) => props.handleActionThenTypeChange?.(e.target.value)}
             mx={4}
-            value={props.actionThenType === "create-new-then" ? "" : props.actionThenType}
+            value={
+              props.actionThenType === "create-new-then"
+                ? ""
+                : props.actionThenType
+            }
           >
             <option value="" disabled selected hidden>
               -- Plase select your action type --
@@ -52,10 +57,28 @@ const ActionHeader = (props: ActionHeaderProps) => {
           </Select>
         )}
       </div>
-      <div className="p-4 w-full max-h-14 overflow-scroll bg-gray-300 rounded-md text-[#3980F3]">
-        {props.metaFunction === "create-new-then" ? "please select your then action and add item" : props.metaFunction === "create-new-when" ? "please add item" :  props.metaFunction}
+      <div className="p-4 w-full max-h-14 overflow-scroll bg-gray-300 rounded-md text-Act6">
+        {props.metaFunction === "create-new-then" &&
+        props.actionThenType === "create-new-then"
+          ? "Please select your then action and add item"
+          : (props.actionThenType === "updateAttribute" ||
+              props.actionThenType === "transferNumber") &&
+            props.metaFunction === "create-new-then"
+          ? "Please add item"
+          : props.actionThenType === "transform" &&
+            props.transformType === "dynamic" &&
+            !props.metaFunction
+          ? "Please input your dynamic image path"
+          : props.actionThenType === "transform" &&
+            props.transformType === "static" &&
+            !props.metaFunction
+          ? "Please input your static image path"
+          : props.actionThenType === "transform" && !props.metaFunction
+          ? "Please select your transform type"
+          : props.metaFunction === "create-new-when"
+          ? "Please add item"
+          : props.metaFunction}
       </div>
-
     </>
   );
 };
