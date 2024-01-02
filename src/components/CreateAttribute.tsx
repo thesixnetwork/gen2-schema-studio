@@ -27,6 +27,7 @@ import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
 import CheckErrorI from "@/utils/checkError";
 
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 // import { Button, ButtonGroup } from '@chakra-ui/react'
 
@@ -43,12 +44,13 @@ const CreateAttribute: React.FC<{
   isAttributes,
   setOnCreate,
   isState,
-  onCreate,
+  // onCreate,
   schemacode,
 }) => {
   // console.log(onEdit)
   const { data: session } = useSession();
   const [errorMessage, setErrorMessage] = useState("");
+  const [haveError, setHaveError] = useState(false);
 
   const [newAttributes, setNewAttributes] = useState<ItokenAttributes>({
     name: "",
@@ -108,20 +110,32 @@ const CreateAttribute: React.FC<{
     if (element) {
       if (error) {
         element.style.borderColor = "red";
+        setHaveError(true);
       } else {
-        element.style.borderColor = "#DADEF2"; // Set it to an empty string to remove the border color
+        element.style.borderColor = "#DADEF2";
+        setHaveError(false);
       }
     }
     return;
   };
 
-  const cancleCreate = () => {
-    setOnCreate(false);
+  const cancleCreate = async () => {
+    const isConfirm = await ConfirmModal(
+      "There are some edits that haven't been saved yet. Do you want to Cancle ?",
+      "Cancle"
+    );
+    if(isConfirm){
+      setOnCreate(false);
+    }
     return;
   }
 
   const handleSave = async () => {
     if(errorMessage){
+      await ConfirmModal(
+        errorMessage,
+        "Error"
+      );
       console.log("Have error validate")
       return;
     }
@@ -149,29 +163,34 @@ const CreateAttribute: React.FC<{
         current_state: "5"
       },
     };
-    console.log(requestData)
+    // console.log(requestData)
     
-    try {
-      const req = await axios.post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-        },
-      });
-      const res = req.data;
-      console.log(res)
-
-      if (res.statusCode === "V:0001") {
-        setOnCreate(false);
-        
-        return;
-      } else {
-        return;
+    const isConfirmed = await ConfirmModal(
+      "Are you sure to Save ?",
+      "Save"
+    );
+    if(isConfirmed){
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        // console.log(res)
+  
+        if (res.statusCode === "V:0001") {
+          setOnCreate(false);
+          
+          return;
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.log("error ", error)
       }
-    } catch (error) {
-      console.log("error ", error)
     }
-
     // setOnCreate(false);
   };
 
@@ -260,7 +279,7 @@ const CreateAttribute: React.FC<{
         };
       }
       if (newAttributes.data_type === "boolean") {
-        console.log("value ==>", value);
+        // console.log("value ==>", value);
         default_mint_value = {
           boolean_attribute_value: {
             value: value === "false" ? false : Boolean(value),

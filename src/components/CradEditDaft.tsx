@@ -27,6 +27,9 @@ import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
 import CheckErrorI from "@/utils/checkError";
 
+import { ConfirmModal } from "@/components/ConfirmModal";
+
+
 // import { Button, ButtonGroup } from '@chakra-ui/react'
 
 const CaradEditDaft: React.FC<{
@@ -259,17 +262,28 @@ const CaradEditDaft: React.FC<{
     return;
   };
 
-  const cancleEdit = () => {
-    setOnEdit(false);
+  const cancleEdit = async () => {
+    const isConfirm = await ConfirmModal(
+      "There are some edits that haven't been saved yet. Do you want to Cancle ?",
+      "Cancle"
+    );
+    if(isConfirm){
+      setOnEdit(false);
+    }
     return;
   }
 
   // console.log("isAttributes", isAttributes)
   const handleSave = async () => {
     if(errorMessage){
+      await ConfirmModal(
+        errorMessage,
+        "Error"
+      );
       console.log("Have error validate")
       return;
     }
+
     isAttributes[indexEdit] = newAttributes;
     let onchain_data;
     const apiUrl = `${ENV.Client_API_URL}/schema/set_schema_info`;
@@ -295,27 +309,32 @@ const CaradEditDaft: React.FC<{
     };
     console.log(requestData);
 
-    try {
-      const req = await axios.post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-        },
-      });
-      const res = req.data;
-      console.log(res);
-
-      if (res.statusCode === "V:0001") {
-        setOnEdit(false);
-
-        return;
-      } else {
-        return;
+    const isConfirmed = await ConfirmModal(
+      "Are you sure to Save ?",
+      "Save"
+    );
+    if(isConfirmed){
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        console.log(res);
+  
+        if (res.statusCode === "V:0001") {
+          setOnEdit(false);
+  
+          return;
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.log("error ", error);
       }
-    } catch (error) {
-      console.log("error ", error);
     }
-
     // setOnCreate(false);
   };
 

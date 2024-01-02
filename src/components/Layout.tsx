@@ -12,6 +12,7 @@ import HomeNavBar from "@/components/HomeNavbar";
 import HomeSidebar from "@/components/HomeSidebar";
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from "@/helpers/AuthService";
 import CloseDetailButton from "./CloseDetailButton";
+import Loading from "./Loading";
 
 export default function Layout({
     children,
@@ -57,12 +58,12 @@ export default function Layout({
                 },
             })
                 .then(response => {
-                    console.log('API Response from refresh :', response.data);
+                    // console.log('API Response from refresh :', response.data);
                     saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
                     const accessToken = getAccessTokenFromLocalStorage();
                     const refreshToken = getRefreshTokenFromLocalStorage();
-                    console.log("New Access: ", accessToken)
-                    console.log("New Refresh: ", refreshToken)
+                    // console.log("New Access: ", accessToken)
+                    // console.log("New Refresh: ", refreshToken)
                     setRefreshTokenNumber(refreshTokenNumber + 1)
                 })
                 .catch(error => {
@@ -87,12 +88,12 @@ export default function Layout({
                     <div className=" w-full">
                         <HomeNavBar />
                     </div>
-                    <div className=" w-[95%] min-h-[75vh] pt-20">
+                    <div className=" w-[95%] min-h-[75vh]">
                         <Flex bgColor="" width={"100%"} height={"100%"} className="" >
                             <Box className=" duration-500" bgColor="" ref={boxRef} width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
                             </Box>
-                            <Flex className=" duration-500" width={isSideBarShow ? "22%" : "0%"} height={"20%"} position="relative" >
+                            <Flex className=" duration-500" width={isSideBarShow ? "22%" : "0%"} height={"20%"} position="relative" marginTop={24} >
                                 <div onClick={closeSidebar} className={` absolute top-[-2%] left-0`} >
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>

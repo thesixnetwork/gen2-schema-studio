@@ -1,7 +1,5 @@
 import React from 'react'
 import Image from 'next/image';
-import p from '../../public/pic/Help_Icon.png'
-import HelpButton from '@/components/HelpButton';
 import ConnectButton from '@/components/ConnectButton';
 import HomeFooter from '@/components/HomeFooter';
 import Loading from '@/components/Loading';
@@ -14,7 +12,6 @@ function connectPage({ }: Props) {
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-bg  '>
-               {/* <Loading></Loading> */}
                 <div className='absolute flex top-[25%] z-10'>
                     <Image src='/pic/Logo_Gen2studio.png' alt={''} width={500} height={500}></Image>
                 </div>

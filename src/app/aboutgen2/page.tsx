@@ -1,13 +1,16 @@
+'use client';
 import React from 'react'
 import layer_pic from '../../../public/pic/layer_pic.png'
 import Image from 'next/image'
 import NextPageButton from '@/components/NextPageButton'
 import BackPageButton from '@/components/BackPageButton'
+import { useRouter } from 'next/navigation'
 type Props = {}
 
 function page({ }: Props) {
+    const router = useRouter();
     return (
-        <div className=" w-full h-full min-h-[75vh] p-10 flex flex-col justify-between items-center ">
+        <div className=" w-full h-full min-h-[75vh] p-10 flex flex-col justify-between items-center py-10">
             <div className=' px-[10%] w-full flex items-center justify-between'>
                 <div className='w-48 h-48 bg-2nd4 rounded-lg border border-Act6 flex justify-center items-center'>
                     <h1 className=' text-6xl text-Act6 font-thin'>NFT</h1>
@@ -31,8 +34,12 @@ function page({ }: Props) {
                 </p>
             </div>
             <div className=' w-[90%] h-20 flex justify-between items-center'>
-                <BackPageButton></BackPageButton>
-                <NextPageButton></NextPageButton>
+                <div onClick={() => { router.push(`/class`, { scroll: false }) }}>
+                    <BackPageButton></BackPageButton>
+                </div>
+                <div onClick={() => { router.push(`/newdraft/1/newintegration`, { scroll: false }) }}>
+                    <NextPageButton></NextPageButton>
+                </div>
             </div>
         </div>
     )

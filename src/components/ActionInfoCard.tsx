@@ -13,10 +13,10 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
   console.log("props name", props.name);
   const schemacode = getCookie("schemaCode");
   return (
-    <Link href={`/newdraft/6/${schemacode}/action-form/${props.name}`}>
       <div className="text-black w-96 border rounded-xl p-4 relative bg-white">
+    <Link href={`/newdraft/6/${schemacode}/action-form/${props.name}`}>
         <div
-          className="border border-red-600 rounded-full h-4 w-4 flex items-center justify-center text-red-600 text-xs absolute right-2 top-2 hover:scale-110 duration-300 cursor-pointer"
+          className="z-20 border border-red-600 rounded-full h-4 w-4 flex items-center justify-center text-red-600 text-xs absolute right-2 top-2 hover:scale-110 duration-300 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             props.handleDelete(props.index);
@@ -58,8 +58,8 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
             )}
           </div>
         </div>
-      </div>
     </Link>
+      </div>
   );
 };
 

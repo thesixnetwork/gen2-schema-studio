@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Select } from "@chakra-ui/react";
-
+import Stepmenu from "@/components/Stepmenu";
+import { getCookie } from "@/service/getCookie";
 interface ActionHeaderProps {
   type: string;
   metaFunction: string;
@@ -12,9 +13,12 @@ interface ActionHeaderProps {
 }
 
 const ActionHeader = (props: ActionHeaderProps) => {
-  console.log("log", props.actionThenType, ">", props.metaFunction);
+  const schemaCode = getCookie("schemaCode") ?? "";
   return (
-    <>
+    <div>
+      <header>
+        <Stepmenu schemacode={schemaCode} currentStep={6}></Stepmenu>
+      </header>
       <div className="text-black flex items-center my-4">
         <h6>
           Action: <span className="font-semibold">{props.actionName}</span> |{" "}
@@ -79,7 +83,7 @@ const ActionHeader = (props: ActionHeaderProps) => {
           ? "Please add item"
           : props.metaFunction}
       </div>
-    </>
+    </div>
   );
 };
 

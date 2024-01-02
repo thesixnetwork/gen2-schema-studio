@@ -25,6 +25,7 @@ import BackPageButton from "@/components/BackPageButton";
 import { setCookie } from "@/service/setCookie";
 import { ItokenAttributes } from "@/type/Nftmngr";
 import { INftAttributes } from "@/type/Nftmngr";
+import Stepmenu from "@/components/Stepmenu";
 
 const Page = ({ params }: { params: { schemacode: string } }) => {
   const [action, setAction] = useState<Array<any>>([]);
@@ -119,25 +120,12 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
     <>
       {loading && <Loading />}
 
-      <>
+      <div className="py-10">
         <header>
-          <Flex p={10} flexWrap={"wrap"}>
-            <Text
-              color="#44498D"
-              fontFamily="Montserrat"
-              fontSize="32px"
-              fontStyle="normal"
-              fontWeight="400"
-              lineHeight="normal"
-            >
-              {schemacode}
-            </Text>
-            <Divider borderColor={"brand"} />
-            <TapState isCurren={6} schemaCode={schemacode} />
-          </Flex>
+          <Stepmenu schemacode={schemacode} currentStep={6}></Stepmenu>
         </header>
         <section>
-          <div className="grid gap-y-8 grid-cols-2 md:grid-cols-3 justify-items-center my-12">
+          <div className="grid gap-y-8 grid-cols-2 md:grid-cols-3 justify-items-center my-12 ">
             {action !== undefined &&
               action.map((item, index) => (
                 <div key={index}>
@@ -163,7 +151,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
             </Link>
           </div>
         </section>
-      </>
+      </div>
     </>
   );
 };

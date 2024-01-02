@@ -17,6 +17,7 @@ function HomeDraftCard(props: Props) {
             try {
                if(props.CollectionImage){
                 await axios.get(props.CollectionImage).then((res) => {
+                    console.log(res)
                     setImgUrl(res.data.image);
                     setLoading(false);
                 });
@@ -36,11 +37,11 @@ function HomeDraftCard(props: Props) {
         <div className=' w-draftCardWidth h-draftCardHeight  rounded-2xl bg-gradient-24 from-Act7 via-bg to-Act7 p-[0.08rem] hover:scale-105 duration-500 cursor-pointer'>
             <div className=' w-full h-full rounded-2xl bg-bg p-3 flex flex-col  items-center'>
                 {props.CollectionImage === "" ?
-                    <div>
-                        <p>NO Image</p>
+                    <div className=' h-[50%] flex justify-center items-center'>
+                        <p className=' text-main2'>NO Image</p>
                     </div>
                     :   
-                    <img className=' w-40 mb-1' src={imgUrl} alt={''} width={10} height={10}></img>
+                    <img className=' w-40 h-40 mb-1' src={imgUrl} alt={''} ></img>
                 }
                 <div className=' w-full h-[0.08rem] bg-Act7 '></div>
                 <div className=' text-main2 w-full relative mt-3 '>
