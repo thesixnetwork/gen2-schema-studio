@@ -60,7 +60,7 @@ export default function Page({
   return (
     <>
       {isDaft && !loading && (
-        <Flex p={10} flexWrap={"wrap"}>
+        <Flex  flexWrap={"wrap"}>
           {/* <Text
             color="#44498D"
             fontFamily="Montserrat"
@@ -74,7 +74,7 @@ export default function Page({
           <Divider borderColor={"brand"} />
           <TapState isCurren={5} schemaCode={schemacode} /> */}
            <Stepmenu schemacode={schemaCode} currentStep={5}></Stepmenu>
-          <Box p={6}>
+          <Box>
             <CradNewDaft
               isDaft={isDaft}
               isState={5}

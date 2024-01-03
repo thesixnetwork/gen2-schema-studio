@@ -38,9 +38,9 @@ function Stepmenu(props: Props) {
   ];
 
   return (
-    <div className=" w-full h-full duration-300">
+    <div className=" w-full h-full duration-300 relative">
       {props.schemacode !== "" && props.schemacode !== null && (
-        <div className=" h-20 flex justify-start items-end">
+        <div className=" h-20 min-h-20 w-full flex justify-start items-end absolute top-[-5rem] left-2">
           <p className=" mb-4 text-main2 text-3xl duration-300">
             {props.schemacode}
           </p>

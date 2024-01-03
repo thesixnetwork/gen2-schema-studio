@@ -163,7 +163,7 @@ export default function Page({
     return (
         <>
             {/* {isLoading && <Loading></Loading>} */}
-            <div className=" w-full h-full min-h-[75vh] flex flex-col justify-between items-center py-10">
+            <div className=" w-full h-full min-h-[67vh] flex flex-col justify-between items-center pb-10 ">
                 <Stepmenu schemacode={schemaCode} currentStep={1}></Stepmenu>
                 <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode} loading={isLoadingFindSchemaCode}></InputCardOneLine>
                 <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} loading={false} ></InputCardOneLine>

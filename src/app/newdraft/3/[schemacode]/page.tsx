@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { tree } from "next/dist/build/templates/app-page";
 import Loading from "@/components/Loading";
 import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
+import AttributeCardAndDelete from "@/components/state3/AttributeCardAndDelete";
 
 export default function Page({
     params: { schemacode },
@@ -98,7 +99,7 @@ export default function Page({
 
     useEffect(() => {
         // if () {
-            getAttribute()
+        getAttribute()
         // }
 
     }, [contractAddres])
@@ -341,7 +342,7 @@ export default function Page({
             {/* {isLoadingSaveState3 &&
             <Loading></Loading>
         } */}
-            <div className=" w-full   flex flex-col justify-between items-center py-10">
+            <div className=" w-full   flex flex-col justify-between items-center ">
                 <Stepmenu schemacode={schemaCode} currentStep={3}></Stepmenu>
                 {isMain ?
                     <div className=" w-full h-[70vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
@@ -349,8 +350,8 @@ export default function Page({
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
                         {isDaft !== null && (isDaft.schema_info.origin_data.origin_attributes).map((item, index) => (
-                            <div>
-                                <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   " >
+                            <div >
+                                {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   " >
                                     <Image
                                         className='z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2'
                                         src={deleate_icon}
@@ -358,9 +359,17 @@ export default function Page({
                                         onClick={() => deleteAttribute(index)}
                                     ></Image>
                                     <div onClick={() => openSettingBar(item.name, item.data_type, item.display_option.opensea.trait_type, index)}>
-                                        <AttributeCard key={index} name={item.name} dataType={item.data_type} traitType={item.display_option.opensea.trait_type}></AttributeCard>
+                                        <AttributeCard name={item.name} dataType={item.data_type} traitType={item.display_option.opensea.trait_type} value={""}></AttributeCard>
                                     </div>
-                                </div>
+                                </div> */}
+                                <AttributeCardAndDelete
+                                    name={item.name}
+                                    dataType={item.data_type}
+                                    traitType={item.display_option.opensea.trait_type}
+                                    value={""}
+                                    onDelete={() => deleteAttribute(index)}
+                                    onSettingBarClick={() => openSettingBar(item.name, item.data_type, item.display_option.opensea.trait_type, index)}>
+                                </AttributeCardAndDelete>
                             </div>
                         ))}
                     </div>

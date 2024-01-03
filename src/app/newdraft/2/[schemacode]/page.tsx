@@ -121,7 +121,7 @@ export default function Page({
     return (
         <>
             {/* {isLoading && <Loading></Loading>} */}
-            <div className=" w-full h-full min-h-[110vh] flex flex-col justify-between items-center py-10">
+            <div className=" w-full h-full min-h-[110vh] flex flex-col justify-between items-center ">
                 <Stepmenu schemacode={schemaCode} currentStep={2}></Stepmenu>
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
                 <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x898bb3b662419e79366046C625A213B83fB4809B"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
