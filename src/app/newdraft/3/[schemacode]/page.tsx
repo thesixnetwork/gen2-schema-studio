@@ -20,6 +20,7 @@ import { saveState3 } from "@/postDataService/saveState3";
 import { useRouter } from 'next/navigation'
 import { tree } from "next/dist/build/templates/app-page";
 import Loading from "@/components/Loading";
+import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
 
 export default function Page({
     params: { schemacode },
@@ -32,6 +33,7 @@ export default function Page({
     const [isDaft, setIsDaft] = useState(null)
     const [name, setName] = useState("")
     const [schemaCode, setSchemaCode] = useState("")
+    const [contractAddres, setContractAddres] = useState("")
     const [traitType, setTraitType] = useState("")
     const [dataType, setDataType] = useState("")
     const [attributeIndex, setAttributeIndex] = useState(0)
@@ -48,6 +50,7 @@ export default function Page({
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
                 setIsDaft(schemaInfo)
+                setContractAddres(schemaInfo.schema_info.origin_data.origin_contract_address)
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
@@ -66,6 +69,42 @@ export default function Page({
     useEffect(() => {
         getDraftInfo()
     }, [isDaft])
+
+    const getAttribute = async () => {
+        if (contractAddres !== "" && contractAddres !== null) {
+            try {
+                const originAttribute = await getOriginAttributFromContract(contractAddres)
+                console.log("originAttribute", originAttribute)
+
+                // Assuming originAttribute is an array of attributes
+                const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes, ...originAttribute];
+                setIsDaft({
+                    ...isDaft,
+                    schema_info: {
+                        ...isDaft.schema_info,
+                        origin_data: {
+                            ...isDaft.schema_info.origin_data,
+                            origin_attributes: updatedAttributes,
+                        },
+                    },
+                });
+            } catch (error) {
+                // Handle errors
+                console.error('Error fetching data:', error);
+            }
+        }
+    }
+
+
+    useEffect(() => {
+        // if () {
+            getAttribute()
+        // }
+
+    }, [contractAddres])
+
+
+
 
     const handleInputChangeChaDataType = (value: string) => {
         setDataType(value);
@@ -298,8 +337,8 @@ export default function Page({
         console.log(isNewAttribute)
     }, [isNewAttribute])
     return (
-        <>  
-        {/* {isLoadingSaveState3 &&
+        <>
+            {/* {isLoadingSaveState3 &&
             <Loading></Loading>
         } */}
             <div className=" w-full   flex flex-col justify-between items-center py-10">

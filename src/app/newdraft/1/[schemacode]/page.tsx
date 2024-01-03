@@ -26,7 +26,7 @@ export default function Page({
     const router = useRouter()
     const { data: session } = useSession()
     console.log(session)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [isLoadingFindSchemaCode, setIsLoadingFindSchemaCode] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
     const [schemaCode, setSchemaCode] = useState("")
@@ -42,6 +42,7 @@ export default function Page({
                 const schemaInfo = await getSchemaInfo(schemacode);
                 console.log(schemaInfo)
                 setIsDaft(schemaInfo)
+                setIsLoading(false)
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors

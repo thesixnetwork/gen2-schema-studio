@@ -90,10 +90,10 @@ export default function Layout({
                     </div>
                     <div className=" w-[95%] min-h-[75vh]">
                         <Flex bgColor="" width={"100%"} height={"100%"} className="" >
-                            <Box className=" duration-500" bgColor="" ref={boxRef} width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
+                            <Box className=" duration-500 " bgColor="" ref={boxRef} width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
                             </Box>
-                            <Flex className=" duration-500" width={isSideBarShow ? "22%" : "0%"} height={"20%"} position="relative" marginTop={24} >
+                            <Flex className=" duration-500 mt-20" width={isSideBarShow ? "22%" : "0%"} height={"20%"} position="relative">
                                 <div onClick={closeSidebar} className={` absolute top-[-2%] left-0`} >
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>

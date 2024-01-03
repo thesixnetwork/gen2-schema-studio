@@ -40,11 +40,13 @@ function Stepmenu(props: Props) {
   return (
     <div className=" w-full h-full duration-300">
       {props.schemacode !== "" && props.schemacode !== null && (
-        <p className=" mb-4 text-main2 text-3xl duration-300">
-          {props.schemacode}
-        </p>
+        <div className=" h-20 flex justify-start items-end">
+          <p className=" mb-4 text-main2 text-3xl duration-300">
+            {props.schemacode}
+          </p>
+        </div>
       )}
-      <div className=" w-full h-32 flex justify-between border-t border-t-2nd4 duration-300">
+      <div className=" w-full h-20 flex justify-between border-t border-t-2nd4 duration-300">
         {stateDetail.map((stepDetail) => (
           <StepmenuBox
             key={stepDetail.state}
