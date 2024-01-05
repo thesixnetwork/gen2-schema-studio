@@ -24,6 +24,7 @@ import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
 import { useRouter } from 'next/navigation'
 import Stepmenu from "@/components/Stepmenu";
+import Loading from "@/components/Loading";
 
 // import { testFunc  } from './action'
 // import { cookies } from 'next/headers'
@@ -40,6 +41,7 @@ export default function Page({
   const [loading, setLoading] = useState(true);
   const router = useRouter()
   const [schemaCode, setSchemaCode] = useState("")
+  const [stepDraft, setStepDraft] = useState(4)
 
   useEffect(() => {
     (async () => {
@@ -47,6 +49,7 @@ export default function Page({
         const send = await getSchemaInfo(schemacode);
         setIsDaft(send);
         setSchemaCode(send.schema_info.code)
+        setStepDraft(send.current_state)
         setLoading(false);
         // Process the response or update state as needed
       } catch (error) {
@@ -60,7 +63,7 @@ export default function Page({
   return (
     <>
       {isDaft && !loading && (
-        <Flex  flexWrap={"wrap"}>
+        <Flex flexWrap={"wrap"}>
           {/* <Text
             color="#44498D"
             fontFamily="Montserrat"
@@ -73,7 +76,7 @@ export default function Page({
           </Text>
           <Divider borderColor={"brand"} />
           <TapState isCurren={5} schemaCode={schemacode} /> */}
-           <Stepmenu schemacode={schemaCode} currentStep={5}></Stepmenu>
+          <Stepmenu schemacode={schemaCode} currentStep={5} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
           <Box>
             <CradNewDaft
               isDaft={isDaft}
@@ -89,7 +92,7 @@ export default function Page({
               <BackPageButton></BackPageButton>
             </div>
             <div onClick={() => { router.push(`/newdraft/6/${schemacode}`, { scroll: false }) }} >
-              <NextPageButton></NextPageButton>
+              <NextPageButton loading={false}></NextPageButton>
             </div>
           </Flex>
         </Flex>
@@ -102,31 +105,7 @@ export default function Page({
       )}
 
       {loading && !isDaft && (
-        <Flex p={10} flexWrap={"wrap"}>
-          <Text
-            color="#44498D"
-            fontFamily="Montserrat"
-            fontSize="32px"
-            fontStyle="normal"
-            fontWeight="400"
-            lineHeight="normal"
-          >
-            {schemacode}
-          </Text>
-          <Divider borderColor={"brand"} />
-          <TapState isCurren={5} schemaCode={schemacode} />
-          {Array.from({ length: 8 }).map((_, index) => (
-            <Skeleton
-              key={index}
-              margin="10px"
-              maxW="200px"
-              bgColor="#F5F6FA"
-              width="200px"
-              height="265px"
-              borderRadius="8px"
-            ></Skeleton>
-          ))}
-        </Flex>
+        <Loading></Loading>
       )}
     </>
   );

@@ -3,6 +3,8 @@ import StepmenuBox from "./StepmenuBox";
 type Props = {
   schemacode: string;
   currentStep: number;
+  schemacodeNavigate:string;
+  stepDraft: number;
 };
 
 function Stepmenu(props: Props) {
@@ -53,8 +55,7 @@ function Stepmenu(props: Props) {
             step={stepDetail.state}
             stepName={stepDetail.text}
             currentStep={props.currentStep}
-            schemaCode={props.schemacode}
-          ></StepmenuBox>
+            schemaCode={props.schemacodeNavigate} stepDraft={props.stepDraft}          ></StepmenuBox>
         ))}
       </div>
     </div>

@@ -43,6 +43,8 @@ export default function Page({
     const [errorMessageTraitType, setErrorMessageTraitType] = useState("")
     const [errorMessageName, setErrorMessageName] = useState("")
     const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const [stepDraft, setStepDraft] = useState(2)
     const router = useRouter()
 
 
@@ -52,6 +54,7 @@ export default function Page({
                 const schemaInfo = await getSchemaInfo(schemacode);
                 setIsDaft(schemaInfo)
                 setContractAddres(schemaInfo.schema_info.origin_data.origin_contract_address)
+                setIsLoading(false)
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
@@ -64,6 +67,7 @@ export default function Page({
         if (isDaft !== "" && isDaft !== null) {
             console.log("isDaft:", isDaft)
             setSchemaCode(isDaft.schema_info.code)
+            setStepDraft(isDaft.current_state)
         }
     }
 
@@ -339,13 +343,13 @@ export default function Page({
     }, [isNewAttribute])
     return (
         <>
-            {/* {isLoadingSaveState3 &&
-            <Loading></Loading>
-        } */}
+            {isLoading &&
+                <Loading></Loading>
+            }
             <div className=" w-full   flex flex-col justify-between items-center ">
-                <Stepmenu schemacode={schemaCode} currentStep={3}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={3} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
                 {isMain ?
-                    <div className=" w-full h-[70vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
+                    <div className=" w-full h-[67vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
                         <div onClick={() => { createNewAttribute() }}>
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
@@ -375,10 +379,12 @@ export default function Page({
                     </div>
 
                     :
-                    <div className=" w-full h-full min-h-[70vh] flex flex-col justify-between items-center">
-                        <InputCardOneLine title={"Name"} require={true} placeholder={"Add attribute name"} validate={validateStateName} errorMassage={errorMessageName} value={name} onChange={handleInputChangeName} loading={false} ></InputCardOneLine>
-                        <InputSelectCard title={"Data type"} require={true} value={dataType} onChange={handleInputChangeChaDataType}></InputSelectCard>
-                        <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} loading={false} ></InputCardOneLine>
+                    <div className=" w-full h-full  flex flex-col  items-center">
+                        <div className=" w-full h-full min-h-[60vh] flex flex-col justify-between items-center p-10">
+                            <InputCardOneLine title={"Name"} require={true} placeholder={"Add attribute name"} validate={validateStateName} errorMassage={errorMessageName} value={name} onChange={handleInputChangeName} loading={false} ></InputCardOneLine>
+                            <InputSelectCard title={"Data type"} require={true} value={dataType} onChange={handleInputChangeChaDataType}></InputSelectCard>
+                            <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} loading={false} ></InputCardOneLine>
+                        </div>
                         <div className=" w-full flex justify-end items-center">
                             <div onClick={() => { canCel() }}>
                                 <CancelButton></CancelButton>
@@ -396,7 +402,7 @@ export default function Page({
                             <BackPageButton></BackPageButton>
                         </div>
                         <div onClick={() => { save_state3() }} >
-                            <NextPageButton></NextPageButton>
+                            <NextPageButton loading={isLoadingSaveState3}></NextPageButton>
                         </div>
                     </div>
                 }

@@ -10,6 +10,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
 import { useRouter } from 'next/navigation'
+import Loading from './Loading';
 type Props = {}
 
 export default function HomeCard({ }: Props) {
@@ -17,6 +18,8 @@ export default function HomeCard({ }: Props) {
     const items = ['Draft', 'Live', 'Testnet'];
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading2, setIsLoading2] = useState(true)
     const getListDraft = async () => {
         const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
         const params = {};
@@ -30,7 +33,7 @@ export default function HomeCard({ }: Props) {
                 params: params,
                 headers: headers,
             });
-            console.log("list :",response.data.data.sesstion);
+            console.log("list :", response.data.data.sesstion);
             setListdraft(response.data.data.sesstion);
             // return response.data.data.sesstion;
 
@@ -41,11 +44,25 @@ export default function HomeCard({ }: Props) {
     }
 
     useEffect(() => {
-        getListDraft()
-    }, [])
+        const fetchData = async () => {
+            try {
+                
+                await getListDraft();
+                setIsLoading(false);
+            } catch (error) {
+                // Handle errors here
+                console.error("Error fetching data:", error);
+                setIsLoading(false);
+            }
+        };
+    
+        fetchData();
+    }, []);
 
     return (
         <div>
+            { isLoading && <Loading></Loading>
+            }
             {items.map((item, index) => (
                 <div className=' flex flex-col'>
                     <div className=' w-full h-10 flex justify-center items-center relative'>

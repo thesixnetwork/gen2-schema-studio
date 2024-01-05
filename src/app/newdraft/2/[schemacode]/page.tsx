@@ -32,7 +32,8 @@ export default function Page({
     const [originBaseURI, setOriginBaseURI] = useState("")
     const [isLoadingGetBaseURI, setIsLoadingGetBaseURI] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-
+    const [isLoadingSave, setIsLoadingSave] = useState(false)
+    const [stepDraft, setStepDraft] = useState(1)
 
     useEffect(() => {
         (async () => {
@@ -55,6 +56,7 @@ export default function Page({
             setSchemaCode(isDaft.schema_info.code)
             setOriginBaseURI(isDaft.schema_info.origin_data.origin_base_uri)
             setOriginContractAddress(isDaft.schema_info.origin_data.origin_contract_address)
+            setStepDraft(isDaft.current_state)
         }
     }
 
@@ -80,11 +82,11 @@ export default function Page({
     };
 
     const save_state2 = async () => {
-        setIsLoading(true)
+        setIsLoadingSave(true)
         const saveState2_status = await saveState2(originContractAddress, originBaseURI, schemacode)
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
-        setIsLoading(false)
+        setIsLoadingSave(false)
     }
 
     const backPage = () => {
@@ -120,9 +122,9 @@ export default function Page({
 
     return (
         <>
-            {/* {isLoading && <Loading></Loading>} */}
+            {isLoading && <Loading></Loading>}
             <div className=" w-full h-full min-h-[110vh] flex flex-col justify-between items-center ">
-                <Stepmenu schemacode={schemaCode} currentStep={2}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={2} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
                 <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x898bb3b662419e79366046C625A213B83fB4809B"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
                 <InputToggleCard title={"Chain Type"} require={true} chainIndex={chainTypeIndex} onChangeChainIndex={handleInputChangeChainTypeIndex}></InputToggleCard>
@@ -132,7 +134,7 @@ export default function Page({
                         <BackPageButton></BackPageButton>
                     </div>
                     <div onClick={save_state2}>
-                        <NextPageButton></NextPageButton>
+                        <NextPageButton loading={isLoadingSave}></NextPageButton>
                     </div>
                 </div>
             </div>

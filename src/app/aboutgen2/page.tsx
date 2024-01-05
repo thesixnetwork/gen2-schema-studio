@@ -5,6 +5,7 @@ import Image from 'next/image'
 import NextPageButton from '@/components/NextPageButton'
 import BackPageButton from '@/components/BackPageButton'
 import { useRouter } from 'next/navigation'
+import About_Gen2_Bg from '../../../public/pic/about_gen2_bg.png'
 type Props = {}
 
 function page({ }: Props) {
@@ -20,9 +21,13 @@ function page({ }: Props) {
                     <Image src={layer_pic} alt={''} ></Image>
                 </div>
                 <div className='text-Act6 text-5xl font-thin'>=</div>
-                <div className=' w-48 h-48  bg-2nd4 bg-opacity-70 rounded-lg  flex flex-col justify-center items-center'>
-                    <h1 className=' text-6xl text-Act6 font-thin'>NFT</h1>
-                    <div className='  absolute mt-32    w-20 h-6 bg-transparent rounded-lg border border-Act6 flex justify-center items-center'>
+                <div className='  flex flex-col justify-center items-center'>
+                    <div className=' w-40 h-40 bg-white  opacity-60 z-10 absolute  rounded-lg '></div>
+                    <div className=' w-64 h-64 absolute z-0'>
+                        <Image src={About_Gen2_Bg} alt={''}></Image>
+                    </div>
+                    <h1 className=' text-6xl text-Act6 font-thin z-10'>NFT</h1>
+                    <div className=' absolute mt-32 w-20 h-6 bg-transparent rounded-lg border border-Act6 flex justify-center items-center z-10'>
                         <h1 className=' text-lg text-Act6 '>Gen2</h1>
                     </div>
                 </div>

@@ -27,6 +27,7 @@ export default function Page({
     const { data: session } = useSession()
     console.log(session)
     const [isLoading, setIsLoading] = useState(true)
+    const [isLoadingNext, setIsLoadingNext] = useState(false)
     const [isLoadingFindSchemaCode, setIsLoadingFindSchemaCode] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
     const [schemaCode, setSchemaCode] = useState("")
@@ -34,6 +35,7 @@ export default function Page({
     const [description, setDescription] = useState("")
     const [validate, setValidate] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
+    const [stepDraft, setStepDraft] = useState(0)
 
 
     useEffect(() => {
@@ -57,6 +59,7 @@ export default function Page({
             setSchemaCode(isDaft.schema_info.code)
             setCollectionName(isDaft.schema_info.name)
             setDescription(isDaft.schema_info.description)
+            setStepDraft(isDaft.current_state)
         }
     }
 
@@ -119,20 +122,24 @@ export default function Page({
     }
 
     const nextPage = async () => {
-        setIsLoading(true)
+       
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
+                setIsLoadingNext(true)
                 await create_SchemaCode()
                 router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
+                setIsLoadingNext(false)
             } else {
                 validateNextPage()
             }
 
-        } else {
+        } else if(validate && !isLoadingFindSchemaCode) {
+            setIsLoadingNext(true)
             await edit_schemaCode()
-            router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
+            router.push(`/newdraft/2/${schemacode}`, { scroll: false })
+            setIsLoadingNext(false)
         }
-        setIsLoading(false)
+       
     }
 
     const validateNextPage = () => {
@@ -162,9 +169,9 @@ export default function Page({
 
     return (
         <>
-            {/* {isLoading && <Loading></Loading>} */}
+            {isLoading && <Loading></Loading>}
             <div className=" w-full h-full min-h-[67vh] flex flex-col justify-between items-center pb-10 ">
-                <Stepmenu schemacode={schemaCode} currentStep={1}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={1} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
                 <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode} loading={isLoadingFindSchemaCode}></InputCardOneLine>
                 <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} loading={false} ></InputCardOneLine>
                 <InputCardOneLine title={"Description"} require={false} placeholder={"WhaleGate Gen2 NFT With SIX"} validate={true} errorMassage={""} value={description} onChange={handleInputChangeDescription} loading={false} ></InputCardOneLine>
@@ -173,7 +180,7 @@ export default function Page({
                         <BackPageButton></BackPageButton>
                     </div>
                     <div onClick={nextPage}>
-                        <NextPageButton></NextPageButton>
+                        <NextPageButton loading={isLoadingNext}></NextPageButton>
                     </div>
                 </div>
             </div>
