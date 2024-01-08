@@ -9,15 +9,18 @@ import { getAccessTokenFromLocalStorage } from '@/helpers/AuthService';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
+import Loading from './Loading';
 import { useRouter } from 'next/navigation'
 type Props = {}
 
 export default function HomeCard({ }: Props) {
     const router = useRouter()
     const items = ['Draft', 'Live', 'Testnet'];
+    const [loading, setLoading] = useState(false);
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
     const getListDraft = async () => {
+        setLoading(true);
         const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
         const params = {};
         const headers = {
@@ -33,10 +36,12 @@ export default function HomeCard({ }: Props) {
             console.log("list :",response.data.data.sesstion);
             setListdraft(response.data.data.sesstion);
             // return response.data.data.sesstion;
-
+            setLoading(false);
         } catch (error) {
             // console.error("Error:", error);
             // return null
+            setLoading(false);
+
         }
     }
 
@@ -46,6 +51,7 @@ export default function HomeCard({ }: Props) {
 
     return (
         <div>
+            {loading && <Loading />}
             {items.map((item, index) => (
                 <div className=' flex flex-col'>
                     <div className=' w-full h-10 flex justify-center items-center relative'>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Select } from "@chakra-ui/react";
+import { Box, Select } from "@chakra-ui/react";
 import Stepmenu from "@/components/Stepmenu";
 import { getCookie } from "@/service/getCookie";
 interface ActionHeaderProps {
@@ -24,41 +24,45 @@ const ActionHeader = (props: ActionHeaderProps) => {
           Action: <span className="font-semibold">{props.actionName}</span> |{" "}
           {props.type == "when" ? "When" : "Then"}
         </h6>
+
         {props.type == "then" && (
-          <Select
-            w={320}
-            justifyContent={"center"}
-            alignContent={"center"}
-            onChange={(e) => props.handleActionThenTypeChange?.(e.target.value)}
-            mx={4}
-            value={
-              props.actionThenType === "create-new-then"
-                ? ""
-                : props.actionThenType
-            }
-          >
-            <option value="" disabled selected hidden>
-              -- Plase select your action type --
-            </option>
-            <option value="updateAttribute">Update Attribute</option>
-            <option value="transferNumber">Transfer Number</option>
-            <option value="transform">Transform</option>
-          </Select>
+          <div className="bg-white rounded-sm p-1.5 mx-4">
+            <select
+              className="justify-center alignContent-center w-[320px] border border-Act6 text-Act6 rounded-sm p-2 font-semibold"
+              onChange={(e) =>
+                props.handleActionThenTypeChange?.(e.target.value)
+              }
+              value={
+                props.actionThenType === "create-new-then"
+                  ? ""
+                  : props.actionThenType
+              }
+            >
+              <option value="" disabled selected hidden>
+                -- Plase select your action type --
+              </option>
+              <option value="updateAttribute">Update Attribute</option>
+              <option value="transferNumber">Transfer Number</option>
+              <option value="transform">Transform</option>
+            </select>
+          </div>
         )}
         {props.type == "then" && props.actionThenType === "transform" && (
-          <Select
-            w={320}
-            justifyContent={"center"}
-            alignContent={"center"}
-            onChange={(e) => props.handleTransformTypeChange?.(e.target.value)}
-            value={props.transformType}
-          >
-            <option value="" disabled selected hidden>
-              -- Plase select your transform type --
-            </option>
-            <option value="static">Static Image Path</option>
-            <option value="dynamic">Dynamic Image Path</option>
-          </Select>
+          <div className="bg-white rounded-sm p-1.5">
+            <select
+              className="justify-center alignContent-center w-[340px] border border-Act6 text-Act6 rounded-sm p-2 font-semibold"
+              onChange={(e) =>
+                props.handleTransformTypeChange?.(e.target.value)
+              }
+              value={props.transformType}
+            >
+              <option value="" disabled selected hidden>
+                -- Plase select your transform type --
+              </option>
+              <option value="static">Static Image Path</option>
+              <option value="dynamic">Dynamic Image Path</option>
+            </select>
+          </div>
         )}
       </div>
       <div className="p-4 w-full max-h-14 overflow-scroll bg-gray-300 rounded-md text-Act6">

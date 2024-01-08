@@ -16,8 +16,10 @@ import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
+import { useRouter } from "next/navigation";
 
 const Page = ({ params }: { params: { param: string } }) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [actionNameValue, setActionNameValue] = useState("");
   const [isActionNameError, setIsActionNameError] = useState(false);
@@ -32,12 +34,11 @@ const Page = ({ params }: { params: { param: string } }) => {
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [editedActionArr, setEditedActionArr] = useState<any[] | undefined>([]);
   const [actionIndex, setActionIndex] = useState(0);
-  const getCookieData = getCookie("action");
+  const [isEdit, setIsEdit] = useState(false);
   const getIsEdited = getCookie("isEditAction");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
-  const [isCreateTempArr, setIsCreateTempArr] = useState(false);
-  const [getActionFromCookie, setGetActionFromCookie] = useState(false);
   const [isError, setIsError] = useState(false);
+  const getActionFromCookie = localStorage.getItem("action") ?? "";
   const schemacode = getCookie("schemaCode") ?? "";
   const getActionWhenFromCookie = getCookie("action-when") ?? "";
   const getActionNameFromCookie = getCookie("action-name") ?? "";
@@ -60,66 +61,8 @@ const Page = ({ params }: { params: { param: string } }) => {
     },
   ]);
 
-  const containsSpecialChars = (str: string) => {
-    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
-    return specialChars.test(str);
-  };
-
-  const containsSpace = (str: string) => {
-    const specialChars = / /;
-    return specialChars.test(str);
-  };
-
-  const containsUppercase = (str: string) => {
-    return /[A-Z]/.test(str);
-  };
-
-  //   const checkDuplicateActionName = (actionNameValue:string)=>{
-  //     let isDuplicate = false
-  //     actions.forEach((action)=>{
-  //       if(action.name === actionNameValue){
-  //         isDuplicate = true
-  //       }
-  //     })
-  //     return isDuplicate
-  //   }
-
-  const checkActionNameError = async (str: string) => {
-    setIsActionNameError(false);
-    if (!str) {
-      setActionNameErrorMessage("Not Availible");
-      setIsActionNameError(true);
-    } else if (containsSpecialChars(str)) {
-      setActionNameErrorMessage("Can't Contain Special Characters");
-      setIsActionNameError(true);
-    } else if (containsSpace(str)) {
-      setActionNameErrorMessage(" Can't Contain Space");
-      setIsActionNameError(true);
-    } else if (containsUppercase(str)) {
-      setActionNameErrorMessage("Can't Contain Uppercase");
-      setIsActionNameError(true);
-    }
-    // else if (checkDuplicateActionName(str)){
-    //   setActionNameErrorMessage("Can't Be Duplicate!");
-    //   setIsActionNameError(true);
-    // }
-    else {
-      setIsActionNameError(false);
-    }
-  };
-
-  const checkDescriptionError = async (str: string) => {
-    setIsDescriptionError(false);
-    if (!str) {
-      setDescriptionErrorMessage("Not Availible");
-      setIsDescriptionError(true);
-    } else {
-      setIsDescriptionError(false);
-    }
-  };
-
   const handleSave = async () => {
-    console.log(createNewAction[0].when);
+    setLoading(true);
     if (params.param === "create-new-action") {
       await postCreateAction6(
         schemacode,
@@ -137,7 +80,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     }
 
     if (getIsTransformFromCookie === "true") {
-      postImageUrlAction6(
+      await postImageUrlAction6(
         schemacode,
         decodeURIComponent(getImgSourceFromCookie),
         getPrefixFromCookie,
@@ -145,11 +88,12 @@ const Page = ({ params }: { params: { param: string } }) => {
         getImgFormatFromCookie
       );
     }
+    router.push(`/newdraft/6/${schemacode}`);
   };
 
   useEffect(() => {
-    
     (async () => {
+      setLoading(true);
       try {
         const response = await getSchemaInfo(schemacode);
 
@@ -161,17 +105,16 @@ const Page = ({ params }: { params: { param: string } }) => {
           const actions = response.schema_info.onchain_data.actions;
 
           if (actions) {
-            
             if (getIsEdited !== "true") {
               await setAction(actions);
               console.log("getting");
-              await setCookie("action", JSON.stringify(actions));
+              await localStorage.setItem("action", JSON.stringify(actions));
               setCookie("isEditAction", "false");
-            }else {
-              await setUpdatedAction(JSON.parse(decodeURIComponent(getCookieData)));
+            } else {
+              await setUpdatedAction(JSON.parse(getActionFromCookie));
               setCookie("isEditAction", "false");
             }
-
+            setIsEdit(true);
             console.log("success");
           } else {
             console.error("error");
@@ -186,17 +129,16 @@ const Page = ({ params }: { params: { param: string } }) => {
   }, [schemacode]);
 
   useEffect(() => {
-    console.log(">> acc ::", getCookieData);
-    console.log(">>>", updatedAction);
-    if (getCookieData && params.param !== "create-new-action") {
-      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-      setGetActionFromCookie(parsedCookieData);
+    setLoading(true);
+    if (getActionFromCookie && params.param !== "create-new-action") {
+      const parsedCookieData = JSON.parse(getActionFromCookie);
       setUpdatedAction(parsedCookieData);
-      console.log(">>>!", updatedAction);
     }
-  }, [getCookieData, action]);
+    setLoading(false);
+  }, [getActionFromCookie, action]);
 
   useEffect(() => {
+    setLoading(true);
     if (params.param === "create-new-action") {
       setIsCreateNewAction(true);
       setCookie("isCreateNewAction", "true");
@@ -225,23 +167,40 @@ const Page = ({ params }: { params: { param: string } }) => {
         ...prev.slice(1),
       ]);
     } else {
+      // console.log("--->1", updatedAction);
+      console.log("--->2", getActionFromCookie);
+      // console.log("--->3", typeof getActionFromCookie)
+      // console.log("--->4",(JSON.parse(getActionFromCookie)))
+
+      if (isEdit) {
+        // console.log("--->5", JSON.parse("[{\"name\":\"eiei\",\"desc\":\"mod\",\"disable\":false,\"when\":\"meta.GetNumber('points') > 11\",\"then\":[\"meta.SetBoolean('check_in', false)\",\"meta.SetBoolean('check_in', false)\",\"meta.SetBoolean('check_in', true)\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"mum8\",\"desc\":\"123\",\"disable\":false,\"when\":\"\",\"then\":[\"meta.TransferNumber('points', params['tokenId'].GetString(), 200)\",\"meta.SetNumber('points', 200)\",\"meta.SetNumber('points', 0)\",\"meta.SetBoolean('switch', true)\",\"meta.SetString('eventname', 'test')\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"mocktest01\",\"desc\":\"124241\",\"disable\":false,\"when\":\"meta.GetNumber('points') > 0\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"test\",\"desc\":\"1234\",\"disable\":false,\"when\":\"meta.GetBoolean('check_in') == false\",\"then\":[\"meta.SetNumber('points', 200)\",\"meta.SetString('tier', 'bronze')\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"mockcccccccccasd\",\"desc\":\"test11asd\",\"disable\":false,\"when\":\"meta.GetNumber('points') > 1111\",\"then\":[\"meta.SetNumber('points', 2)\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"tes\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"123\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"456\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"555\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"111\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"222\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"333\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"3333333\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"666\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"777\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"888\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]}]"));
+        setUpdatedAction(JSON.parse(getActionFromCookie));
+      }
+      // console.log("--->6", updatedAction);
       setActionIndex(
-        action ? action.findIndex((item) => item.name === params.param) : 0
+        getIsEdited === "true"
+          ? (updatedAction ?? []).findIndex(
+              (item) => item.name === params.param
+            )
+          : (action ?? []).findIndex((item) => item.name === params.param) ?? 0
       );
-      console.log("this case");
+
+      console.log("this case--", console.log(actionIndex));
     }
-  }, [action]);
+    setLoading(false);
+  }, [action, isEdit]);
 
   useEffect(() => {
     setCookie("isCreateNewThen", "false");
   }, []);
 
   return (
+    
     <>
       {loading && <Loading />}
       <div className="w-fit max-w-screen-md mx-auto mt-12">
-        {(typeof actionIndex === "number" || isCreateNewAction) && (
-          <div className="flex flex-col items-center gap-y-6">
+        {(typeof actionIndex === "number" || isCreateNewAction)  && (
+          <div className="flex flex-col items-center gap-y-8">
             <ActionInput
               name="Name"
               value={
@@ -320,9 +279,9 @@ const Page = ({ params }: { params: { param: string } }) => {
           <Link href={`/newdraft/6/${schemacode}`}>
             <CancelButton />
           </Link>
-          <Link href={`/newdraft/6/${schemacode}`} onClick={handleSave}>
+          <div onClick={handleSave}>
             <SaveButton />
-          </Link>
+          </div>
         </div>
       </div>
     </>

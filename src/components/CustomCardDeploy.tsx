@@ -187,6 +187,7 @@ const CustomCardDeploy: React.FC<Props> = ({
             color: "blue", // เปลี่ยน color ของ Text เมื่อ hover
             cursor: "pointer",
             transform: "scale(1.05)",
+            transitionDuration: "200ms",
           }}
           onClick={() => handleDeploy("Deploy Mainnet")}
         >
@@ -217,6 +218,7 @@ const CustomCardDeploy: React.FC<Props> = ({
             color: "blue", // เปลี่ยน color ของ Text เมื่อ hover
             cursor: "pointer",
             transform: "scale(1.05)",
+            transitionDuration: "200ms",
           }}
           onClick={() => handleDeploy("Deploy Testnet")}
         >

@@ -119,7 +119,7 @@ export default function Flowbar(props: FlowbarProps) {
               <span className="text-sm font-bold text-main2">Function</span>
               {props.selectedAttribute === "number" ||
               props.selectedAttribute === "float" ? (
-                <div className="flex">
+                <div className="flex gap-x-2">
                   <Menu
                     nodeName="increaseNode"
                     handleDoubleClickAddNode={props.handleDoubleClickAddNode}

@@ -83,7 +83,7 @@ const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
 const ThenTransferFlow = (props: ThenTransferFlowProps) => {
-  const getCookieData = getCookie("action");
+  const getCookieData = localStorage.getItem("action");
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -111,7 +111,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );
-
+  const getActionThenIndexCookie = getCookie("actionThenIndex");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const getActionThanArrCookie = getCookie("action-then-arr");
@@ -124,7 +124,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     grid_padding: 60,
   };
 
-  const isBase64 = (str) => {
+  const isBase64 = (str: string) => {
     try {
       return btoa(atob(str)) === str;
     } catch (error) {
@@ -152,7 +152,10 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       });
 
       const isInsideLength = (
-        position: object,
+        position: {
+          x: number;
+          y: number;
+        },
         startX: number,
         startY: number,
         width: number,
@@ -636,10 +639,12 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     ) => {
       const updatedArray = array.map((action) => {
         if (action.name === name && getIsCreateNewThenFromCookie === "false") {
-          const updatedThen =
-            action.then.length > 0
-              ? action.then.map((item) => (item === oldThen ? newThen : item))
-              : [newThen];
+          let updatedThen;
+          if (getActionThenIndexCookie) {
+            updatedThen = action.then.map((item, index) =>
+              index === parseInt(getActionThenIndexCookie) ? newThen : item
+            );
+          }
           return { ...action, then: updatedThen };
         } else if (
           action.name === name &&
@@ -672,9 +677,13 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
 
-      const updatedTempArrCookie = tempArrCookie.map((item: string) =>
-        item === originalMetaFunction ? metaDataToAdd : item
-      );
+        let updatedTempArrCookie
+        if(getActionThenIndexCookie){
+          
+           updatedTempArrCookie =tempArrCookie.map((item:string, index:number) =>
+          index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+        );
+        }
 
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
@@ -684,8 +693,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
-
-    setCookie("action", JSON.stringify(tempArr));
+    localStorage.setItem("action", JSON.stringify(tempArr));
     setCookie("action-then", metaData);
     setCookie("isEditAction", "true");
   };
@@ -1060,7 +1068,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         </div>
 
         <div className="flex justify-end gap-x-8 mt-4">
-        <Link
+          <Link
             href={
               isCreateNewActionCookie === "true"
                 ? `/newdraft/6/${schemacode}/action-form/create-new-action`

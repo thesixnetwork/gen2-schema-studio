@@ -37,11 +37,16 @@ function Stepmenu(props: Props) {
     },
   ];
 
+  const getSchemaName = (str: string) => {
+    const match = str.match(/^(.+)_v\d+$/);
+    return match ? match[1] : str;
+  };
+
   return (
-    <div className=" w-full h-full duration-300">
+    <div className=" w-full h-full duration-300 mt-10">
       {props.schemacode !== "" && props.schemacode !== null && (
         <p className=" mb-4 text-main2 text-3xl duration-300">
-          {props.schemacode}
+          {getSchemaName(props.schemacode)}
         </p>
       )}
       <div className=" w-full h-32 flex justify-between border-t border-t-2nd4 duration-300">

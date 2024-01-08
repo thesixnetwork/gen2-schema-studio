@@ -104,5 +104,15 @@
       "title": "Then",
       "description": ""
     }
+  ],
+  "/newdraft/7": [
+    {
+      "title": "Testnet",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+      "title": "Mainnet",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.."
+    }
   ]
 }
