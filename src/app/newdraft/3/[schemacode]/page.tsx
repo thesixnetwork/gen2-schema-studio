@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { tree } from "next/dist/build/templates/app-page";
 import Loading from "@/components/Loading";
 import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
+import { IOriginAttributes } from "@/type/Nftmngr";
 import AttributeCardAndDelete from "@/components/state3/AttributeCardAndDelete";
 
 export default function Page({
@@ -73,8 +74,22 @@ export default function Page({
 
     useEffect(() => {
         getDraftInfo()
+        // get_origin_attributes_form_contract(contractAddres)
     }, [isDaft])
 
+    const get_origin_attributes_form_contract = async (contract: string) => {
+        const object1:IOriginAttributes[] = isDaft.schema_info.origin_data.origin_attributes; // Assuming isDaft has a type
+        const object2:IOriginAttributes[] = await getOriginAttributFromContract(contract);
+    
+        // Check if object1 is defined and has a 'some' method
+        const uniqueObjects = object2.filter(
+            obj2 => !object1 || (Array.isArray(object1) && object1.some(obj1 => obj1.name === obj2.name))
+        );
+        ////////////////
+
+        console.log("uniqueObjects",uniqueObjects)
+    
+    };
     const getAttribute = async () => {
         if (contractAddres !== "" && contractAddres !== null) {
             try {
@@ -339,7 +354,7 @@ export default function Page({
     //------------------------Post data to base --------------------------------------------//
 
     useEffect(() => {
-        console.log(isNewAttribute)
+        console.log("isNewAttribute",isNewAttribute)
     }, [isNewAttribute])
     return (
         <>

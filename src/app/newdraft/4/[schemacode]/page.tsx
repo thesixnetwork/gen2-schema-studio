@@ -89,7 +89,7 @@ export default function Page({
           <Divider borderColor={"brand"} />
           <TapState isCurren={4} schemaCode={schemacode} /> */}
           <Stepmenu schemacode={schemaCode} currentStep={4} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
-          <Box >
+          <Box marginTop="40px">
             <CradNewDaft
               isDaft={isDaft}
               isState={4}

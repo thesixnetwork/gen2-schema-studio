@@ -34,14 +34,16 @@ export default function Page({
 }: {
   params: { schemacode: string };
 }) {
-  const { data: session } = useSession();
-  // console.log(session)
+  // const { data: session } = useSession();
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter()
   const [schemaCode, setSchemaCode] = useState("")
   const [stepDraft, setStepDraft] = useState(4)
+  // console.log(schemacode)
+  // console.log(isDaft)
+
 
   useEffect(() => {
     (async () => {
@@ -77,7 +79,7 @@ export default function Page({
           <Divider borderColor={"brand"} />
           <TapState isCurren={5} schemaCode={schemacode} /> */}
           <Stepmenu schemacode={schemaCode} currentStep={5} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
-          <Box>
+          <Box marginTop="40px">
             <CradNewDaft
               isDaft={isDaft}
               isState={5}

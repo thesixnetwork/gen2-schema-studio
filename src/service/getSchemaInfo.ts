@@ -12,16 +12,20 @@ import api  from "@/utils/custiomAxios";
 
 export async function getSchemaInfo(schemaCode: string) {
     //   console.log(ENV.API_URL);
+    //   console.log(schemaCode);
     // const ss  = await getSession({event:"session"})
     // const user: any = request.nextauth.token;
-    const apiUrl = `/schema/get_schema_info/${schemaCode}`;
+    const apiUrl = `schema/get_schema_info/${schemaCode}`;
     // const cookieStore = cookies()
     // const token = cookieStore.get('next-auth.session-token')
     // console.log("qqqqdata" ,token?.value)
+    //   console.log(apiUrl);
+
 
     try {
         const req = await api.get(apiUrl);
         const schema_info:ISchemaInfo = req.data.data.schema_info
+        // console.log(req.data)
         return schema_info
     } catch (error) {
         // console.log("error ", error)
