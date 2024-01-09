@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import AlertModal from "@/components/AlertModal";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
@@ -67,14 +68,14 @@ const CustomCardDeploy: React.FC<Props> = ({
       );
       console.log("schemaInfo", isDaft);
 
-      if(!isDaft){
+      if (!isDaft) {
         await Swal.fire({
-            position: "center",
-            icon: "error",
-            title: "NOT FOUND SCHEMA INFO",
-            showConfirmButton: false,
-            timer: 1500,
-          });
+          position: "center",
+          icon: "error",
+          title: "NOT FOUND SCHEMA INFO",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       }
 
       if (isAccount && offlineSigner && isDaft) {
@@ -165,15 +166,27 @@ const CustomCardDeploy: React.FC<Props> = ({
         //     timer: 1500,
         //   });
         // }
+        <AlertModal title="Deployed successfully" type="warning"/>
       }
     } else {
-      // User canceled, do something else or nothing
+      <AlertModal title="Deployment failed" type="error"/>
       console.log("Deployment canceled");
     }
   };
 
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleButtonClick = () => {
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 2000);
+  };
+
   return (
     <>
+      <button onClick={handleButtonClick}>logg</button>
+      {showAlert && <AlertModal title="Deployed succesfuly" type="warning"/>}
       {text === "Mainnet" && (
         <Flex
           width="200px"

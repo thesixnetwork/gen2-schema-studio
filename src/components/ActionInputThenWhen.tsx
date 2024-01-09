@@ -4,8 +4,8 @@ import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
 import { IActions } from "@/type/Nftmngr";
 import { useRouter } from "next/navigation";
-import delete_icon from "../../public/pic/delete-action.png";
-import Image from "next/image";
+import ConfirmModalChakra from "./ConfirmModalChakra";
+
 interface ActionInputThenWhenProps {
   actionType: string;
   action: IActions[];
@@ -18,11 +18,14 @@ interface ActionInputThenWhenProps {
 const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
   const router = useRouter();
   const actionName = props.action[props.actionIndex]?.name || "";
+  const [showModal, setShowModal] = useState(false);
+  const [showModalIndex, setShowModalIndex] = useState<number>(0);
   const [action, setAction] = useState<string | string[]>(
     props.actionType === "then"
       ? props.action[props.actionIndex]?.then || []
       : props.action[props.actionIndex]?.when || []
-  );  const schemacode = getCookie("schemaCode");
+  );
+  const schemacode = getCookie("schemaCode");
 
   const handleClickWhen = () => {
     setCookie(`action-name`, actionName);
@@ -47,7 +50,7 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
     const updatedThen = [...props.action[props.actionIndex]?.then];
     updatedThen.splice(index, 1);
     setAction(updatedThen);
-  
+
     // Update the state in the parent component
     props.action[props.actionIndex]?.then.splice(index, 1);
     console.log("deleted", props.action[props.actionIndex]?.then);
@@ -64,10 +67,9 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
   };
 
   useEffect(() => {
-    if(props.actionType === "when"){
-
+    if (props.actionType === "when") {
       setAction(props.action[props.actionIndex]?.when);
-    }else if (props.actionType === "then"){
+    } else if (props.actionType === "then") {
       setAction(props.action[props.actionIndex]?.then);
     }
   }, [props.action, props.actionIndex]);
@@ -104,12 +106,21 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeleteWhen();
+                  setShowModal(true);
                 }}
                 className="rounded-full flex h-4 w-4 items-center justify-center border border-main2 text-main2 hover:scale-110 duration-300"
               >
                 -
               </button>
+              {showModal && (
+                <ConfirmModalChakra
+                  title="Are you sure to delete when?"
+                  function={() => handleDeleteWhen()}
+                  isOpen={showModal}
+                  setIsOpen={setShowModal}
+                  confirmButtonTitle="Yes, delete"
+                />
+              )}
             </div>
           </div>
         ) : (
@@ -140,11 +151,21 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
                     className="z-100 rounded-full flex h-4 w-4 items-center justify-center border border-main2 text-main2 hover:scale-110 duration-300"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteThen(index);
+                      setShowModal(true);
+                      setShowModalIndex(index);
                     }}
                   >
                     -
                   </div>
+                  {showModal && showModalIndex === index && (
+                    <ConfirmModalChakra
+                      title="Are you sure to delete then?"
+                      function={() => handleDeleteThen(index)}
+                      isOpen={showModal}
+                      setIsOpen={setShowModal}
+                      confirmButtonTitle="Yes, delete"
+                    />
+                  )}
                 </div>
               )}
             </div>

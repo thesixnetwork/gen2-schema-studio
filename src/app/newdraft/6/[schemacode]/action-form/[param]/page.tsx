@@ -17,6 +17,7 @@ import NextPageButton from "@/components/NextPageButton";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
 import { useRouter } from "next/navigation";
+import Stepmenu from "@/components/Stepmenu";
 
 const Page = ({ params }: { params: { param: string } }) => {
   const router = useRouter();
@@ -120,10 +121,9 @@ const Page = ({ params }: { params: { param: string } }) => {
             console.error("error");
           }
         }
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false);
+        // setLoading(false);
       }
     })();
   }, [schemacode]);
@@ -133,8 +133,9 @@ const Page = ({ params }: { params: { param: string } }) => {
     if (getActionFromCookie && params.param !== "create-new-action") {
       const parsedCookieData = JSON.parse(getActionFromCookie);
       setUpdatedAction(parsedCookieData);
+      setLoading(false);
     }
-    setLoading(false);
+    // setLoading(false);
   }, [getActionFromCookie, action]);
 
   useEffect(() => {
@@ -166,6 +167,7 @@ const Page = ({ params }: { params: { param: string } }) => {
         },
         ...prev.slice(1),
       ]);
+      setLoading(false)
     } else {
       // console.log("--->1", updatedAction);
       console.log("--->2", getActionFromCookie);
@@ -175,6 +177,7 @@ const Page = ({ params }: { params: { param: string } }) => {
       if (isEdit) {
         // console.log("--->5", JSON.parse("[{\"name\":\"eiei\",\"desc\":\"mod\",\"disable\":false,\"when\":\"meta.GetNumber('points') > 11\",\"then\":[\"meta.SetBoolean('check_in', false)\",\"meta.SetBoolean('check_in', false)\",\"meta.SetBoolean('check_in', true)\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"mum8\",\"desc\":\"123\",\"disable\":false,\"when\":\"\",\"then\":[\"meta.TransferNumber('points', params['tokenId'].GetString(), 200)\",\"meta.SetNumber('points', 200)\",\"meta.SetNumber('points', 0)\",\"meta.SetBoolean('switch', true)\",\"meta.SetString('eventname', 'test')\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"mocktest01\",\"desc\":\"124241\",\"disable\":false,\"when\":\"meta.GetNumber('points') > 0\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"test\",\"desc\":\"1234\",\"disable\":false,\"when\":\"meta.GetBoolean('check_in') == false\",\"then\":[\"meta.SetNumber('points', 200)\",\"meta.SetString('tier', 'bronze')\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"mockcccccccccasd\",\"desc\":\"test11asd\",\"disable\":false,\"when\":\"meta.GetNumber('points') > 1111\",\"then\":[\"meta.SetNumber('points', 2)\"],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"tes\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"123\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"456\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"555\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"111\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"222\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"333\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"3333333\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"666\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"777\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]},{\"name\":\"888\",\"desc\":\"\",\"disable\":false,\"when\":\"\",\"then\":[],\"allowed_actioner\":\"ALLOWED_ACTIONER_ALL\",\"params\":[]}]"));
         setUpdatedAction(JSON.parse(getActionFromCookie));
+        setLoading(false);
       }
       // console.log("--->6", updatedAction);
       setActionIndex(
@@ -184,10 +187,8 @@ const Page = ({ params }: { params: { param: string } }) => {
             )
           : (action ?? []).findIndex((item) => item.name === params.param) ?? 0
       );
-
-      console.log("this case--", console.log(actionIndex));
     }
-    setLoading(false);
+    // setLoading(false);
   }, [action, isEdit]);
 
   useEffect(() => {
@@ -195,11 +196,13 @@ const Page = ({ params }: { params: { param: string } }) => {
   }, []);
 
   return (
-    
     <>
       {loading && <Loading />}
+      <header>
+        <Stepmenu schemacode={schemacode} currentStep={6}></Stepmenu>
+      </header>
       <div className="w-fit max-w-screen-md mx-auto mt-12">
-        {(typeof actionIndex === "number" || isCreateNewAction)  && (
+        {(typeof actionIndex === "number" || isCreateNewAction) && (
           <div className="flex flex-col items-center gap-y-8">
             <ActionInput
               name="Name"

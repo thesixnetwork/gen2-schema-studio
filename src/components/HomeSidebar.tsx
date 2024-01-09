@@ -1,13 +1,13 @@
 import { usePathname } from 'next/navigation';
 import { promises as fs } from 'fs';
 import descriptionData from '../description/descriptionData.json'
-const HomeSidebar = () => {
+const HomeSidebar = (props:string) => {
   const pathname = usePathname();
   const basePath = `/${pathname.split('/').slice(1, 3).join('/')}`;
   const detail: any = descriptionData[basePath] || [];
-
+console.log("log kaa", props.checkIsThenOrWhen)
   return (
-    <aside className="flex justify-end items-end w-full">
+    <aside className={`flex justify-end items-end w-full `}>
       <div className="border bg-white border-Act7 w-96 h-fit text-[#878CA8] rounded-lg p-4 mx-8">
         <div>
           {detail.map((item: any) => (

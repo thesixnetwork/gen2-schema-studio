@@ -36,6 +36,7 @@ export default function Layout({
     //--------------------------------------Authen Refresh Token----------------------------------------//
     //--------------------------------------Frontend State----------------------------------------//
     const [isSideBarShow, setIsSideBarShow] = useState(true)
+    const [checkIsThenOrWhen, setCheckIsThenOrWhen] = useState(false)
     //--------------------------------------Frontend State----------------------------------------//
     useEffect(() => {
         if (boxRef.current) {
@@ -75,30 +76,38 @@ export default function Layout({
     useEffect(() => {
         RefreshToken()
     }, [refreshTokenNumber])
+
+    useEffect(() => {
+        pathname.includes("then") || pathname.includes("when") ? setCheckIsThenOrWhen(true) : setCheckIsThenOrWhen(false)
+    },[pathname])
     //--------------------------------------Authen Refresh Token----------------------------------------//
 
     const closeSidebar = () => {
         setIsSideBarShow(!isSideBarShow)
     }
 
+    useEffect(()=>{
+        console.log("checker",checkIsThenOrWhen)
+    },[checkIsThenOrWhen])
+
     return (
         <>
             {pathname !== "/" ?
                 <div className=" flex flex-col justify-center items-center bg-bg overflow-x-hidden" >
-                    <div className=" w-full">
+                    <div className=" w-full h-[15vh]">
                         <HomeNavBar />
                     </div>
-                    <div className=" w-[95%] min-h-[75vh]">
+                    <div className=" w-[95%] min-h-[67vh] ">
                         <Flex bgColor="" width={"100%"} height={"100%"} className="" >
-                            <Box className=" duration-500" bgColor="" ref={boxRef} width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
+                            <Box className=" duration-500   " bgColor=""  width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
                             </Box>
-                            <Flex className=" duration-500" width={isSideBarShow ? "22%" : "0%"} height={"20%"} position="relative" marginTop={24} >
-                                <div onClick={closeSidebar} className={` absolute top-[-2%] left-0`} >
+                            <Flex className=" duration-500  pt-[8vh] " width={isSideBarShow ? "22%" : "0%"} height={"20%"}  position="relative ">
+                                <div onClick={closeSidebar} className={`pt-[8vh] absolute top-[-2%] left-0`} >
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>
                                 {isSideBarShow &&
-                                    <Box height={childrenHeight} width={"100%"}>
+                                    <Box  width={"100%"}>
                                         <div >
                                             <HomeSidebar />
                                         </div>

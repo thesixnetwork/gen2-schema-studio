@@ -183,7 +183,6 @@ function ConnectButton(props:Props) {
   const handleConnect = async () => {
     handlerKeplrConnect();
     props.setLoading(true);
-
   };
 
   return (

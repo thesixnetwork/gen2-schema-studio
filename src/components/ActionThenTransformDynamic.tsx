@@ -144,6 +144,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
 
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
+            updatedTempArrCookie = tempArrCookie
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
@@ -397,6 +398,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                       ? `/newdraft/6/${schemacode}/action-form/create-new-action`
                       : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
                   }
+                  onClick={() => setCookie("isEditAction", "true")}
                 >
                   <CancelButton />
                 </Link>

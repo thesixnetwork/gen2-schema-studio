@@ -6,6 +6,7 @@ import Image from "next/image";
 import delete_icon from "../../public/pic/deleate_attribute_card.png";
 import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/navigation";
+import ConfirmModalChakra from "./ConfirmModalChakra";
 
 interface ActionInfoCardProps {
   name: string;
@@ -21,6 +22,7 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
   const displayLines = 4;
   const schemacode = getCookie("schemaCode");
   const [expanded, setExpanded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const toggleExpand = () => {
     setExpanded(!expanded);
   };
@@ -70,10 +72,19 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
           alt={"delete"}
           onClick={(e) => {
             e.stopPropagation();
-            props.handleDelete(props.index);
+            // props.handleDelete(props.index);
+            setShowModal(true);
           }}
         />
-
+        {showModal && (
+          <ConfirmModalChakra
+            title="Are you sure to delete?"
+            function={() => props.handleDelete(props.index)}
+            isOpen={showModal}
+            setIsOpen={setShowModal}
+            confirmButtonTitle="Yes, delete"
+          />
+        )}
         <div className="flex flex-col gap-y-3">
           <div>
             <h6 className="text-main2 font-light">Name</h6>

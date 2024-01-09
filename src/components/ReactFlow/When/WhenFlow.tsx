@@ -1145,13 +1145,13 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   return (
     <div className="flex justify-between px-8">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="when"
           actionName={props.actionName}
           metaFunction={props.metaFunction}
         />
-        <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
+        <div className="h-[580px] w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}

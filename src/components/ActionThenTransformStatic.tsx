@@ -140,16 +140,17 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
         let updatedTempArrCookie
         if(getActionThenIndexCookie){
           
-           updatedTempArrCookie =tempArrCookie.map((item:string, index:number) =>
+           updatedTempArrCookie = tempArrCookie.map((item:string, index:number) =>
           index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
         );
         }
 
-      if (originalMetaFunction === "create-new-then") {
-        if (!tempArrCookie.includes(originalMetaFunction)) {
-          updatedTempArrCookie.push(metaDataToAdd);
+        if (originalMetaFunction === "create-new-then") {
+          if (!tempArrCookie.includes(originalMetaFunction)) {
+              updatedTempArrCookie = tempArrCookie
+            updatedTempArrCookie.push(metaDataToAdd);
+          }
         }
-      }
 
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
@@ -287,6 +288,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
                       ? `/newdraft/6/${schemacode}/action-form/create-new-action`
                       : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
                   }
+                  onClick={() => setCookie("isEditAction", "true")}
                 >
                   <CancelButton />
                 </Link>

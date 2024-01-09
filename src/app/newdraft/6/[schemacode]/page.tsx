@@ -26,7 +26,7 @@ import { setCookie } from "@/service/setCookie";
 import { ItokenAttributes } from "@/type/Nftmngr";
 import { INftAttributes } from "@/type/Nftmngr";
 import Stepmenu from "@/components/Stepmenu";
-import CryptoJS from "crypto-js";
+import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 
 const Page = ({ params }: { params: { schemacode: string } }) => {
   const [action, setAction] = useState<Array<any>>([]);
@@ -118,8 +118,9 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
       <header>
         <Stepmenu schemacode={schemacode} currentStep={6}></Stepmenu>
       </header>
-      <section>
+      <section className="mt-12">
         <div className="grid gap-y-8 grid-cols-1 2xl:grid-cols-3 xl:grid-cols-2 justify-items-center">
+        <ActionCreateCard />
           {action !== undefined &&
             action.map((item, index) => (
               <div key={index}>
@@ -134,8 +135,8 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
               </div>
             ))}
 
-          <ActionCreateCard />
         </div>
+        <ConfirmModalChakra title="Are you sure to create?"/>
         <div className="w-full flex justify-between px-24 my-12">
           <Link href={`/newdraft/5/${schemacode}`}>
             <BackPageButton />

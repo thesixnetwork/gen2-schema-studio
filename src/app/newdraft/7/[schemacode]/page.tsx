@@ -85,7 +85,8 @@ export default function Page({
           <Flex
             id="con-card-deploy"
             width="100%"
-            justifyContent="space-evenly"
+            justifyContent="center"
+            columnGap={48}
           >
             <CustomCardDeploy
               text={"Testnet"}

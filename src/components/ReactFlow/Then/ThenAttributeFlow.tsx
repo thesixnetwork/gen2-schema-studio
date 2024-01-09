@@ -840,7 +840,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             );
           }
           console.log(":thiscase1", action);
-          console.log(":!", action.name , "and", name)
+          console.log(":!", action.name, "and", name);
           console.log(":thiscase2", action);
           console.log("=>", newThen);
           console.log("==>", array);
@@ -889,6 +889,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
+          updatedTempArrCookie = tempArrCookie;
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
@@ -1093,7 +1094,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   return (
     <div className="flex justify-between px-8 ">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[64vw] mr-12">
         <div>
           <ActionHeader
             type="then"
@@ -1104,7 +1105,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             handleActionThenTypeChange={props.handleActionThenTypeChange}
             handleTransformTypeChange={props.handleTransformTypeChange}
           />
-          <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
+          <div className="h-[580px] w-full border rounded-3xl bg-white p-2 mt-4">
             <div ref={reactFlowWrapper} className="h-full">
               <ReactFlow
                 nodes={nodes}
@@ -1129,6 +1130,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         </div>
         <div className="flex justify-end gap-x-8 mt-4">
           <Link
+            onClick={() => setCookie("isEditAction", "true")}
             href={
               isCreateNewActionCookie === "true"
                 ? `/newdraft/6/${schemacode}/action-form/create-new-action`

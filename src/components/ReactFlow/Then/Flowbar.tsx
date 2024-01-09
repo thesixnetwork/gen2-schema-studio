@@ -259,11 +259,12 @@ export default function Flowbar(props: FlowbarProps) {
 
               <ModalFooter justifyContent={"center"}>
                 <Button
-                  colorScheme="white"
+                  colorScheme="#2F3030"
                   variant="outline"
                   onClick={handleCreate}
                   mr={4}
                   _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                  bgColor={"#2F3030"}
                 >
                   Generate
                 </Button>

@@ -33,6 +33,7 @@ const theme = extendTheme({
     brand: "#DADEF2",
     base: "#44498D",
   },
+  
 });
 
 export default theme;

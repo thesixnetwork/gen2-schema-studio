@@ -16,9 +16,9 @@ function page({ }: Props) {
     ]
 
     return (
-        <div className=" w-full h-full min-h-[75vh] p-0 flex flex-col justify-between items-center py-10 ">
+        <div className=" w-full h-full min-h-[75vh] p-0 flex flex-col justify-between items-center  ">
             {classDetail.map((item: any, index: number) => (
-                <div onClick={() => { setActiveState(index) }} className={`${activeState === index && ' border-Act7 shadow-lg shadow-Act7  '} w-[80%] h-44 px-[6%]  rounded-2xl border border-2nd4 flex flex-col justify-center items-center hover:scale-105 duration-300 cursor-pointer z-30`}>
+                <div onClick={() => { setActiveState(index) }} className={`${activeState === index && ' border-Act7 shadow-md shadow-Act7  '} w-[80%] h-44 px-[6%]  rounded-2xl border border-2nd4 flex flex-col justify-center items-center hover:scale-105 duration-300 cursor-pointer z-30`}>
                     <h1 className=' text-main2 text-3xl'>{item.title}</h1>
                     <p className=' text-main2 mt-5 text-lg'>{item.description}</p>
                 </div>

@@ -42,7 +42,6 @@ import {
 import axios from "axios";
 import Swal from "sweetalert2";
 import ActionHeader from "@/components/ActionHeader";
-
 import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
 interface ThenTransferFlowProps {
@@ -685,11 +684,12 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         );
         }
 
-      if (originalMetaFunction === "create-new-then") {
-        if (!tempArrCookie.includes(originalMetaFunction)) {
-          updatedTempArrCookie.push(metaDataToAdd);
+        if (originalMetaFunction === "create-new-then") {
+          if (!tempArrCookie.includes(originalMetaFunction)) {
+              updatedTempArrCookie = tempArrCookie
+            updatedTempArrCookie.push(metaDataToAdd);
+          }
         }
-      }
 
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
@@ -1036,7 +1036,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   return (
     <div className="flex justify-between px-8 ">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="then"
           actionName={props.actionName}
@@ -1046,7 +1046,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           handleActionThenTypeChange={props.handleActionThenTypeChange}
           handleTransformTypeChange={props.handleTransformTypeChange}
         />
-        <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
+        <div className="h-[580px]  w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}
@@ -1074,6 +1074,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
                 ? `/newdraft/6/${schemacode}/action-form/create-new-action`
                 : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
             }
+            onClick={() => setCookie("isEditAction", "true")}
           >
             <CancelButton />
           </Link>
