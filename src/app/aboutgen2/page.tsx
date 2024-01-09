@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import About_Gen2_Bg from '../../../public/pic/about_gen2_bg.png'
 type Props = {}
 
-function page({ }: Props) {
+function Page({ }: Props) {
     const router = useRouter();
     return (
         <div className=" w-full h-full min-h-[75vh] p-10 flex flex-col justify-between items-center py-10">
@@ -50,4 +50,4 @@ function page({ }: Props) {
     )
 }
 
-export default page
+export default Page

@@ -98,7 +98,7 @@ export default function Layout({
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>
                                 {isSideBarShow &&
-                                    <Box  width={"100%"}>
+                                    <Box   width={"100%"}>
                                         <div >
                                             <HomeSidebar />
                                         </div>

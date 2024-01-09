@@ -6,7 +6,7 @@ type Props = {}
 
 function Loading({ }: Props) {
   return (
-    <div className='top-0 left-0 w-[100vw] h-[100vh] fixed bg-black z-40 bg-opacity-50  backdrop-blur-sm flex flex-col justify-center items-center'>
+    <div className='top-0 left-0 w-[100vw] h-[100vh] fixed bg-Act8 z-40 bg-opacity-50  backdrop-blur-sm flex flex-col justify-center items-center'>
       <div className='absolute flex top-[25%] z-50 '>
         <Image src={white_logo} alt={''} width={500} height={500}></Image>
       </div>

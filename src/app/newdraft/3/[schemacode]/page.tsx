@@ -63,50 +63,50 @@ export default function Page({
         })();
     }, [schemacode]);
 
-    const getDraftInfo = () => {
-        if (isDaft !== "" && isDaft !== null) {
-            console.log("isDaft:", isDaft)
-            setSchemaCode(isDaft.schema_info.code)
-            setStepDraft(isDaft.current_state)
-        }
-    }
+
 
     useEffect(() => {
-        getDraftInfo()
-    }, [isDaft])
-
-    const getAttribute = async () => {
-        if (contractAddres !== "" && contractAddres !== null) {
-            try {
-                const originAttribute = await getOriginAttributFromContract(contractAddres)
-                console.log("originAttribute", originAttribute)
-
-                // Assuming originAttribute is an array of attributes
-                const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes, ...originAttribute];
-                setIsDaft({
-                    ...isDaft,
-                    schema_info: {
-                        ...isDaft.schema_info,
-                        origin_data: {
-                            ...isDaft.schema_info.origin_data,
-                            origin_attributes: updatedAttributes,
-                        },
-                    },
-                });
-            } catch (error) {
-                // Handle errors
-                console.error('Error fetching data:', error);
+        const getDraftInfo = async () => {
+            if (isDaft !== "" && isDaft !== null) {
+                console.log("isDaft:", isDaft)
+                setSchemaCode(isDaft.schema_info.code)
+                setStepDraft(isDaft.current_state)
             }
         }
-    }
+        getDraftInfo();
+    }, [isDaft]);
+
+
+
 
 
     useEffect(() => {
-        // if () {
-        getAttribute()
-        // }
+        const getAttribute = async () => {
+            if (contractAddres !== "" && contractAddres !== null) {
+                try {
+                    const originAttribute = await getOriginAttributFromContract(contractAddres)
+                    console.log("originAttribute", originAttribute)
 
-    }, [contractAddres])
+                    // Assuming originAttribute is an array of attributes
+                    const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes, ...originAttribute];
+                    setIsDaft({
+                        ...isDaft,
+                        schema_info: {
+                            ...isDaft.schema_info,
+                            origin_data: {
+                                ...isDaft.schema_info.origin_data,
+                                origin_attributes: updatedAttributes,
+                            },
+                        },
+                    });
+                } catch (error) {
+                    // Handle errors
+                    console.error('Error fetching data:', error);
+                }
+            }
+        }
+        getAttribute();
+    }, [contractAddres,isDaft]);
 
 
 
@@ -269,29 +269,32 @@ export default function Page({
     };
 
     // ------------------------Validate Data -----------------------------------------------//
-    const validateName = () => {
-        const isNameExists = isAttributeExists(name);
-        if (uppercaseTest(name)) {
-            setValidateStateName(false);
-            setErrorMessageName("Uppercase is not allowed");
-        } else if (spaceTest(name)) {
-            setValidateStateName(false);
-            setErrorMessageName("Space is not allowed");
-        } else if (specialCharsTest(name)) {
-            setValidateStateName(false);
-            setErrorMessageName("Special characters are not allowed");
-        } else if (isNameExists && isNewAttribute && (name !== "")) {
-            setValidateStateName(false);
-            setErrorMessageName(`Attribute with name "${name}" already exists.`);
-        } else {
-            setValidateStateName(true);
-            setErrorMessageName("");
-        }
-    };
+
 
     useEffect(() => {
+
+        const validateName = () => {
+            const isNameExists = isAttributeExists(name);
+            if (uppercaseTest(name)) {
+                setValidateStateName(false);
+                setErrorMessageName("Uppercase is not allowed");
+            } else if (spaceTest(name)) {
+                setValidateStateName(false);
+                setErrorMessageName("Space is not allowed");
+            } else if (specialCharsTest(name)) {
+                setValidateStateName(false);
+                setErrorMessageName("Special characters are not allowed");
+            } else if (isNameExists && isNewAttribute && (name !== "")) {
+                setValidateStateName(false);
+                setErrorMessageName(`Attribute with name "${name}" already exists.`);
+            } else {
+                setValidateStateName(true);
+                setErrorMessageName("");
+            }
+        };
         validateName();
-    }, [name]);
+    }, [name, isNewAttribute]);
+
 
     // Check if the attribute with the given name already exists
     const isAttributeExists = (newAttributeName: string) => {
@@ -303,19 +306,20 @@ export default function Page({
         return false;
     };
 
-    const validateTraitType = () => {
-        if (specialCharsTestTraitType(traitType)) {
-            setValidateStateTraitType(false);
-            setErrorMessageTraitType("Special characters are not allowed");
-        } else {
-            setValidateStateTraitType(true);
-            setErrorMessageTraitType("");
-        }
-    };
+
 
     useEffect(() => {
-        validateTraitType();
+        const validateTraitType = () => {
+            if (specialCharsTestTraitType(traitType)) {
+                setValidateStateTraitType(false);
+                setErrorMessageTraitType("Special characters are not allowed");
+            } else {
+                setValidateStateTraitType(true);
+                setErrorMessageTraitType("");
+            }
+        };
     }, [traitType]);
+
 
     // ------------------------Validate Data -----------------------------------------------//
 
@@ -354,7 +358,7 @@ export default function Page({
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
                         {isDaft !== null && (isDaft.schema_info.origin_data.origin_attributes).map((item, index) => (
-                            <div >
+                            <div key={item} >
                                 {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   " >
                                     <Image
                                         className='z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2'

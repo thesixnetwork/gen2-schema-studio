@@ -50,19 +50,24 @@ export default function Page({
         })();
     }, [schemacode]);
 
-    const getDraftInfo = () => {
-        if (isDaft !== "" && isDaft !== null) {
-            console.log("isDaft:", isDaft)
-            setSchemaCode(isDaft.schema_info.code)
-            setOriginBaseURI(isDaft.schema_info.origin_data.origin_base_uri)
-            setOriginContractAddress(isDaft.schema_info.origin_data.origin_contract_address)
-            setStepDraft(isDaft.current_state)
-        }
-    }
-
     useEffect(() => {
-        getDraftInfo()
-    }, [isDaft])
+        const getDraftInfo = () => {
+            if (isDaft !== "" && isDaft !== null) {
+                console.log("isDaft:", isDaft);
+                setSchemaCode(isDaft.schema_info.code);
+                setOriginBaseURI(isDaft.schema_info.origin_data.origin_base_uri);
+                setOriginContractAddress(isDaft.schema_info.origin_data.origin_contract_address);
+                setStepDraft(isDaft.current_state);
+            }
+        };
+    
+        getDraftInfo(); // Call the function on mount
+    
+        return () => {
+            // Cleanup or unsubscribe if needed
+        };
+    }, [isDaft]);
+
 
     const handleInputChangeChaChainIndex = (value: number) => {
         setChainIndex(value);
@@ -103,8 +108,8 @@ export default function Page({
             try {
                 setIsLoadingGetBaseURI(true)
                 const origin_base_URI = await getBaseURI(originContractAddress)
-                console.log("base_uri",origin_base_URI)
-                if (typeof origin_base_URI !== 'string' ) {
+                console.log("base_uri", origin_base_URI)
+                if (typeof origin_base_URI !== 'string') {
                     setOriginBaseURI("")
                 } else {
                     setOriginBaseURI(origin_base_URI)

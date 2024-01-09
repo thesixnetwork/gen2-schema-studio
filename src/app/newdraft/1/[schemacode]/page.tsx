@@ -2,7 +2,7 @@
 
 import TapState from "@/components/TapState";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react"
 import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
@@ -42,9 +42,9 @@ export default function Page({
         (async () => {
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
-                console.log(schemaInfo)
-                setIsDaft(schemaInfo)
-                setIsLoading(false)
+                console.log(schemaInfo);
+                setIsDaft(schemaInfo);
+                setIsLoading(false);
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
@@ -53,19 +53,22 @@ export default function Page({
         })();
     }, [schemacode]);
 
-    const getDraftInfo = () => {
+
+
+    const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            console.log("isDaft:", isDaft)
-            setSchemaCode(isDaft.schema_info.code)
-            setCollectionName(isDaft.schema_info.name)
-            setDescription(isDaft.schema_info.description)
-            setStepDraft(isDaft.current_state)
+            console.log("isDaft:", isDaft);
+            setSchemaCode(isDaft.schema_info.code);
+            setCollectionName(isDaft.schema_info.name);
+            setDescription(isDaft.schema_info.description);
+            setStepDraft(isDaft.current_state);
         }
-    }
+    }, [isDaft]);
 
     useEffect(() => {
-        getDraftInfo()
-    }, [isDaft])
+        getDraftInfo();
+    }, [isDaft, getDraftInfo]);
+
     // const isDaft = await getSchemaInfo(schemacode);
     // console.log(JSON.stringify(isDaft, null, 2));
 
@@ -81,35 +84,34 @@ export default function Page({
         setDescription(value);
     };
 
-    const validateSchemaCode = async () => {
-        setIsLoadingFindSchemaCode(true)
-        const findSchemaCodeStatus = await findSchemaCode(schemaCode)
-        console.log("findSchemaCodeStatus :", findSchemaCodeStatus)
+    const validateSchemaCode = useCallback(async () => {
+        setIsLoadingFindSchemaCode(true);
+        const findSchemaCodeStatus = await findSchemaCode(schemaCode);
+        console.log("findSchemaCodeStatus :", findSchemaCodeStatus);
         if (uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
-            setValidate(false)
+            setValidate(false);
         } else {
-            setValidate(true)
-        };
+            setValidate(true);
+        }
 
         if (uppercaseTest(schemaCode)) {
-            setErrorMessage("Uppercase is not allowed")
+            setErrorMessage("Uppercase is not allowed");
         } else if (spaceTest(schemaCode)) {
-            setErrorMessage("Space is not allowed")
+            setErrorMessage("Space is not allowed");
         } else if (specialCharsTest(schemaCode)) {
-            setErrorMessage("Special characters is not allowed")
+            setErrorMessage("Special characters are not allowed");
         } else if (!findSchemaCodeStatus && schemaCode !== "") {
-            setErrorMessage("Schema code is Duplicate")
-        }
-        else {
+            setErrorMessage("Schema code is Duplicate");
+        } else {
             setErrorMessage("");
         }
-        setIsLoadingFindSchemaCode(false)
-    }
-
+        setIsLoadingFindSchemaCode(false);
+    }, [schemaCode]);
 
     useEffect(() => {
-        validateSchemaCode()
-    }, [schemaCode])
+        validateSchemaCode();
+    }, [schemaCode, validateSchemaCode]);
+
 
     const create_SchemaCode = async () => {
         const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
@@ -122,7 +124,7 @@ export default function Page({
     }
 
     const nextPage = async () => {
-       
+
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
                 setIsLoadingNext(true)
@@ -133,13 +135,13 @@ export default function Page({
                 validateNextPage()
             }
 
-        } else if(validate && !isLoadingFindSchemaCode) {
+        } else if (validate && !isLoadingFindSchemaCode) {
             setIsLoadingNext(true)
             await edit_schemaCode()
             router.push(`/newdraft/2/${schemacode}`, { scroll: false })
             setIsLoadingNext(false)
         }
-       
+
     }
 
     const validateNextPage = () => {
