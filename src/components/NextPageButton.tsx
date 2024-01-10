@@ -2,7 +2,7 @@ import { Spinner } from '@chakra-ui/react';
 import React from 'react';
 
 type Props = {
-  loading: boolean;
+  loading?: boolean;
 };
 
 function NextPageButton(props: Props) {
