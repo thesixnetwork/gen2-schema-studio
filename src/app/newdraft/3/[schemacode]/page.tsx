@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { tree } from "next/dist/build/templates/app-page";
 import Loading from "@/components/Loading";
 import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
+import { IOriginAttributes } from "@/type/Nftmngr";
 import AttributeCardAndDelete from "@/components/state3/AttributeCardAndDelete";
 
 export default function Page({
@@ -63,50 +64,64 @@ export default function Page({
         })();
     }, [schemacode]);
 
-
-
-    useEffect(() => {
-        const getDraftInfo = async () => {
-            if (isDaft !== "" && isDaft !== null) {
-                console.log("isDaft:", isDaft)
-                setSchemaCode(isDaft.schema_info.code)
-                setStepDraft(isDaft.current_state)
-            }
+    const getDraftInfo = () => {
+        if (isDaft !== "" && isDaft !== null) {
+            console.log("isDaft:", isDaft)
+            setSchemaCode(isDaft.schema_info.code)
+            setStepDraft(isDaft.current_state)
         }
-        getDraftInfo();
-    }, [isDaft]);
-
-
-
-
+    }
 
     useEffect(() => {
-        const getAttribute = async () => {
-            if (contractAddres !== "" && contractAddres !== null) {
-                try {
-                    const originAttribute = await getOriginAttributFromContract(contractAddres)
-                    console.log("originAttribute", originAttribute)
+        getDraftInfo()
+        // get_origin_attributes_form_contract(contractAddres)
+    }, [isDaft])
 
-                    // Assuming originAttribute is an array of attributes
-                    const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes, ...originAttribute];
-                    setIsDaft({
-                        ...isDaft,
-                        schema_info: {
-                            ...isDaft.schema_info,
-                            origin_data: {
-                                ...isDaft.schema_info.origin_data,
-                                origin_attributes: updatedAttributes,
-                            },
+    const get_origin_attributes_form_contract = async (contract: string) => {
+        const object1:IOriginAttributes[] = isDaft.schema_info.origin_data.origin_attributes; // Assuming isDaft has a type
+        const object2:IOriginAttributes[] = await getOriginAttributFromContract(contract);
+    
+        // Check if object1 is defined and has a 'some' method
+        const uniqueObjects = object2.filter(
+            obj2 => !object1 || (Array.isArray(object1) && object1.some(obj1 => obj1.name === obj2.name))
+        );
+        ////////////////
+
+        console.log("uniqueObjects",uniqueObjects)
+    
+    };
+    const getAttribute = async () => {
+        if (contractAddres !== "" && contractAddres !== null) {
+            try {
+                const originAttribute = await getOriginAttributFromContract(contractAddres)
+                console.log("originAttribute", originAttribute)
+
+                // Assuming originAttribute is an array of attributes
+                const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes, ...originAttribute];
+                setIsDaft({
+                    ...isDaft,
+                    schema_info: {
+                        ...isDaft.schema_info,
+                        origin_data: {
+                            ...isDaft.schema_info.origin_data,
+                            origin_attributes: updatedAttributes,
                         },
-                    });
-                } catch (error) {
-                    // Handle errors
-                    console.error('Error fetching data:', error);
-                }
+                    },
+                });
+            } catch (error) {
+                // Handle errors
+                console.error('Error fetching data:', error);
             }
         }
-        getAttribute();
-    }, [contractAddres,isDaft]);
+    }
+
+
+    useEffect(() => {
+        // if () {
+        getAttribute()
+        // }
+
+    }, [contractAddres])
 
 
 
@@ -269,32 +284,29 @@ export default function Page({
     };
 
     // ------------------------Validate Data -----------------------------------------------//
-
+    const validateName = () => {
+        const isNameExists = isAttributeExists(name);
+        if (uppercaseTest(name)) {
+            setValidateStateName(false);
+            setErrorMessageName("Uppercase is not allowed");
+        } else if (spaceTest(name)) {
+            setValidateStateName(false);
+            setErrorMessageName("Space is not allowed");
+        } else if (specialCharsTest(name)) {
+            setValidateStateName(false);
+            setErrorMessageName("Special characters are not allowed");
+        } else if (isNameExists && isNewAttribute && (name !== "")) {
+            setValidateStateName(false);
+            setErrorMessageName(`Attribute with name "${name}" already exists.`);
+        } else {
+            setValidateStateName(true);
+            setErrorMessageName("");
+        }
+    };
 
     useEffect(() => {
-
-        const validateName = () => {
-            const isNameExists = isAttributeExists(name);
-            if (uppercaseTest(name)) {
-                setValidateStateName(false);
-                setErrorMessageName("Uppercase is not allowed");
-            } else if (spaceTest(name)) {
-                setValidateStateName(false);
-                setErrorMessageName("Space is not allowed");
-            } else if (specialCharsTest(name)) {
-                setValidateStateName(false);
-                setErrorMessageName("Special characters are not allowed");
-            } else if (isNameExists && isNewAttribute && (name !== "")) {
-                setValidateStateName(false);
-                setErrorMessageName(`Attribute with name "${name}" already exists.`);
-            } else {
-                setValidateStateName(true);
-                setErrorMessageName("");
-            }
-        };
         validateName();
-    }, [name, isNewAttribute]);
-
+    }, [name]);
 
     // Check if the attribute with the given name already exists
     const isAttributeExists = (newAttributeName: string) => {
@@ -306,20 +318,19 @@ export default function Page({
         return false;
     };
 
-
+    const validateTraitType = () => {
+        if (specialCharsTestTraitType(traitType)) {
+            setValidateStateTraitType(false);
+            setErrorMessageTraitType("Special characters are not allowed");
+        } else {
+            setValidateStateTraitType(true);
+            setErrorMessageTraitType("");
+        }
+    };
 
     useEffect(() => {
-        const validateTraitType = () => {
-            if (specialCharsTestTraitType(traitType)) {
-                setValidateStateTraitType(false);
-                setErrorMessageTraitType("Special characters are not allowed");
-            } else {
-                setValidateStateTraitType(true);
-                setErrorMessageTraitType("");
-            }
-        };
+        validateTraitType();
     }, [traitType]);
-
 
     // ------------------------Validate Data -----------------------------------------------//
 
@@ -343,7 +354,7 @@ export default function Page({
     //------------------------Post data to base --------------------------------------------//
 
     useEffect(() => {
-        console.log(isNewAttribute)
+        console.log("isNewAttribute",isNewAttribute)
     }, [isNewAttribute])
     return (
         <>
@@ -358,7 +369,7 @@ export default function Page({
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
                         {isDaft !== null && (isDaft.schema_info.origin_data.origin_attributes).map((item, index) => (
-                            <div key={item} >
+                            <div >
                                 {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   " >
                                     <Image
                                         className='z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2'

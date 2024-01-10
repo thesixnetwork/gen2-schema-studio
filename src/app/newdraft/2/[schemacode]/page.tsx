@@ -1,6 +1,7 @@
 'use client'
 
 import { getSchemaInfo } from "@/service/getSchemaInfo";
+import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react"
 import BackPageButton from "@/components/BackPageButton";
@@ -13,6 +14,8 @@ import Stepmenu from "@/components/Stepmenu";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
 import { getBaseURI } from "@/service/getBaseURI";
+import { IOriginAttributes } from "@/type/Nftmngr";
+
 
 
 
@@ -88,11 +91,16 @@ export default function Page({
 
     const save_state2 = async () => {
         setIsLoadingSave(true)
+        // let origin_attributes_form_contract 
+        // const new_origin_attribute = await get_origin_attributes_form_contract(originContractAddress);
+        console.log("originContractAddress",originContractAddress)
+        console.log("originBaseURI",originBaseURI)
         const saveState2_status = await saveState2(originContractAddress, originBaseURI, schemacode)
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
         setIsLoadingSave(false)
     }
+    
 
     const backPage = () => {
         // if (originBaseURI !== "" || originContractAddress !== "") {

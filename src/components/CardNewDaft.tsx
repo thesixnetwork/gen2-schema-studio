@@ -28,21 +28,85 @@ import { useRouter } from "next/navigation";
 import NewCollecitonCard from "./state3/NewCollectionCard";
 import AttributeCard from "./state3/AttributeCard";
 import AttributeCardAndDelete from "./state3/AttributeCardAndDelete";
+import { ConfirmModal } from "@/components/ConfirmModal";
+import ENV from "@/utils/ENV";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
-const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number, setIsDaft: Dispatch<SetStateAction<ISchemaInfo | null>>, schemacode: string }> = ({ isDaft, isState, setIsDaft, schemacode }) => {
+
+const CaradNewDaft: React.FC<{
+  isDaft: ISchemaInfo;
+  isState: number;
+  setIsDaft: Dispatch<SetStateAction<ISchemaInfo | null>>;
+  schemacode: string;
+}> = ({ isDaft, isState, setIsDaft, schemacode }) => {
+  const { data: session } = useSession();
+
   const router = useRouter();
   const [onEdit, setOnEdit] = useState(false);
   const [onCreate, setOnCreate] = useState(false);
   const [onAdd, setOnAdd] = useState(false);
   const [indexEdit, setIndexEdit] = useState(0);
   const [isAttribute, setIsAttribute] = useState<ItokenAttributes | null>(null);
-  const [isAttributes, setIsAttributes] = useState<ItokenAttributes[]>(isState === 4 ? isDaft.schema_info.onchain_data.nft_attributes : isDaft.schema_info.onchain_data.token_attributes);
+  const [isAttributes, setIsAttributes] = useState<ItokenAttributes[]>(
+    isState === 4
+      ? isDaft.schema_info.onchain_data.nft_attributes
+      : isDaft.schema_info.onchain_data.token_attributes
+  );
   const handleEdit = (item: ItokenAttributes, index: number) => {
     setOnEdit(true);
     setIndexEdit(index);
     setIsAttribute(item);
   };
 
+  const handleDel = async (index: number) => {
+    const updatedAttributes = isAttributes.filter((_, i) => i !== index);
+    let onchain_data;
+    const apiUrl = `${ENV.Client_API_URL}/schema/set_schema_info`;
+    if (isState === 4) {
+      onchain_data = {
+        nft_attributes: updatedAttributes,
+      };
+    }
+    if (isState === 5) {
+      onchain_data = {
+        token_attributes: updatedAttributes,
+      };
+    }
+
+    const requestData = {
+      payload: {
+        schema_info: {
+          onchain_data: onchain_data,
+        },
+        schema_code: schemacode,
+        status: "Draft",
+        current_state: "4",
+      },
+    };
+    const isConfirm = await ConfirmModal("Do you want to Delelte ?", "Cancle");
+    if (isConfirm) {
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        if (res.statusCode === "V:0001") {
+          setIsAttributes(updatedAttributes);
+          // console.log(res)
+          return;
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.log("error ", error)
+      }
+    }
+
+  };
 
   useEffect(() => {
     if (isState === 4) {
@@ -51,7 +115,7 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number, setIsDaft: 
     if (isState === 5) {
       setIsAttributes(isDaft.schema_info.onchain_data.token_attributes);
     }
-  }, [isState])
+  }, [isState]);
 
   return (
     <>
@@ -70,13 +134,10 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number, setIsDaft: 
                     traitType={item.display_option.opensea.trait_type}
                     value={item.display_option.opensea.trait_type}
                     onSettingBarClick={() => handleEdit(item, index)}
-                    onDelete={function (): void {
-                      throw new Error("Function not implemented.");
-                    }}>
-                  </AttributeCardAndDelete>
+                    onDelete={() => handleDel(index)}
+                  ></AttributeCardAndDelete>
                 </div>
-              ))
-            }
+              ))}
           </div>
           // <Flex
           //   flexDirection="column"
@@ -212,8 +273,29 @@ const CaradNewDaft: React.FC<{ isDaft: ISchemaInfo, isState: number, setIsDaft: 
             // eslint-disable-next-line react/jsx-no-comment-textnodes
           ))} */}
 
-        {onEdit && !onCreate && isAttribute && <CardEditDaft isAttribute={isAttribute} isAttributes={isAttributes} setIsAttributes={setIsAttributes} indexEdit={indexEdit} rawData={isDaft} setOnEdit={setOnEdit} isState={isState} onEdit={onEdit} schemacode={schemacode} />}
-        {onCreate && !onEdit && <CreateAttribute rawData={isDaft} setIsAttributes={setIsAttributes} isAttributes={isAttributes} setOnCreate={setOnCreate} isState={isState} schemacode={schemacode} />}
+        {onEdit && !onCreate && isAttribute && (
+          <CardEditDaft
+            isAttribute={isAttribute}
+            isAttributes={isAttributes}
+            setIsAttributes={setIsAttributes}
+            indexEdit={indexEdit}
+            rawData={isDaft}
+            setOnEdit={setOnEdit}
+            isState={isState}
+            onEdit={onEdit}
+            schemacode={schemacode}
+          />
+        )}
+        {onCreate && !onEdit && (
+          <CreateAttribute
+            rawData={isDaft}
+            setIsAttributes={setIsAttributes}
+            isAttributes={isAttributes}
+            setOnCreate={setOnCreate}
+            isState={isState}
+            schemacode={schemacode}
+          />
+        )}
       </Flex>
     </>
   );
