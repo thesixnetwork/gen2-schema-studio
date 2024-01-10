@@ -25,7 +25,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const [action, setAction] = useState<Array<any> | undefined>();
   const [updatedAction, setUpdatedAction] = useState<any[] | undefined>([]);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
-  const [currentStep, setCurrentStep] = useState(5);
+  const [stepDraft, setStepDraft] = useState(5);
   const [actionIndex, setActionIndex] = useState(0);
   const [isEdit, setIsEdit] = useState(false);
   const getIsEdited = getCookie("isEditAction");
@@ -90,7 +90,7 @@ const Page = ({ params }: { params: { param: string } }) => {
       try {
         const response = await getSchemaInfo(schemacode);
         if (response && response.current_state) {
-          setCurrentStep(response?.current_state);
+          setStepDraft(response?.current_state);
         }
         if (
           response &&

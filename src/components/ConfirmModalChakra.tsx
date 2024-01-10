@@ -41,10 +41,17 @@ const ConfirmModalChakra = (props: Props) => {
     props.setIsOpen(false);
     onClose();
   };
+
+  const handleClose = () =>{
+    onClose()
+    props.setIsOpen(false)
+  }
+
   useEffect(() => {
     props.isOpen && onOpen();
     console.log("props.isOpen", props.isOpen)
   }, [props.isOpen]);
+
 
   return (
     <>
@@ -53,11 +60,11 @@ const ConfirmModalChakra = (props: Props) => {
         // initialFocusRef={initialRef}
         // finalFocusRef={finalRef}
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         isCentered
       >
-        <ModalOverlay  bg="blackAlpha.800" backdropFilter="blur(5px) " />
-        <ModalContent className=" rounded-2xl" bg="rgba(0, 0, 0, 0.6)" padding={4}>
+        <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(5px) "/>
+        <ModalContent bg="rgba(0, 0, 0, 0.6)" padding={4}>
           <ModalHeader
             color={"white"}
             display={"flex"}

@@ -3,15 +3,11 @@ import { cookies } from 'next/headers'
 import ENV from '@/utils/ENV'
 import axios from 'axios'
 
-export const getListDraft = async (contract_address: string) => {
+export const getListDraft = async () => {
     const cookieStore = cookies()
     const token = cookieStore.get('token')
     const apiUrl = `${ENV.API_URL}schema/list_draft`; // Replace with your API endpoint
-    const params = {
-        contract_address: `${contract_address}`,
-        chain_id: "98",
-    };
-
+    const params = {};
     const headers = {
         'Content-Type': 'application/json',
         Authorization: token?.value,
@@ -23,8 +19,8 @@ export const getListDraft = async (contract_address: string) => {
             headers: headers, // Pass headers as an object
         });
 
-        console.log(req.data.data)
-        return req.data.data.base_uri
+        console.log(req.data.data.sesstion)
+        return req.data.data.sesstion
     } catch (error) {
         return error;
     }

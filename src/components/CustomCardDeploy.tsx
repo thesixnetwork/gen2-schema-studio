@@ -29,6 +29,7 @@ import { EncodeObject, OfflineSigner, Registry } from "@cosmjs/proto-signing";
 import { MsgCreateNFTSchema } from "@/type/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { GasPrice } from "@cosmjs/stargate/build/fee";
+import ConfirmModalChakra from "./ConfirmModalChakra";
 
 interface Props {
   text: string;
@@ -115,61 +116,49 @@ const CustomCardDeploy: React.FC<Props> = ({
         console.log("rpcClient", rpcClient);
         msgArray.push(msgCreateNFTSchemaEndcode);
 
-        // try {
-        //   const txResponse = await rpcClient.signAndBroadcast(
-        //     isAccount[0].address,
-        //     msgArray,
-        //     "auto",
-        //     ``
-        //   );
-        //   console.log("tx-----", txResponse);
-        //   const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
-        //   const requestData = {
-        //     payload: {
-        //       schema_code: schemacode,
-        //       status: "Testnet",
-        //       current_state: "7",
-        //     },
-        //   };
-        //   await axios
-        //     .post(apiUrl, requestData, {
-        //       headers: {
-        //         "Content-Type": "application/json",
-        //         Authorization: `Bearer ${session?.user.accessToken}`,
-        //       },
-        //     })
-        //     .then((response) => {
-        //       console.log("API Response Deploy :", response.data);
-        //       console.log(requestData);
-        //       // You can handle the API response here
-        //     })
-        //     .catch((error) => {
-        //       console.error("API Error:", error);
-        //       // Handle errors here
-        //     });
+        try {
+          const txResponse = await rpcClient.signAndBroadcast(
+            isAccount[0].address,
+            msgArray,
+            "auto",
+            ``
+          );
+          console.log("tx-----", txResponse);
+          const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
+          const requestData = {
+            payload: {
+              schema_code: schemacode,
+              status: "Testnet",
+              current_state: "7",
+            },
+          };
+          await axios
+            .post(apiUrl, requestData, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session?.user.accessToken}`,
+              },
+            })
+            .then((response) => {
+              console.log("API Response Deploy :", response.data);
+              console.log(requestData);
+              // You can handle the API response here
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+              // Handle errors here
+            });
 
-        //   await Swal.fire({
-        //     position: "center",
-        //     icon: "success",
-        //     title: "Deployed Successfully",
-        //     showConfirmButton: false,
-        //     timer: 1500,
-        //   });
-        //   router.push("/");
-        // } catch (error) {
-        //   console.error(error);
-        //   await Swal.fire({
-        //     position: "center",
-        //     icon: "error",
-        //     title: "Something went wrong",
-        //     showConfirmButton: false,
-        //     timer: 1500,
-        //   });
-        // }
-        <AlertModal title="Deployed successfully" type="warning"/>
+          <AlertModal title="Deployed successfully" type="warning" />;
+
+          router.push("/");
+        } catch (error) {
+          console.error(error);
+          <AlertModal title="Deployment failed" type="error" />;
+        }
       }
     } else {
-      <AlertModal title="Deployment failed" type="error"/>
+      <AlertModal title="Deployment failed" type="error" />;
       console.log("Deployment canceled");
     }
   };
@@ -186,7 +175,7 @@ const CustomCardDeploy: React.FC<Props> = ({
   return (
     <>
       <button onClick={handleButtonClick}>logg</button>
-      {showAlert && <AlertModal title="Deployed succesfuly" type="warning"/>}
+      {showAlert && <AlertModal title="Deployed succesfuly" type="warning" />}
       {text === "Mainnet" && (
         <Flex
           width="200px"

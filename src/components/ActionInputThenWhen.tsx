@@ -29,7 +29,7 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
 
   const handleClickWhen = () => {
     setCookie(`action-name`, actionName);
-    setCookie(`action-${props.actionType}`, action);
+    setCookie(`action-${props.actionType}`, String(action));
     localStorage.setItem("action", JSON.stringify(props.action));
   };
 

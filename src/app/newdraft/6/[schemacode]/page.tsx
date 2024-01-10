@@ -121,7 +121,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
         <Stepmenu schemacode={schemacode} currentStep={6} schemacodeNavigate={schemacode} stepDraft={stepDraft} />
       </header>
       <section className="mt-12">
-      <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center">
+      <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center">
         <ActionCreateCard />
           {action !== undefined &&
             action.map((item, index) => (
