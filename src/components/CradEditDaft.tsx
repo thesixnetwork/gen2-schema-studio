@@ -84,7 +84,7 @@ const CaradEditDaft: React.FC<{
     type: string
   ) => {
     // console.log(e)
-    // console.log(rawData)
+    // console.log("Attribute",Attribute)
     const element = document.getElementById(`name ${indexEdit}`);
     const filteredArray = Attribute2.filter(
       (item) => item.name === e.target.value
@@ -95,7 +95,9 @@ const CaradEditDaft: React.FC<{
       e.target.value,
       setErrorMessage,
       att4,
-      att5
+      att5,
+      Attribute.name,
+      isState
     );
     if (element) {
       if (error) {
@@ -149,6 +151,16 @@ const CaradEditDaft: React.FC<{
 
   // console.log("newAttributes",newAttributes)
 
+  function checkType(value: string) {
+    const parsedValue = parseFloat(value);
+    if (Number.isInteger(parsedValue)) {
+      console.log(`${value} is an integer.`);
+      return false;
+    } else {
+      console.log(`${value} is a float.`);
+      return true;
+    }
+  }
   const handleAttribute = (type: string, value: string) => {
     if (type === "name") {
       setNewAttributes((prevPerson) => ({
@@ -212,27 +224,44 @@ const CaradEditDaft: React.FC<{
 
     if (type === "value") {
       let default_mint_value;
+      let data_type;
       if (newAttributes.data_type === "string") {
         default_mint_value = {
           string_attribute_value: {
             value: value,
           },
         };
+        data_type = "string";
       }
-      if (newAttributes.data_type === "number") {
-        default_mint_value = {
-          number_attribute_value: {
-            value: value,
-          },
-        };
+      if (
+        newAttributes.data_type === "number" ||
+        newAttributes.data_type === "float"
+      ) {
+        const chectFloat = checkType(value);
+        if (chectFloat) {
+          default_mint_value = {
+            float_attribute_value: {
+              value: parseFloat(value),
+            },
+          };
+          data_type = "float";
+
+        } else {
+          default_mint_value = {
+            number_attribute_value: {
+              value: value,
+            },
+          };
+          data_type = "number";
+        }
       }
-      if (newAttributes.data_type === "float") {
-        default_mint_value = {
-          float_attribute_value: {
-            value: parseFloat(value),
-          },
-        };
-      }
+      // if (newAttributes.data_type === "float") {
+      //   default_mint_value = {
+      //     float_attribute_value: {
+      //       value: parseFloat(value),
+      //     },
+      //   };
+      // }
       if (newAttributes.data_type === "boolean") {
         // console.log("value ==>", value);
         default_mint_value = {
@@ -240,10 +269,12 @@ const CaradEditDaft: React.FC<{
             value: value === "false" ? false : Boolean(value),
           },
         };
+        data_type = "boolean";
       }
       setNewAttributes((prevPerson) => ({
         ...prevPerson,
         default_mint_value: default_mint_value!,
+        data_type: data_type!,
       }));
     }
   };
@@ -288,7 +319,7 @@ const CaradEditDaft: React.FC<{
     return;
   };
 
-  // console.log("isAttributes", isAttributes)
+  console.log("errorMessage", errorMessage);
   const handleSave = async () => {
     if (errorMessage) {
       await ConfirmModal(errorMessage, "Error");
@@ -316,10 +347,10 @@ const CaradEditDaft: React.FC<{
         },
         schema_code: schemacode,
         status: "Draft",
-        current_state: "5",
+        current_state: isState.toString(),
       },
     };
-    // console.log(requestData);
+    console.log(requestData);
 
     const isConfirmed = await ConfirmModal("Are you sure to Save ?", "Save");
     if (isConfirmed) {
@@ -365,7 +396,7 @@ const CaradEditDaft: React.FC<{
         >
           <Flex>
             <Box>
-              <Text className="text-main2 text-2xl font-bold">Name</Text>
+              <p className="text-main2 text-2xl font-bold">Name</p>
             </Box>
           </Flex>
           <Flex flexDirection="column" height="auto">
@@ -400,7 +431,7 @@ const CaradEditDaft: React.FC<{
           justifyContent="space-between"
         >
           <Box>
-            <Text className="text-main2 text-2xl font-bold">Data Type</Text>
+            <p className="text-main2 text-2xl font-bold">Data Type</p>
           </Box>
           <Flex>
             {/* <Input color="black" defaultValue={isAttribute.data_type} /> */}
@@ -491,7 +522,7 @@ const CaradEditDaft: React.FC<{
           justifyContent="space-between"
         >
           <Box>
-            <Text className="text-main2 text-2xl font-bold">Trait Type</Text>
+            <p className="text-main2 text-2xl font-bold">Trait Type</p>
           </Box>
           <Box>
             <Input
@@ -514,7 +545,7 @@ const CaradEditDaft: React.FC<{
           justifyContent="space-between"
         >
           <Box>
-            <Text className="text-main2 text-2xl font-bold">Value</Text>
+            <p className="text-main2 text-2xl font-bold">Value</p>
           </Box>
           <Flex>
             {/* boolean */}

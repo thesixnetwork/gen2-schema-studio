@@ -25,7 +25,7 @@ export default function Page({
 }) {
     const router = useRouter()
     const { data: session } = useSession()
-    console.log(session)
+    // console.log(session)
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingNext, setIsLoadingNext] = useState(false)
     const [isLoadingFindSchemaCode, setIsLoadingFindSchemaCode] = useState(false)
@@ -42,7 +42,7 @@ export default function Page({
         (async () => {
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
-                console.log(schemaInfo);
+                // console.log(schemaInfo);
                 setIsDaft(schemaInfo);
                 setIsLoading(false);
                 // Process the response or update state as needed
@@ -57,7 +57,7 @@ export default function Page({
 
     const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            console.log("isDaft:", isDaft);
+            // console.log("isDaft:", isDaft);
             setSchemaCode(isDaft.schema_info.code);
             setCollectionName(isDaft.schema_info.name);
             setDescription(isDaft.schema_info.description);
@@ -87,7 +87,7 @@ export default function Page({
     const validateSchemaCode = useCallback(async () => {
         setIsLoadingFindSchemaCode(true);
         const findSchemaCodeStatus = await findSchemaCode(schemaCode);
-        console.log("findSchemaCodeStatus :", findSchemaCodeStatus);
+        // console.log("findSchemaCodeStatus :", findSchemaCodeStatus);
         if (uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
             setValidate(false);
         } else {
@@ -115,12 +115,12 @@ export default function Page({
 
     const create_SchemaCode = async () => {
         const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
-        console.log("createSchemaCodeStatus", createSchemaCodeStatus)
+        // console.log("createSchemaCodeStatus", createSchemaCodeStatus)
     }
 
     const edit_schemaCode = async () => {
         const editSchemaCodeStatus = await editSchemaCode(schemacode, schemaCode, collectionName, description)
-        console.log(editSchemaCodeStatus)
+        // console.log(editSchemaCodeStatus)
     }
 
     const nextPage = async () => {

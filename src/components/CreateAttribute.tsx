@@ -25,7 +25,7 @@ import { postData } from "@/service/postAction";
 import axios from "axios";
 import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
-import CheckErrorI from "@/utils/checkError";
+import { CheckErrorII } from "@/utils/checkError";
 
 import { ConfirmModal } from "@/components/ConfirmModal";
 import InputCardOneLine from "./state1/InputCardOneLine";
@@ -107,7 +107,7 @@ const CreateAttribute: React.FC<{
     );
     console.log(filteredArray);
     // console.log(checkDatatype2);
-    const error = await CheckErrorI(
+    const error = await CheckErrorII(
       e.target.value,
       setErrorMessage,
       att4,
@@ -135,6 +135,8 @@ const CreateAttribute: React.FC<{
     }
     return;
   };
+  console.log("isAttributes", isAttributes);
+  // console.log("newAttributes",newAttributes)
 
   const handleSave = async () => {
     if (errorMessage) {
@@ -144,16 +146,18 @@ const CreateAttribute: React.FC<{
     }
     await setIsAttributes([...isAttributes, newAttributes]);
 
+    const newAtt = [...isAttributes, newAttributes];
+    // console.log(newAtt)
     let onchain_data;
     const apiUrl = `${ENV.Client_API_URL}/schema/set_schema_info`;
     if (isState === 4) {
       onchain_data = {
-        nft_attributes: isAttributes,
+        nft_attributes: newAtt,
       };
     }
     if (isState === 5) {
       onchain_data = {
-        token_attributes: isAttributes,
+        token_attributes: newAtt,
       };
     }
     const requestData = {
@@ -163,10 +167,10 @@ const CreateAttribute: React.FC<{
         },
         schema_code: schemacode,
         status: "Draft",
-        current_state: "5",
+        current_state: isState.toString(),
       },
     };
-    // console.log(requestData)
+    console.log(requestData);
 
     const isConfirmed = await ConfirmModal("Are you sure to Save ?", "Save");
     if (isConfirmed) {
@@ -340,33 +344,40 @@ const CreateAttribute: React.FC<{
           id="namenaja"
         >
           <Box height="30%">
-            <Text className="text-main2 text-2xl font-bold">Name</Text>
+            <p className="text-main2 text-2xl font-bold">Name</p>
           </Box>
-          <Box height="60%" width="380px">
-            <Input
-              color="black"
-              id="cr-name"
-              placeholder={"Add Attribute Name"}
-              className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
-              // defaultValue={isAttribute.name}
-              // onChange={(e) => handleInput(e, "name")}
-              onChange={(e) => {
-                handleInput(e, "name"), handleAttribute("name", e.target.value);
-              }}
-            ></Input>
-          </Box>
-          <div
-            className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
-          ></div>
+          <Flex flexDirection="column" height="auto">
+            <Box height="60%" width="380px">
+              <Input
+                color="black"
+                id="cr-name"
+                placeholder={"Add Attribute Name"}
+                className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                // defaultValue={isAttribute.name}
+                // onChange={(e) => handleInput(e, "name")}
+                onChange={(e) => {
+                  handleInput(e, "name"),
+                    handleAttribute("name", e.target.value);
+                }}
+              ></Input>
+            </Box>
+            {errorMessage && (
+              <Box marginTop="2px">
+                <Text color="red">{errorMessage}</Text>
+              </Box>
+            )}
+            <div
+              className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
+            ></div>
+          </Flex>
         </Flex>
         <Flex
           className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
-
           // p={8}
           marginTop="15px"
         >
           <Box height="50%">
-            <Text className="text-main2 text-2xl font-bold">Data Type</Text>
+            <p className="text-main2 text-2xl font-bold">Data Type</p>
           </Box>
           <Flex height="60%" width="380px">
             {/* <Input color="black" defaultValue={isAttribute.data_type} /> */}
@@ -449,11 +460,10 @@ const CreateAttribute: React.FC<{
         </Flex>
         <Flex
           className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
-
           marginTop="15px"
         >
           <Box>
-            <Text className="text-main2 text-2xl font-bold">Trait Type</Text>
+            <p className="text-main2 text-2xl font-bold">Trait Type</p>
           </Box>
           <Box width="380px">
             <Input
@@ -478,7 +488,7 @@ const CreateAttribute: React.FC<{
           marginTop="15px"
         >
           <Box>
-            <Text className="text-main2 text-2xl font-bold">Value</Text>
+            <p className="text-main2 text-2xl font-bold">Value</p>
           </Box>
           <Flex width="380px">
             {/* boolean */}

@@ -39,7 +39,8 @@ const CaradNewDaft: React.FC<{
   isState: number;
   setIsDaft: Dispatch<SetStateAction<ISchemaInfo | null>>;
   schemacode: string;
-}> = ({ isDaft, isState, setIsDaft, schemacode }) => {
+  setOnEditOrCreate: Dispatch<SetStateAction<boolean>>;
+}> = ({ isDaft, isState, setIsDaft, schemacode, setOnEditOrCreate }) => {
   const { data: session } = useSession();
 
   const router = useRouter();
@@ -122,7 +123,7 @@ const CaradNewDaft: React.FC<{
       <Flex flexWrap={"wrap"}>
         {!onEdit && !onCreate && (
           <div className=" w-full h-[70vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
-            <div onClick={() => setOnCreate(true)}>
+            <div onClick={() => {setOnCreate(true), setOnEditOrCreate(true)}}>
               <NewCollecitonCard></NewCollecitonCard>
             </div>
             {isAttributes &&
@@ -132,8 +133,25 @@ const CaradNewDaft: React.FC<{
                     name={item.name}
                     dataType={item.data_type}
                     traitType={item.display_option.opensea.trait_type}
-                    value={item.display_option.opensea.trait_type}
-                    onSettingBarClick={() => handleEdit(item, index)}
+                    // value={
+                    //   item.data_type === "string" ? 
+                    //   item.default_mint_value!.string_attribute_value!.value.toString():
+                    //   item.data_type === "number" ?
+                    //   item.default_mint_value!.number_attribute_value!.value.toString():
+                    //   item.data_type === "boolean" ?
+                    //   item.default_mint_value!.boolean_attribute_value!.value.toString():
+                    //   item.default_mint_value!.float_attribute_value!.value.toString()
+                    // }
+                    value={
+                      item.data_type === "string" && item.default_mint_value?.string_attribute_value ? 
+                      item.default_mint_value?.string_attribute_value.value:
+                      item.data_type === "number" && item.default_mint_value?.number_attribute_value ?
+                      item.default_mint_value?.number_attribute_value.value:
+                      item.data_type === "boolean" && item.default_mint_value?.boolean_attribute_value ?
+                      item.default_mint_value?.boolean_attribute_value.value.toString():
+                      item.default_mint_value?.float_attribute_value && item.default_mint_value?.float_attribute_value.value.toString()
+                    }
+                    onSettingBarClick={() => {handleEdit(item, index), setOnEditOrCreate(true)}}
                     onDelete={() => handleDel(index)}
                   ></AttributeCardAndDelete>
                 </div>
