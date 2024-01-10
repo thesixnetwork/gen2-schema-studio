@@ -31,6 +31,7 @@ import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 const Page = ({ params }: { params: { schemacode: string } }) => {
   const [action, setAction] = useState<Array<any>>([]);
   const [loading, setLoading] = useState(true);
+  const [stepDraft, setStepDraft] = useState(5)
   const [tokenAttributes, setTokenAttributes] = useState<ItokenAttributes[]>(
     []
   );
@@ -96,6 +97,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
           );
           setNftAttributes(response.schema_info.onchain_data.nft_attributes);
           setLoading(false);
+          setStepDraft(response.current_state)
         } else {
           console.error("Invalid :", response);
           setLoading(false);
@@ -116,10 +118,10 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
     <>
       {loading && <Loading />}
       <header>
-        <Stepmenu schemacode={schemacode} currentStep={6}></Stepmenu>
+        <Stepmenu schemacode={schemacode} currentStep={6} schemacodeNavigate={schemacode} stepDraft={stepDraft} />
       </header>
       <section className="mt-12">
-        <div className="grid gap-y-8 grid-cols-1 2xl:grid-cols-3 xl:grid-cols-2 justify-items-center">
+      <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center">
         <ActionCreateCard />
           {action !== undefined &&
             action.map((item, index) => (
@@ -136,7 +138,6 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
             ))}
 
         </div>
-        <ConfirmModalChakra title="Are you sure to create?"/>
         <div className="w-full flex justify-between px-24 my-12">
           <Link href={`/newdraft/5/${schemacode}`}>
             <BackPageButton />

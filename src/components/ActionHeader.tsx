@@ -17,7 +17,7 @@ const ActionHeader = (props: ActionHeaderProps) => {
   return (
     <div>
       <header>
-        <Stepmenu schemacode={schemaCode} currentStep={6}></Stepmenu>
+        <Stepmenu schemacode={schemaCode} currentStep={6} schemacodeNavigate={schemaCode} stepDraft={5} ></Stepmenu>
       </header>
       <div className="text-black flex items-center my-4">
         <h6>

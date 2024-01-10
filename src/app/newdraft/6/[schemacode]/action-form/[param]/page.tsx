@@ -22,18 +22,10 @@ import Stepmenu from "@/components/Stepmenu";
 const Page = ({ params }: { params: { param: string } }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [actionNameValue, setActionNameValue] = useState("");
-  const [isActionNameError, setIsActionNameError] = useState(false);
-  const [actionNameErrorMessage, setActionNameErrorMessage] = useState("");
-  const [actionDescriptionValue, setActionDescriptionValue] = useState("");
-  const [isDescriptionError, setIsDescriptionError] = useState(false);
-  const [descriptionErrorMessage, setDescriptionErrorMessage] = useState("");
   const [action, setAction] = useState<Array<any> | undefined>();
   const [updatedAction, setUpdatedAction] = useState<any[] | undefined>([]);
-  const [actionWhenValue, setActionWhenValue] = useState("");
-  const [actionThenValue, setActionThenValue] = useState([]);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
-  const [editedActionArr, setEditedActionArr] = useState<any[] | undefined>([]);
+  const [currentStep, setCurrentStep] = useState(5);
   const [actionIndex, setActionIndex] = useState(0);
   const [isEdit, setIsEdit] = useState(false);
   const getIsEdited = getCookie("isEditAction");
@@ -97,7 +89,9 @@ const Page = ({ params }: { params: { param: string } }) => {
       setLoading(true);
       try {
         const response = await getSchemaInfo(schemacode);
-
+        if (response && response.current_state) {
+          setCurrentStep(response?.current_state);
+        }
         if (
           response &&
           response.schema_info &&
@@ -167,7 +161,7 @@ const Page = ({ params }: { params: { param: string } }) => {
         },
         ...prev.slice(1),
       ]);
-      setLoading(false)
+      setLoading(false);
     } else {
       // console.log("--->1", updatedAction);
       console.log("--->2", getActionFromCookie);
@@ -199,7 +193,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     <>
       {loading && <Loading />}
       <header>
-        <Stepmenu schemacode={schemacode} currentStep={6}></Stepmenu>
+        <Stepmenu schemacode={schemacode} currentStep={6}  schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
       </header>
       <div className="w-fit max-w-screen-md mx-auto mt-12">
         {(typeof actionIndex === "number" || isCreateNewAction) && (

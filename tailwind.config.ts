@@ -37,6 +37,13 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
+    screens: {
+      'sm': '800px',
+      'md': '1200px',
+      'lg': '1600px',
+      'xl': '2000px',
+      '2xl': '2400px',
+    },
     
     patterns: {
       opacities: {

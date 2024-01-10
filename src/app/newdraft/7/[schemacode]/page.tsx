@@ -49,19 +49,21 @@ export default function Page({
   const router = useRouter();
   const [chainId, setChainId] = useState("fivenet");
   const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET);
+  const [stepDraft, setStepDraft] = useState(6);
 
   useEffect(() => {
     (async () => {
       try {
         const send = await getSchemaInfo(schemacode);
         setIsDaft(send);
+        if (send && send.current_state) {
+          setStepDraft(send?.current_state);
+        }
         if (send) {
           await getAccount();
         }
         setLoading(false);
-        // Process the response or update state as needed
       } catch (error) {
-        // Handle errors
         console.error("Error fetching data:", error);
       }
     })();
@@ -78,7 +80,7 @@ export default function Page({
   return (
     <>
       <header>
-        <Stepmenu schemacode={schemacode} currentStep={7}></Stepmenu>
+        <Stepmenu schemacode={schemacode} currentStep={7}  schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
       </header>
       {isDaft && (
         <Flex flexWrap={"wrap"} my={24}>
@@ -99,11 +101,10 @@ export default function Page({
             <CustomCardDeploy text={"Mainnet"} onClick={() => {}} />
           </Flex>
           <div className="w-full flex flex-end justify-end gap-x-8 mt-24">
-
-          <Link href={`/newdraft/6/${schemacode}`}>
-            <BackPageButton />
-          </Link>
-          <BackToHomeButton />
+            <Link href={`/newdraft/6/${schemacode}`}>
+              <BackPageButton />
+            </Link>
+            <BackToHomeButton />
           </div>
         </Flex>
       )}
