@@ -49,14 +49,15 @@ const ConfirmModalChakra = (props: Props) => {
   return (
     <>
       <Modal
+      
         // initialFocusRef={initialRef}
         // finalFocusRef={finalRef}
         isOpen={isOpen}
         onClose={onClose}
         isCentered
       >
-        <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(5px) " />
-        <ModalContent bg="rgba(0, 0, 0, 0.6)" padding={4}>
+        <ModalOverlay  bg="blackAlpha.800" backdropFilter="blur(5px) " />
+        <ModalContent className=" rounded-2xl" bg="rgba(0, 0, 0, 0.6)" padding={4}>
           <ModalHeader
             color={"white"}
             display={"flex"}

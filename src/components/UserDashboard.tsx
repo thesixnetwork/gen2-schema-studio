@@ -11,6 +11,7 @@ import createDown_icon from '../../public/pic/CaretDown_icon.png'
 import { getBalanceCoin, getCosmosAddress } from '@/helpers/AuthService';
 import Disconnect from './Disconnect';
 import { useSession} from "next-auth/react"
+import ConfirmModalChakra from './ConfirmModalChakra';
 
 type Props = {}
 
@@ -18,7 +19,7 @@ function UserDashboard({ }: Props) {
     // const [cosmosAddress,setCosmosAddress] = useState(getCosmosAddress())
     // const [balance,setBalance]= useState(getBalanceCoin())
     const { data:session} = useSession();
-
+    
 
     return (
         <div className=' w-80 h-32 border-2nd4 border rounded-lg justify-between px-3 py-1'>
@@ -53,6 +54,7 @@ function UserDashboard({ }: Props) {
                 </div>
                <Disconnect></Disconnect>
             </div>
+            
         </div>
     )
 }

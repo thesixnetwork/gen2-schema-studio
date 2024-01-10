@@ -11,7 +11,7 @@ type Props = {}
 function Page({ }: Props) {
     const router = useRouter();
     return (
-        <div className=" w-full h-full min-h-[75vh] p-10 flex flex-col justify-between items-center py-10">
+        <div className=" w-full h-full min-h-[75vh]  flex flex-col justify-between items-center pb-4 pt-10">
             <div className=' px-[10%] w-full flex items-center justify-between'>
                 <div className='w-48 h-48 bg-2nd4 rounded-lg border border-Act6 flex justify-center items-center'>
                     <h1 className=' text-6xl text-Act6 font-thin'>NFT</h1>
@@ -32,13 +32,13 @@ function Page({ }: Props) {
                     </div>
                 </div>
             </div>
-            <div className=' w-[90%] h-60 border border-2nd4 rounded-3xl px-10 py-5 flex justify-center items-center text-main2'>
+            <div className=' w-[90%] h-60 border border-2nd4 rounded-3xl px-10 pb-4 pt-10 flex justify-center items-center text-main2'>
                 <p className=' text-xl'><span className="font-bold">Data Layer - NFT Gen 2</span> is designed to empower existing NFTs for various business applications. Its dynamic attributes can be modified on the blockchain with permission, bridging real-world businesses and blockchain technology. It allows for the creation of NFTs that can serve as membership cards, event tickets, health tags for hospitality,
                     and much more. If you want to explore further,<br />
                     <span className="font-bold">please visit NFT Gen 2 for additional information.</span>
                 </p>
             </div>
-            <div className=' w-[90%] h-20 flex justify-between items-center'>
+            <div className=' w-[90%]  flex justify-between items-center'>
                 <div onClick={() => { router.push(`/class`, { scroll: false }) }}>
                     <BackPageButton></BackPageButton>
                 </div>

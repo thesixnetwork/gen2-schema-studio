@@ -136,13 +136,13 @@ export default function Page({
     return (
         <>
             {isLoading && <Loading></Loading>}
-            <div className=" w-full h-full min-h-[110vh] flex flex-col justify-between items-center ">
+            <div className=" w-full h-full min-h-[110vh] flex flex-col justify-between items-center pb-4 ">
                 <Stepmenu schemacode={schemaCode} currentStep={2} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
-                <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x898bb3b662419e79366046C625A213B83fB4809B"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
+                <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x40df0C834CE7549e9234D11525aD1f7E7CF48E88"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
                 <InputToggleCard title={"Chain Type"} require={true} chainIndex={chainTypeIndex} onChangeChainIndex={handleInputChangeChainTypeIndex}></InputToggleCard>
                 <InputCardOneLineLarge title={"Origin Base URI"} require={false} placeholder={"https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/"} validate={true} errorMassage={""} value={originBaseURI} onChange={handleInputChangeOriginBaseURI} loading={false}></InputCardOneLineLarge>
-                <div className=' w-[90%] h-20 flex justify-between items-center'>
+                <div className=' w-[90%]  flex justify-between items-center'>
                     <div onClick={backPage}>
                         <BackPageButton></BackPageButton>
                     </div>
