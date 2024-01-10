@@ -65,7 +65,7 @@ export default function Page({
 
     const getDraftInfo = () => {
         if (isDaft !== "" && isDaft !== null) {
-            console.log("isDaft:", isDaft)
+            // console.log("isDaft:", isDaft)
             setSchemaCode(isDaft.schema_info.code)
             setStepDraft(isDaft.current_state)
         }
@@ -79,7 +79,7 @@ export default function Page({
         if (contractAddres !== "" && contractAddres !== null) {
             try {
                 const originAttribute = await getOriginAttributFromContract(contractAddres)
-                console.log("originAttribute", originAttribute)
+                // console.log("originAttribute", originAttribute)
 
                 // Assuming originAttribute is an array of attributes
                 const updatedAttributes = [...isDaft.schema_info.origin_data.origin_attributes, ...originAttribute];
@@ -323,7 +323,7 @@ export default function Page({
     const save_state3 = async () => {
         setIsLoadingSaveState3(true)
         const saveState3_status = await saveState3(isDaft.schema_info.origin_data.origin_attributes, schemacode)
-        console.log("saveState1_status :", saveState3_status)
+        // console.log("saveState1_status :", saveState3_status)
         router.push(`/newdraft/4/${schemacode}`)
         setIsLoadingSaveState3(false)
     }
