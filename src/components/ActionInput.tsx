@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { IActions } from "@/type/Nftmngr";
-import { getCookie } from "@/service/getCookie";
 
 interface ActionInputProps {
   name: string;
@@ -15,7 +14,7 @@ const ActionInput = (props: ActionInputProps) => {
   const [value, setValue] = useState("");
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const actionCookieString = getCookie("action");
+  const actionCookieString = localStorage.getItem('action');
 
   const allAction =
     actionCookieString !== null
@@ -115,18 +114,18 @@ const ActionInput = (props: ActionInputProps) => {
   }, [props.value]);
 
   return (
-    <div className="border justify-between w-[40vw] relative rounded-md bg-white">
+    <div className="border justify-between w-[40vw] relative rounded-2xl bg-white">
       <div
         className={`${
           props.name === "Name" ? "bg-main2 " : "bg-none"
-        } border-main2 border h-3 w-3 rounded-full absolute right-1 top-1`}
+        } w-5 h-5 rounded-full border border-main2 absolute right-2 top-2`}
       ></div>
-      <div className="flex items-center justify-between px-10 h-28">
-        <h2 className="text-main2 font-semibold">{props.name}</h2>
+      <div className="flex items-center justify-between px-20 h-28">
+        <h2 className="text-main2 text-2xl font-bold">{props.name}</h2>
         <div className="flex flex-col relative">
           <input
             placeholder={`Input your action ${props.name.toLowerCase()}`}
-            className={`pl-4 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px]  ${
+            className={` pl-5 text-xl h-12 rounded-md  bg-[#F5F6FA] text-Act6  border-[1px]  ${
               isError
                 ? "border-red-500 focus:border-red-500 text-red-500"
                 : "border-Act6 focus:border-Act6"
@@ -140,7 +139,7 @@ const ActionInput = (props: ActionInputProps) => {
               console.log(e);
             }}
           ></input>
-          <span className="text-red-500 text-xs absolute mt-10">
+          <span className="text-red-500 text-xs absolute mt-12">
             {isError && errorMessage}
           </span>
         </div>

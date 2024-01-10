@@ -21,8 +21,9 @@ import {
   getAccessTokenFromLocalStorage,
   getSCHEMA_CODE,
 } from "@/helpers/AuthService";
+import _ from "lodash";
 
-import axios from "axios";
+import IActions from "@/type/IActions";
 
 import InputNode from "./CustomNode/InputNode";
 
@@ -57,19 +58,6 @@ interface NodeProps {
   };
 }
 
-interface ResultProps {
-  type: string | number | boolean;
-  value: string | number | boolean;
-  left?: ResultProps;
-  right?: ResultProps;
-  functionName?: string;
-  dataType?: string;
-  attributeName?: {
-    type: string;
-    dataType: string;
-    value: string;
-  };
-}
 
 interface WhenFlowProps {
   metaFunction: string;
@@ -109,10 +97,9 @@ const WhenFlow = (props: WhenFlowProps) => {
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
-  const getCookieData = getCookie("action");
+  const getCookieData = localStorage.getItem('action');
   const schemacode = getCookie("schemaCode");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
-
   const nodeTypes = useMemo(() => {
     return {
       customInputNode: InputNode,
@@ -149,17 +136,15 @@ const WhenFlow = (props: WhenFlowProps) => {
   const onInit = (rfi: ReactFlowInstance) => setReactFlowInstance(rfi);
 
   const convertObject = (obj: any) => {
-    console.log("!", obj);
-    console.log("starting convert..");
     const outputArray: any = [];
     const edgesArr: any = [];
     let nodeIdCounter = 1;
-
     const processNode = (
       node: any,
       parentNodeId: null | string = null,
       parentPositionY = 0
     ) => {
+      console.log(">..",node)
       const nodeId = `${nodeIdCounter++}`;
       console.log("---node>", node);
       const outputNode = {
@@ -335,13 +320,15 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   const onDragOver = (event: DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+  }
   };
 
   const onDrop = async (event: DragEvent) => {
     event.preventDefault();
     if (reactFlowInstance) {
-      const type = event.dataTransfer.getData("application/reactflow");
+      const type = event.dataTransfer?.getData("application/reactflow");
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const mousePosition = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
@@ -644,7 +631,7 @@ const WhenFlow = (props: WhenFlowProps) => {
       tempArr.push(node.data);
     });
 
-    const transformData = (data: NodeProps, id: string) => {
+    const transformData = (data: NodeProps[], id: string) => {
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
           if (
@@ -860,8 +847,10 @@ const WhenFlow = (props: WhenFlowProps) => {
     });
   };
 
+
   const handleSaveAction = async () => {
-    const updateActionWhenByName = (array, name, newWhen) => {
+    const updateActionWhenByName = (array:IActions[], name:string, newWhen:string) => {
+      console.log("::1",array)
       const updatedArray = array.map((action) => {
         if (action.name === name) {
           return { ...action, when: newWhen };
@@ -871,19 +860,18 @@ const WhenFlow = (props: WhenFlowProps) => {
       return updatedArray;
     };
     if (getCookieData) {
-      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+      const parsedCookieData = Array.from(JSON.parse(getCookieData));
       // console.log("logger", parsedCookieData);
-      const newAction = JSON.stringify(
-        updateActionWhenByName(parsedCookieData, props.actionName, metaData)
-      );
+      const newAction = JSON.stringify(updateActionWhenByName(parsedCookieData, props.actionName, metaData));
+      console.log("log ja",parsedCookieData)
       console.log("123--", newAction);
       console.log("setted already");
-      setCookie("action", newAction);
+      localStorage.setItem("action", newAction);
       console.log("1", parsedCookieData);
       console.log("2", props.actionName);
       console.log("3", metaData);
       console.log(
-        "4",
+        "##4",
         JSON.stringify(
           updateActionWhenByName(parsedCookieData, props.actionName, metaData)
         )
@@ -1157,13 +1145,13 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   return (
     <div className="flex justify-between px-8">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="when"
           actionName={props.actionName}
           metaFunction={props.metaFunction}
         />
-        <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
+        <div className="h-[580px] w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}

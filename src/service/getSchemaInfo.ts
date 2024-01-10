@@ -25,7 +25,7 @@ export async function getSchemaInfo(schemaCode: string) {
     try {
         const req = await api.get(apiUrl);
         const schema_info:ISchemaInfo = req.data.data.schema_info
-        // console.log(req.data)
+        console.log("log here",schema_info.current_state)
         return schema_info
     } catch (error) {
         // console.log("error ", error)

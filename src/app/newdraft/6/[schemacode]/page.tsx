@@ -26,10 +26,12 @@ import { setCookie } from "@/service/setCookie";
 import { ItokenAttributes } from "@/type/Nftmngr";
 import { INftAttributes } from "@/type/Nftmngr";
 import Stepmenu from "@/components/Stepmenu";
+import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 
 const Page = ({ params }: { params: { schemacode: string } }) => {
   const [action, setAction] = useState<Array<any>>([]);
   const [loading, setLoading] = useState(true);
+  const [stepDraft, setStepDraft] = useState(5)
   const [tokenAttributes, setTokenAttributes] = useState<ItokenAttributes[]>(
     []
   );
@@ -49,8 +51,6 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
     arr2: { name: string; data_type: string }[]
   ) => {
     const tempArr: { name: string; dataType: string }[] = [];
-    console.log("arr1", arr1);
-    console.log("arr2", arr2);
     arr1.forEach((item) => {
       tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
     });
@@ -58,11 +58,6 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
     arr2.forEach((item) => {
       tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
     });
-
-    console.log("111", arr1);
-    console.log("222", arr2);
-
-    console.log("444", tempArr);
     setCookie("action-attribute", JSON.stringify(tempArr));
   };
 
@@ -102,6 +97,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
           );
           setNftAttributes(response.schema_info.onchain_data.nft_attributes);
           setLoading(false);
+          setStepDraft(response.current_state)
         } else {
           console.error("Invalid :", response);
           setLoading(false);
@@ -114,44 +110,43 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
   }, [schemacode]);
 
   useEffect(() => {
-    setCookie("schemaCode", schemacode);
+    setCookie("schemaCode", schemacode);    
   }, []);
+
+
   return (
     <>
       {loading && <Loading />}
+      <header>
+        <Stepmenu schemacode={schemacode} currentStep={6} schemacodeNavigate={schemacode} stepDraft={stepDraft} />
+      </header>
+      <section className="mt-12">
+      <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center">
+        <ActionCreateCard />
+          {action !== undefined &&
+            action.map((item, index) => (
+              <div key={index}>
+                <ActionInfoCard
+                  name={item.name}
+                  description={item.desc}
+                  when={item.when}
+                  then={item.then}
+                  index={index}
+                  handleDelete={handleDelete}
+                />
+              </div>
+            ))}
 
-      <div className="py-10">
-        <header>
-          <Stepmenu schemacode={schemacode} currentStep={6}></Stepmenu>
-        </header>
-        <section>
-          <div className="grid gap-y-8 grid-cols-2 md:grid-cols-3 justify-items-center my-12 ">
-            {action !== undefined &&
-              action.map((item, index) => (
-                <div key={index}>
-                  <ActionInfoCard
-                    name={item.name}
-                    description={item.desc}
-                    when={item.when}
-                    then={item.then}
-                    index={index}
-                    handleDelete={handleDelete}
-                  />
-                </div>
-              ))}
-
-            <ActionCreateCard />
-          </div>
-          <div className="w-full flex justify-between px-24">
-            <Link href={`/newdraft/5/${schemacode}`}>
-              <BackPageButton />
-            </Link>
-            <Link href={`/newdraft/7/${schemacode}`}>
-              <NextPageButton />
-            </Link>
-          </div>
-        </section>
-      </div>
+        </div>
+        <div className="w-full flex justify-between px-24 my-12">
+          <Link href={`/newdraft/5/${schemacode}`}>
+            <BackPageButton />
+          </Link>
+          <Link href={`/newdraft/7/${schemacode}`}>
+            <NextPageButton />
+          </Link>
+        </div>
+      </section>
     </>
   );
 };

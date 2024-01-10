@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { useState } from "react";
-
+import "../app/globals.css";
 interface ConfirmModalProps {
   Texthead: string;
 }
@@ -10,22 +10,26 @@ interface ConfirmModalProps {
 // import { ISchemaInfo, ItokenAttributes } from "@/type/Nftmngr";
 //// action  {"Dploy Testnet","Dploy Mainnet", "Save"}
 export async function ConfirmModal(Texthead: string, action: string) {
-  console.log(action)
+  console.log(action);
   if (action === "Deploy Testnet") {
     const result = await Swal.fire({
-      title: "Are you sure to Deploy Testnet ?",
+      customClass: {
+        confirmButton: "custom-modal-button-border",
+        cancelButton: "custom-modal-button-border",
+      },
+      title: "Are you sure to Deploy Testnet?",
       width: 600,
       icon: "warning",
       padding: "3em",
-      color: "#716add",
-      background: "#000",
-      backdrop: `
-      rgba(0,0,123,0.4)
-      url("https://sweetalert2.github.io/images/nyan-cat.gif")
-      left top
-      no-repeat
-    `,
+      color: "#fff",
+      background: "rgba(0, 0, 0, 0.6)",
+      iconColor: "#fff",
       showCancelButton: true,
+      confirmButtonColor: "rgba(255, 255, 255, 0.1)",
+      cancelButtonColor: "transparent",
+      backdrop: `
+    rgba(0,0,0,0.8)
+  `,
     });
 
     // Handle the result (user confirmation)
@@ -43,7 +47,7 @@ export async function ConfirmModal(Texthead: string, action: string) {
       icon: "warning",
       padding: "3em",
       color: "#716add",
-      background: "#000",
+      background: "rgba(0, 0, 0, 0.6)",
       backdrop: `
       rgba(0,0,123,0.4)
       url("https://sweetalert2.github.io/images/nyan-cat.gif")
@@ -60,7 +64,6 @@ export async function ConfirmModal(Texthead: string, action: string) {
       return false;
     }
   }
-
 
   if (action === "Save") {
     const result = await Swal.fire({

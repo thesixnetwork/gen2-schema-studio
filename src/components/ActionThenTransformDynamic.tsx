@@ -30,19 +30,19 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
   const [imgSource, setImgSource] = useState("");
   const [postfix, setPostfix] = useState("");
   const [prefix, setPrefix] = useState("");
-  const [isNext, setIsNext] = useState(false);
   const [imgFormat, setImgFormat] = useState("");
   const [tokenId, setTokenId] = useState("1");
   const [loading, setLoading] = useState(false);
   const [imgBeforeTransformError, setImgBeforeTransformError] = useState(false);
   const [imgAfterTransformError, setImgAfterTransformError] = useState(false);
   const [metaData, setMetaData] = useState("");
-  const getCookieData = getCookie("action");
+  const getCookieData = localStorage.getItem("action");
   const getActionThen = getCookie("action-then");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const schemacode = getCookie("schemaCode");
+  const getActionThenIndexCookie = getCookie("actionThenIndex");
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );
@@ -65,10 +65,6 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
     } else {
       return str + "/";
     }
-  };
-
-  const handleNext = () => {
-    setIsNext(true);
   };
 
   const convertMetaFunction = (
@@ -100,10 +96,12 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
     ) => {
       const updatedArray = array.map((action) => {
         if (action.name === name && getIsCreateNewThenFromCookie === "false") {
-          const updatedThen =
-            action.then.length > 0
-              ? action.then.map((item) => (item === oldThen ? newThen : item))
-              : [newThen];
+          let updatedThen;
+          if (getActionThenIndexCookie) {
+            updatedThen = action.then.map((item, index) =>
+              index === parseInt(getActionThenIndexCookie) ? newThen : item
+            );
+          }
           return { ...action, then: updatedThen };
         } else if (
           action.name === name &&
@@ -136,20 +134,24 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
 
-      const updatedTempArrCookie = tempArrCookie.map((item: string) =>
-        item === originalMetaFunction ? metaDataToAdd : item
-      );
+      let updatedTempArrCookie;
+      if (getActionThenIndexCookie) {
+        updatedTempArrCookie = tempArrCookie.map(
+          (item: string, index: number) =>
+            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+        );
+      }
 
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
+            updatedTempArrCookie = tempArrCookie
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
 
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
-
-    setCookie("action", JSON.stringify(tempArr));
+    localStorage.setItem("action", JSON.stringify(tempArr));
     setCookie("action-then", metaData);
     setCookie("isEditAction", "true");
     setCookie("isTransfrom", "true");
@@ -157,31 +159,6 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
     setCookie("imgFormat", imgFormat);
     setCookie("prefix", prefix);
     setCookie("postfix", postfix);
-  };
-
-  const saveImageUrl = async () => {
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_image_url`;
-    const requestData = {
-      schema_code: props.schemaRevision,
-      path: imgSource,
-      postfix: postfix,
-      format: imgFormat.replace(".", ""),
-      dynamic: true,
-    };
-    await axios
-      .post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        },
-      })
-      .then((response) => {
-        console.log("API Response saveImageUrl :", response.data);
-        console.log("Request :", requestData);
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
-      });
   };
 
   const findImageUrl = async () => {
@@ -210,12 +187,17 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
         console.error("Error:", error);
         setLoading(false);
       });
-    const tempObj = await getDynamicImage(schemacode);
+    let tempObj;
+    if (schemacode) {
+      tempObj = await getDynamicImage(schemacode);
+    }
     console.log(tempObj);
-    setImgSource(tempObj.path);
-    setImgFormat("." + tempObj.format);
-    if (tempObj.postfix !== null) {
-      setPostfix(tempObj.postfix);
+    if (tempObj) {
+      setImgSource(tempObj.path);
+      setImgFormat("." + tempObj.format);
+      if (tempObj.postfix !== null) {
+        setPostfix(tempObj.postfix);
+      }
     }
   };
 
@@ -416,6 +398,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                       ? `/newdraft/6/${schemacode}/action-form/create-new-action`
                       : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
                   }
+                  onClick={() => setCookie("isEditAction", "true")}
                 >
                   <CancelButton />
                 </Link>

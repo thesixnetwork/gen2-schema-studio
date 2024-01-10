@@ -44,6 +44,39 @@ interface ThenAttributeFlowProps {
   handleTransformTypeChange: (newActionThenType: string) => void;
 }
 
+interface NodeProps {
+  width: number;
+  height: number;
+  id: string;
+  type: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  draggable: boolean;
+  data: {
+    showType: string;
+    id: string;
+    parentNode: string | number;
+    label: {
+      x: number;
+      y: number;
+    };
+    value: string | number | boolean;
+    dataType: string;
+    isFetch?: boolean;
+    isSet?: boolean;
+    width?: number;
+    height?: number;
+  };
+
+  selected?: boolean;
+  positionAbsolute: {
+    x: number;
+    y: number;
+  };
+}
+
 const initialNodes: Node[] = [
   {
     id: "1",
@@ -99,11 +132,13 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
-  const getCookieData = getCookie("action");
+  const getCookieData = localStorage.getItem("action");
+  const getActionThenIndexCookie = getCookie("actionThenIndex");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const schemacode = getCookie("schemaCode");
+  const isEditInCreateNewAction = getCookie("isEditInCreateNewAction");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -130,9 +165,10 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   };
 
   const convertObjectToNode = (obj) => {
+    console.log("log tong nee", obj);
     let nodeIdCounter = 1;
-    const outputArray = [];
-    const edgesArr = [];
+    const outputArray: any[] = [];
+    const edgesArr: any[] = [];
 
     const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
       console.log("log herre", node);
@@ -236,7 +272,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           outputArray.push(outputNode);
         }
       } else {
-        console.log("A===", outputArray);
         if (outputNode2.data.showType === "valueNode") {
           outputArray.push(outputNode, outputNode2);
         } else {
@@ -307,7 +342,10 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       });
 
       const isInsideLength = (
-        position: object,
+        position: {
+          x: number;
+          y: number;
+        },
         startX: number,
         startY: number,
         width: number,
@@ -794,11 +832,19 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       newThen: string
     ) => {
       const updatedArray = array.map((action) => {
-        if (action.name === name && getIsCreateNewThenFromCookie === "false") {
-          const updatedThen =
-            action.then.length > 0
-              ? action.then.map((item) => (item === oldThen ? newThen : item))
-              : [newThen];
+        if (action.name === name && getIsCreateNewThenFromCookie !== "true") {
+          let updatedThen;
+          if (getActionThenIndexCookie) {
+            updatedThen = action.then.map((item, index) =>
+              index === parseInt(getActionThenIndexCookie) ? newThen : item
+            );
+          }
+          console.log(":thiscase1", action);
+          console.log(":!", action.name, "and", name);
+          console.log(":thiscase2", action);
+          console.log("=>", newThen);
+          console.log("==>", array);
+
           return { ...action, then: updatedThen };
         } else if (
           action.name === name &&
@@ -811,10 +857,12 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       });
 
       tempArr = updatedArray;
+      console.log("temp", tempArr);
     };
 
     if (getCookieData) {
       const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+      console.log("///===>", parsedCookieData);
       updateActionThenByName(
         parsedCookieData,
         props.actionName,
@@ -831,12 +879,17 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
 
-      const updatedTempArrCookie = tempArrCookie.map((item: string) =>
-        item === originalMetaFunction ? metaDataToAdd : item
-      );
+      let updatedTempArrCookie;
+      if (getActionThenIndexCookie) {
+        updatedTempArrCookie = tempArrCookie.map(
+          (item: string, index: number) =>
+            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+        );
+      }
 
       if (originalMetaFunction === "create-new-then") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
+          updatedTempArrCookie = tempArrCookie;
           updatedTempArrCookie.push(metaDataToAdd);
         }
       }
@@ -844,7 +897,9 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
 
-    setCookie("action", JSON.stringify(tempArr));
+    console.log("::==>", tempArr);
+
+    localStorage.setItem("action", JSON.stringify(tempArr));
     setCookie("action-then", metaData);
     setCookie("isEditAction", "true");
   };
@@ -1039,7 +1094,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   return (
     <div className="flex justify-between px-8 ">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[64vw] mr-12">
         <div>
           <ActionHeader
             type="then"
@@ -1050,7 +1105,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             handleActionThenTypeChange={props.handleActionThenTypeChange}
             handleTransformTypeChange={props.handleTransformTypeChange}
           />
-          <div className="h-[580px] w-[64vw] border rounded-3xl bg-white p-2 mt-4">
+          <div className="h-[580px] w-full border rounded-3xl bg-white p-2 mt-4">
             <div ref={reactFlowWrapper} className="h-full">
               <ReactFlow
                 nodes={nodes}
@@ -1075,6 +1130,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         </div>
         <div className="flex justify-end gap-x-8 mt-4">
           <Link
+            onClick={() => setCookie("isEditAction", "true")}
             href={
               isCreateNewActionCookie === "true"
                 ? `/newdraft/6/${schemacode}/action-form/create-new-action`

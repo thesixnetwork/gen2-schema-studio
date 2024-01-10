@@ -119,7 +119,7 @@ export default function Flowbar(props: FlowbarProps) {
               <span className="text-sm font-bold text-main2">Function</span>
               {props.selectedAttribute === "number" ||
               props.selectedAttribute === "float" ? (
-                <div className="flex">
+                <div className="flex gap-x-2">
                   <Menu
                     nodeName="increaseNode"
                     handleDoubleClickAddNode={props.handleDoubleClickAddNode}
@@ -259,11 +259,12 @@ export default function Flowbar(props: FlowbarProps) {
 
               <ModalFooter justifyContent={"center"}>
                 <Button
-                  colorScheme="white"
+                  colorScheme="#2F3030"
                   variant="outline"
                   onClick={handleCreate}
                   mr={4}
                   _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                  bgColor={"#2F3030"}
                 >
                   Generate
                 </Button>

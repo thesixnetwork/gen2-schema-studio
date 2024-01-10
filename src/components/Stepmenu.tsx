@@ -3,7 +3,7 @@ import StepmenuBox from "./StepmenuBox";
 type Props = {
   schemacode: string;
   currentStep: number;
-  schemacodeNavigate:string;
+  schemacodeNavigate: string;
   stepDraft: number;
 };
 
@@ -39,15 +39,20 @@ function Stepmenu(props: Props) {
     },
   ];
 
+  const getSchemaName = (str: string) => {
+    const match = str.match(/^(.+)_v\d+$/);
+    return match ? match[1] : str;
+  };
+
   return (
     <div className=" w-full h-full duration-300 relative">
-      {props.schemacode !== "" && props.schemacode !== null && (
-        <div className=" h-20 min-h-20 w-full flex justify-start items-end absolute top-[-5rem] left-2">
+      <div className=" h-20 min-h-20 w-full flex justify-start items-end">
+        {props.schemacode !== "" && props.schemacode !== null && (
           <p className=" mb-4 text-main2 text-3xl duration-300">
-            {props.schemacode}
+            {getSchemaName(props.schemacode)}
           </p>
-        </div>
-      )}
+        )}
+      </div>
       <div className=" w-full h-20 flex justify-between border-t border-t-2nd4 duration-300">
         {stateDetail.map((stepDetail) => (
           <StepmenuBox
@@ -55,7 +60,9 @@ function Stepmenu(props: Props) {
             step={stepDetail.state}
             stepName={stepDetail.text}
             currentStep={props.currentStep}
-            schemaCode={props.schemacodeNavigate} stepDraft={props.stepDraft}          ></StepmenuBox>
+            schemaCode={props.schemacodeNavigate}
+            stepDraft={props.stepDraft}
+          ></StepmenuBox>
         ))}
       </div>
     </div>
