@@ -11,23 +11,20 @@ import { useEffect, useState } from "react";
 import HomeDraftCard from "./HomeDraftCard";
 import { useRouter } from "next/navigation";
 import Loading from "./Loading";
-import getDataTestnet from "@/service/getDataTestnet";
-import { ISchemaInfo } from "@/type/Nftmngr";
 import { useSession } from "next-auth/react";
 
 type Props = {};
 
 export default function HomeCard({}: Props) {
   const router = useRouter();
+  const { data: session } = useSession();
+
   const items = ["Draft", "Live", "Testnet"];
   // const listDraft = await getListDraft();
   const [listDraft, setListdraft] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoading2, setIsLoading2] = useState(true);
-  const [testDraft, setTestDraft] = useState([]);
-  const { data: session } = useSession();
-
-  const fivenetScan = process.env.NEXT_PUBLIC__SIXSCAN_FIVENET;
+  console.log(session);
   const getListDraft = async () => {
     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
     const params = {};
@@ -54,9 +51,6 @@ export default function HomeCard({}: Props) {
     const fetchData = async () => {
       try {
         const list_draft = await getListDraft();
-        const test_draft = await getDataTestnet();
-        console.log(">>>.", test_draft);
-        setTestDraft(test_draft);
         setIsLoading(false);
       } catch (error) {
         // Handle errors here
@@ -135,32 +129,6 @@ export default function HomeCard({}: Props) {
                   )}
               </div>
             )}
-            {index === 1 && (
-              <div className="flex items-center h-full w-full overflow-scroll">
-                {testDraft &&
-                  testDraft.map((item: ISchemaInfo, index: any) => (
-                    <div key={index} className=" ml-3 flex">
-                      <a
-                       
-                        target="_blank"
-                        href={`${fivenetScan}schema/${item.schema_name}`}
-                      >
-                        <HomeDraftCard
-                          schema_revision={item.schema_revision}
-                          CollectionName={item.schema_name}
-                          CollectionImage={
-                            item.schema_info &&
-                            item.schema_info.schema_info.origin_data
-                              .origin_base_uri
-                          }
-                          type="testnet"
-                        ></HomeDraftCard>
-                      </a>
-                    </div>
-                  ))}
-              </div>
-            )}
-            <button onClick={() => console.log(testDraft)}>log</button>
           </div>
         </div>
       ))}

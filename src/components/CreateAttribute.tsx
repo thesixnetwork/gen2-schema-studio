@@ -42,6 +42,7 @@ const CreateAttribute: React.FC<{
   setOnCreate: Dispatch<SetStateAction<boolean>>;
   isState: number;
   schemacode: string;
+  setOnEditOrCreate: Dispatch<SetStateAction<boolean>>;
 }> = ({
   rawData,
   setIsAttributes,
@@ -50,11 +51,17 @@ const CreateAttribute: React.FC<{
   isState,
   // onCreate,
   schemacode,
+  setOnEditOrCreate
 }) => {
     // console.log(onEdit)
     const { data: session } = useSession();
     const [errorMessage, setErrorMessage] = useState("");
+    const [name, setName] = useState("");
+    const [dataType, setDataType] = useState("string")
+    const [traitType, setTraitType] = useState("")
+    const [isError, setIsError] = useState(false);
     const [haveError, setHaveError] = useState(false);
+
 
     const [newAttributes, setNewAttributes] = useState<ItokenAttributes>({
       name: "",
@@ -97,10 +104,90 @@ const CreateAttribute: React.FC<{
 
     // console.log(isAttributes);
 
+    const handleInputChangeName = async (value: string) => {
+      setName(value);
+      const element = document.getElementById(`cr-name`);
+      const filteredArray = Attribute2.filter(
+        (item) => item.name === value
+      );
+      console.log(filteredArray);
+      // console.log(checkDatatype2);
+      const error = await CheckErrorII(
+        value,
+        setErrorMessage,
+        att4,
+        att5
+      );
+
+      setIsError(error)
+
+      setNewAttributes((prevPerson) => ({
+        ...prevPerson,
+        name: value,
+      }));
+    };
+
+    const handleInputChangeChaDataType = (value: string) => {
+      setDataType(value);
+      let default_mint_value;
+      if (value === "string") {
+        default_mint_value = {
+          string_attribute_value: {
+            value: "",
+          },
+        };
+      }
+      if (value === "number") {
+        default_mint_value = {
+          number_attribute_value: {
+            value: "0",
+          },
+        };
+      }
+      if (value === "float") {
+        default_mint_value = {
+          float_attribute_value: {
+            value: 0.0,
+          },
+        };
+      }
+      if (value === "boolean") {
+        default_mint_value = {
+          boolean_attribute_value: {
+            value: true,
+          },
+        };
+      }
+
+      setNewAttributes((prevPerson) => ({
+        ...prevPerson,
+        data_type: value,
+        default_mint_value: default_mint_value!,
+      }));
+    };
+
+    const handleInputChangeTraitType = (value: string) => {
+      setTraitType(value);
+      setNewAttributes((prevPerson) => ({
+        ...prevPerson,
+        display_option: {
+          bool_true_value: "",
+          bool_false_value: "",
+          opensea: {
+            display_type: "",
+            trait_type: value,
+            max_value: "0",
+          },
+        },
+      }));
+    };
+
+
     const handleInput = async (
       e: React.ChangeEvent<HTMLInputElement>,
       type: string
     ) => {
+      setName(e.target.value)
       // console.log(e)
       // console.log(rawData)
       const element = document.getElementById(`cr-name`);
@@ -115,6 +202,7 @@ const CreateAttribute: React.FC<{
         att4,
         att5
       );
+      setIsError(error)
       if (element) {
         if (error) {
           element.style.borderColor = "red";
@@ -134,6 +222,7 @@ const CreateAttribute: React.FC<{
       );
       if (isConfirm) {
         setOnCreate(false);
+        setOnEditOrCreate(false)
 
       }
       return;
@@ -189,6 +278,7 @@ const CreateAttribute: React.FC<{
 
           if (res.statusCode === "V:0001") {
             setOnCreate(false);
+            setOnEditOrCreate(false);
 
             return;
           } else {
@@ -274,7 +364,7 @@ const CreateAttribute: React.FC<{
         if (newAttributes.data_type === "number") {
           default_mint_value = {
             number_attribute_value: {
-              value: value,
+              value: parseFloat(value).toString(),
             },
           };
         }
@@ -302,41 +392,35 @@ const CreateAttribute: React.FC<{
 
     return (
       <>
-        <Flex flexWrap="wrap" justifyContent="space-around" marginTop="40px">
-          {/* <InputCardOneLine
-          title={"Name"}
-          require={true}
-          loading={false}
-          placeholder={"Add attribute name"}
-          validate={true}
-          errorMassage={""}
-          value={""}
-          onChange={function (value: string): void {
-            throw new Error("Function not implemented.");
-          }}
-        ></InputCardOneLine>
-        <InputSelectCard
-          title={"Data type"}
-          require={true}
-          value={""}
-          onChange={function (value: string): void {
-            throw new Error("Function not implemented.");
-          }}
-        ></InputSelectCard>
-        <InputCardOneLine
-          title={"Trait type"}
-          require={true}
-          placeholder={"Add trait type here"}
-          validate={true}
-          errorMassage={""}
-          value={""}
-          onChange={function (value: string): void {
-            throw new Error("Function not implemented.");
-          }}
-          loading={false}
-        ></InputCardOneLine> */}
+        <div className=" min-h-[65vh] w-full flex flex-col justify-between items-center  " >
+          <InputCardOneLine
+            title={"Name"}
+            require={true}
+            loading={false}
+            placeholder={"Add attribute name"}
+            validate={!isError}
+            errorMassage={errorMessage}
+            value={name}
+            onChange={handleInputChangeName}
+          ></InputCardOneLine>
+          <InputSelectCard
+            title={"Data type"}
+            require={true}
+            value={dataType}
+            onChange={handleInputChangeChaDataType}
+          ></InputSelectCard>
+          <InputCardOneLine
+            title={"Trait type"}
+            require={true}
+            placeholder={"Add trait type here"}
+            validate={true}
+            errorMassage={""}
+            value={traitType}
+            onChange={handleInputChangeTraitType}
+            loading={false}
+          ></InputCardOneLine>
 
-          <Flex
+          {/* <Flex
             // flexWrap="wrap"
             // width="60%"
             // border="1px solid #DADEF2"
@@ -359,8 +443,9 @@ const CreateAttribute: React.FC<{
                   // defaultValue={isAttribute.name}
                   // onChange={(e) => handleInput(e, "name")}
                   onChange={(e) => {
-                    handleInput(e, "name"),
-                      handleAttribute("name", e.target.value);
+
+                    handleInput(e, "name")
+                    handleAttribute("name", e.target.value);
                   }}
                 ></Input>
               </Box>
@@ -373,8 +458,8 @@ const CreateAttribute: React.FC<{
                 className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
               ></div>
             </Flex>
-          </Flex>
-          <Flex
+          </Flex> */}
+          {/* <Flex
             className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             // p={8}
             marginTop="15px"
@@ -383,7 +468,7 @@ const CreateAttribute: React.FC<{
               <p className="text-main2 text-2xl font-bold">Data Type</p>
             </Box>
             <Flex height="60%" width="380px">
-              {/* <Input color="black" defaultValue={isAttribute.data_type} /> */}
+              
               <Flex
                 borderRadius="4px 0px 0px 4px"
                 border="1px solid #3980F3"
@@ -457,8 +542,9 @@ const CreateAttribute: React.FC<{
             <div
               className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
             ></div>
-          </Flex>
-          <Flex
+          </Flex> */}
+
+          {/* <Flex
             className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             marginTop="15px"
           >
@@ -477,7 +563,7 @@ const CreateAttribute: React.FC<{
             <div
               className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
             ></div>
-          </Flex>
+          </Flex> */}
           <Flex
             // flexWrap="wrap"
             // width="60%"
@@ -485,7 +571,6 @@ const CreateAttribute: React.FC<{
             // borderRadius="12px"
             // p={8}
             className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
-            marginTop="15px"
           >
             <Box>
               <p className="text-main2 text-2xl font-bold">Value</p>
@@ -494,7 +579,12 @@ const CreateAttribute: React.FC<{
               {/* boolean */}
               {newAttributes.data_type === "boolean" && (
                 <>
-                  <Flex
+                  <div className=' w-96 h-10 flex  items-center    '>
+                    <div onClick={() => handleAttribute("value", "true")} className={`w-[50%] h-full border border-Act6 rounded-l-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${newAttributes.default_mint_value.boolean_attribute_value?.value === true ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>Yes</div>
+
+                    <div onClick={() => handleAttribute("value", "false")} className={`w-[50%] h-full border border-Act6 rounded-r-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${newAttributes.default_mint_value.boolean_attribute_value?.value === false ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>No</div>
+                  </div>
+                  {/* <Flex
                     borderRadius="4px 0px 0px 4px"
                     border="1px solid #3980F3"
                     height="48px"
@@ -510,14 +600,15 @@ const CreateAttribute: React.FC<{
                     _hover={{
                       cursor: "pointer",
                       bgColor: `${newAttributes.default_mint_value.boolean_attribute_value
-                          ?.value === true
-                          ? "#3980F3"
-                          : "#DADEF2"
+                        ?.value === true
+                        ? "#3980F3"
+                        : "#DADEF2"
                         }`,
                     }}
                     onClick={() => handleAttribute("value", "true")}
                   >
                     <Text
+                      style={{ fontSize: '20px' }} // Adjust the font size as needed
                       color={
                         newAttributes.default_mint_value.boolean_attribute_value
                           ?.value === true
@@ -544,9 +635,9 @@ const CreateAttribute: React.FC<{
                     _hover={{
                       cursor: "pointer",
                       bgColor: `${newAttributes.default_mint_value.boolean_attribute_value
-                          ?.value === false
-                          ? "#3980F3"
-                          : "#DADEF2"
+                        ?.value === false
+                        ? "#3980F3"
+                        : "#DADEF2"
                         }`,
                     }}
                     onClick={() => handleAttribute("value", "false")}
@@ -561,7 +652,7 @@ const CreateAttribute: React.FC<{
                     >
                       No
                     </Text>
-                  </Flex>
+                  </Flex> */}
                 </>
               )}
 
@@ -569,10 +660,14 @@ const CreateAttribute: React.FC<{
               {newAttributes.data_type === "number" && (
                 <>
                   <NumberInput
+                    border={"white"}
+                    focusBorderColor='white'
+                    variant='unstyled'
                     size="md"
                     color="black"
-                    width="380px"
-                    // className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                    width="10rem"
+                    className=" text-Act7 "
+                    // className={` w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={
                       newAttributes.default_mint_value.number_attribute_value
                         ?.value
@@ -582,9 +677,9 @@ const CreateAttribute: React.FC<{
                     onChange={(e) => handleAttribute("value", e.toLowerCase())}
                   >
                     <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                    <NumberInputStepper >
+                      <NumberIncrementStepper className="  text-Act7" />
+                      <NumberDecrementStepper className=" text-Act7" />
                     </NumberInputStepper>
                   </NumberInput>
                 </>
@@ -595,9 +690,8 @@ const CreateAttribute: React.FC<{
               {newAttributes.data_type === "string" && (
                 <>
                   <Input
-                    color="black"
                     placeholder={"Add Value"}
-                    className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                    className={` text-Act6 outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={
                       newAttributes.default_mint_value.string_attribute_value
                         ?.value
@@ -625,7 +719,7 @@ const CreateAttribute: React.FC<{
               <SaveButton></SaveButton>
             </div>
           </Flex>
-        </Flex>
+        </div>
       </>
     );
   };

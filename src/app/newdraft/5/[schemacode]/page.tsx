@@ -35,6 +35,7 @@ export default function Page({
   params: { schemacode: string };
 }) {
   // const { data: session } = useSession();
+  // // console.log("session", session)
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +85,7 @@ export default function Page({
             schemacodeNavigate={schemacode}
             stepDraft={stepDraft}
           ></Stepmenu>
-          <Box marginTop="40px">
+          <Box className=" w-full h-full">
             <CradNewDaft
               isDaft={isDaft}
               isState={5}

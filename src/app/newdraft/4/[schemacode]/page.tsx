@@ -95,7 +95,7 @@ export default function Page({
             schemacodeNavigate={schemacode}
             stepDraft={stepDraft}
           ></Stepmenu>
-          <Box marginTop="40px">
+          <Box className=" w-full h-full" >
             <CradNewDaft
               isDaft={isDaft}
               isState={4}

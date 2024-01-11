@@ -107,7 +107,6 @@ function ConnectButton(props:Props) {
         );
         console.log("verified= ", verified);
       } catch (error) {
-        props.setLoading(false)
         console.error("Error:", error);
       }
     }
