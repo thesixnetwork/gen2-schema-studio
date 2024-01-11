@@ -364,7 +364,7 @@ const CreateAttribute: React.FC<{
         if (newAttributes.data_type === "number") {
           default_mint_value = {
             number_attribute_value: {
-              value: value,
+              value: parseFloat(value).toString(),
             },
           };
         }
