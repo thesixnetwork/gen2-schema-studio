@@ -163,7 +163,7 @@ export default function Layout({
           <div className=" w-full h-[15vh]">
             <HomeNavBar />
           </div>
-          <div className=" w-[95%] min-h-[75vh] pt-[8vh]  ">
+          <div className=" w-[95%] min-h-[75vh]   ">
             <Flex bgColor="" width={"100%"} height={"100%"} className="">
               <Box
                 className=" duration-500   "
@@ -174,7 +174,7 @@ export default function Layout({
                 <main>{children}</main>
               </Box>
               <Flex
-                className=" duration-500  "
+                className=" duration-500 mt-20  "
                 width={isSideBarShow ? "22%" : "0%"}
                 height={"20%"}
                 position="relative"
@@ -189,7 +189,7 @@ export default function Layout({
                 </div>
                 {isSideBarShow && (
                   <Box width={"100%"}>
-                    <div>
+                    <div >
                       <HomeSidebar />
                     </div>
                   </Box>
