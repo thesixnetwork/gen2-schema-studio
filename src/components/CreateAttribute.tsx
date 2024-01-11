@@ -25,11 +25,13 @@ import { postData } from "@/service/postAction";
 import axios from "axios";
 import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
-import CheckErrorI from "@/utils/checkError";
+import { CheckErrorII } from "@/utils/checkError";
 
 import { ConfirmModal } from "@/components/ConfirmModal";
 import InputCardOneLine from "./state1/InputCardOneLine";
 import InputSelectCard from "./state3/InputSelectCard";
+import CancelButton from "./button/CancelButton";
+import SaveButton from "./button/SaveButton";
 
 // import { Button, ButtonGroup } from '@chakra-ui/react'
 
@@ -83,8 +85,8 @@ const CreateAttribute: React.FC<{
         : rawData.schema_info.onchain_data.token_attributes
     );
 
-    const att4 = rawData.schema_info.onchain_data.nft_attributes
-    const att5 = rawData.schema_info.onchain_data.token_attributes
+    const att4 = rawData.schema_info.onchain_data.nft_attributes;
+    const att5 = rawData.schema_info.onchain_data.token_attributes;
 
     const [isDefaultValue, setIsDefaultValue] = useState<string | number>(
       newAttributes.default_mint_value.string_attribute_value?.value ||
@@ -92,7 +94,6 @@ const CreateAttribute: React.FC<{
       newAttributes.default_mint_value.float_attribute_value?.value ||
       `${newAttributes.default_mint_value.boolean_attribute_value?.value}`
     );
-
 
     // console.log(isAttributes);
 
@@ -108,7 +109,12 @@ const CreateAttribute: React.FC<{
       );
       console.log(filteredArray);
       // console.log(checkDatatype2);
-      const error = await CheckErrorI(e.target.value, setErrorMessage, att4, att5)
+      const error = await CheckErrorII(
+        e.target.value,
+        setErrorMessage,
+        att4,
+        att5
+      );
       if (element) {
         if (error) {
           element.style.borderColor = "red";
@@ -128,31 +134,33 @@ const CreateAttribute: React.FC<{
       );
       if (isConfirm) {
         setOnCreate(false);
+
       }
       return;
-    }
+    };
+    console.log("isAttributes", isAttributes);
+    // console.log("newAttributes",newAttributes)
 
     const handleSave = async () => {
       if (errorMessage) {
-        await ConfirmModal(
-          errorMessage,
-          "Error"
-        );
-        console.log("Have error validate")
+        await ConfirmModal(errorMessage, "Error");
+        console.log("Have error validate");
         return;
       }
       await setIsAttributes([...isAttributes, newAttributes]);
 
+      const newAtt = [...isAttributes, newAttributes];
+      // console.log(newAtt)
       let onchain_data;
       const apiUrl = `${ENV.Client_API_URL}/schema/set_schema_info`;
       if (isState === 4) {
         onchain_data = {
-          nft_attributes: isAttributes,
+          nft_attributes: newAtt,
         };
       }
       if (isState === 5) {
         onchain_data = {
-          token_attributes: isAttributes,
+          token_attributes: newAtt,
         };
       }
       const requestData = {
@@ -162,15 +170,12 @@ const CreateAttribute: React.FC<{
           },
           schema_code: schemacode,
           status: "Draft",
-          current_state: "5"
+          current_state: isState.toString(),
         },
       };
-      // console.log(requestData)
+      console.log(requestData);
 
-      const isConfirmed = await ConfirmModal(
-        "Are you sure to Save ?",
-        "Save"
-      );
+      const isConfirmed = await ConfirmModal("Are you sure to Save ?", "Save");
       if (isConfirmed) {
         try {
           const req = await axios.post(apiUrl, requestData, {
@@ -190,7 +195,7 @@ const CreateAttribute: React.FC<{
             return;
           }
         } catch (error) {
-          console.log("error ", error)
+          console.log("error ", error);
         }
       }
       // setOnCreate(false);
@@ -297,56 +302,93 @@ const CreateAttribute: React.FC<{
 
     return (
       <>
-        <Flex flexWrap="wrap" justifyContent="space-around">
-          <InputCardOneLine title={"Name"} require={true} loading={false} placeholder={"Add attribute name"} validate={true} errorMassage={""} value={""} onChange={function (value: string): void {
+        <Flex flexWrap="wrap" justifyContent="space-around" marginTop="40px">
+          {/* <InputCardOneLine
+          title={"Name"}
+          require={true}
+          loading={false}
+          placeholder={"Add attribute name"}
+          validate={true}
+          errorMassage={""}
+          value={""}
+          onChange={function (value: string): void {
             throw new Error("Function not implemented.");
-          }}></InputCardOneLine>
-          <InputSelectCard title={"Data type"} require={true} value={""} onChange={function (value: string): void {
+          }}
+        ></InputCardOneLine>
+        <InputSelectCard
+          title={"Data type"}
+          require={true}
+          value={""}
+          onChange={function (value: string): void {
             throw new Error("Function not implemented.");
-          }}></InputSelectCard>
-          <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={true} errorMassage={""} value={""} onChange={function (value: string): void {
+          }}
+        ></InputSelectCard>
+        <InputCardOneLine
+          title={"Trait type"}
+          require={true}
+          placeholder={"Add trait type here"}
+          validate={true}
+          errorMassage={""}
+          value={""}
+          onChange={function (value: string): void {
             throw new Error("Function not implemented.");
-          }} loading={false} ></InputCardOneLine>
-       
+          }}
+          loading={false}
+        ></InputCardOneLine> */}
+
           <Flex
-            flexWrap="wrap"
-            width="60%"
-            border="1px solid #DADEF2"
-            borderRadius="12px"
-            p={8}
+            // flexWrap="wrap"
+            // width="60%"
+            // border="1px solid #DADEF2"
+            // borderRadius="12px"
+            // p={8}
+            marginTop="15px"
+            className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             id="namenaja"
           >
-            <Box height="50%">
-              <Text>Name</Text>
+            <Box height="30%">
+              <p className="text-main2 text-2xl font-bold">Name</p>
             </Box>
-            <Box height="50%">
-              <Input
-                color="black"
-                id="cr-name"
-                // defaultValue={isAttribute.name}
-                // onChange={(e) => handleInput(e, "name")}
-                onChange={(e) => { handleInput(e, "name"), handleAttribute("name", e.target.value) }}
-              ></Input>
-            </Box>
+            <Flex flexDirection="column" height="auto">
+              <Box height="60%" width="380px">
+                <Input
+                  color="black"
+                  id="cr-name"
+                  placeholder={"Add Attribute Name"}
+                  className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                  // defaultValue={isAttribute.name}
+                  // onChange={(e) => handleInput(e, "name")}
+                  onChange={(e) => {
+                    handleInput(e, "name"),
+                      handleAttribute("name", e.target.value);
+                  }}
+                ></Input>
+              </Box>
+              {errorMessage && (
+                <Box marginTop="2px">
+                  <Text color="red">{errorMessage}</Text>
+                </Box>
+              )}
+              <div
+                className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
+              ></div>
+            </Flex>
           </Flex>
           <Flex
-            flexWrap="wrap"
-            width="60%"
-            border="1px solid #DADEF2"
-            borderRadius="12px"
-            p={8}
+            className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
+            // p={8}
             marginTop="15px"
           >
             <Box height="50%">
-              <Text>Data Type</Text>
+              <p className="text-main2 text-2xl font-bold">Data Type</p>
             </Box>
-            <Flex height="50%">
+            <Flex height="60%" width="380px">
               {/* <Input color="black" defaultValue={isAttribute.data_type} /> */}
               <Flex
                 borderRadius="4px 0px 0px 4px"
                 border="1px solid #3980F3"
                 height="48px"
-                width="110.667px"
+                width="130.667px"
                 justifyContent="center"
                 alignItems="center"
                 bgColor={newAttributes.data_type === "string" ? "#3980F3" : ""}
@@ -369,7 +411,7 @@ const CreateAttribute: React.FC<{
                 // borderRadius="4px 0px 0px 4px"
                 border="1px solid #3980F3"
                 height="48px"
-                width="110.667px"
+                width="130.667px"
                 justifyContent="center"
                 alignItems="center"
                 bgColor={newAttributes.data_type === "number" ? "#3980F3" : ""}
@@ -392,7 +434,7 @@ const CreateAttribute: React.FC<{
                 borderRadius="0px 4px 4px 0px"
                 border="1px solid #3980F3"
                 height="48px"
-                width="110.667px"
+                width="130.667px"
                 justifyContent="center"
                 alignItems="center"
                 bgColor={newAttributes.data_type === "boolean" ? "#3980F3" : ""}
@@ -412,38 +454,43 @@ const CreateAttribute: React.FC<{
                 </Text>
               </Flex>
             </Flex>
+            <div
+              className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
+            ></div>
           </Flex>
           <Flex
-            flexWrap="wrap"
-            width="60%"
-            border="1px solid #DADEF2"
-            borderRadius="12px"
-            p={8}
+            className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             marginTop="15px"
           >
             <Box>
-              <Text>Trait Type</Text>
+              <p className="text-main2 text-2xl font-bold">Trait Type</p>
             </Box>
-            <Box>
+            <Box width="380px">
               <Input
                 color="black"
+                placeholder={"Add Trait Type"}
+                className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                 // defaultValue={isAttribute.display_option.opensea.trait_type}
                 onChange={(e) => handleAttribute("trait_type", e.target.value)}
               />
             </Box>
+            <div
+              className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
+            ></div>
           </Flex>
           <Flex
-            flexWrap="wrap"
-            width="60%"
-            border="1px solid #DADEF2"
-            borderRadius="12px"
-            p={8}
+            // flexWrap="wrap"
+            // width="60%"
+            // border="1px solid #DADEF2"
+            // borderRadius="12px"
+            // p={8}
+            className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             marginTop="15px"
           >
             <Box>
-              <Text>Value</Text>
+              <p className="text-main2 text-2xl font-bold">Value</p>
             </Box>
-            <Flex>
+            <Flex width="380px">
               {/* boolean */}
               {newAttributes.data_type === "boolean" && (
                 <>
@@ -451,7 +498,7 @@ const CreateAttribute: React.FC<{
                     borderRadius="4px 0px 0px 4px"
                     border="1px solid #3980F3"
                     height="48px"
-                    width="110.667px"
+                    width="130.667px"
                     justifyContent="center"
                     alignItems="center"
                     bgColor={
@@ -463,9 +510,9 @@ const CreateAttribute: React.FC<{
                     _hover={{
                       cursor: "pointer",
                       bgColor: `${newAttributes.default_mint_value.boolean_attribute_value
-                        ?.value === true
-                        ? "#3980F3"
-                        : "#DADEF2"
+                          ?.value === true
+                          ? "#3980F3"
+                          : "#DADEF2"
                         }`,
                     }}
                     onClick={() => handleAttribute("value", "true")}
@@ -485,7 +532,7 @@ const CreateAttribute: React.FC<{
                     borderRadius="0px 4px 4px 0px"
                     border="1px solid #3980F3"
                     height="48px"
-                    width="110.667px"
+                    width="130.667px"
                     justifyContent="center"
                     alignItems="center"
                     bgColor={
@@ -497,9 +544,9 @@ const CreateAttribute: React.FC<{
                     _hover={{
                       cursor: "pointer",
                       bgColor: `${newAttributes.default_mint_value.boolean_attribute_value
-                        ?.value === false
-                        ? "#3980F3"
-                        : "#DADEF2"
+                          ?.value === false
+                          ? "#3980F3"
+                          : "#DADEF2"
                         }`,
                     }}
                     onClick={() => handleAttribute("value", "false")}
@@ -524,6 +571,8 @@ const CreateAttribute: React.FC<{
                   <NumberInput
                     size="md"
                     color="black"
+                    width="380px"
+                    // className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={
                       newAttributes.default_mint_value.number_attribute_value
                         ?.value
@@ -542,10 +591,13 @@ const CreateAttribute: React.FC<{
               )}
 
               {/* string */}
+              {/* {console.log(newAttributes.data_type)} */}
               {newAttributes.data_type === "string" && (
                 <>
                   <Input
                     color="black"
+                    placeholder={"Add Value"}
+                    className={`outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={
                       newAttributes.default_mint_value.string_attribute_value
                         ?.value
@@ -555,6 +607,9 @@ const CreateAttribute: React.FC<{
                 </>
               )}
             </Flex>
+            <div
+              className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
+            ></div>
           </Flex>
 
           <Flex
@@ -563,48 +618,14 @@ const CreateAttribute: React.FC<{
             justifyContent="flex-end"
             alignItems="center"
           >
-            <Flex
-              border="1px 
-            solid #3980F3"
-              borderRadius="5px"
-              justifyContent="center"
-              alignItems="center"
-              width="150px"
-              height="48px"
-              _hover={{
-                bgColor: "#DADEF2",
-                color: "blue", // เปลี่ยน color ของ Text เมื่อ hover
-                cursor: "pointer",
-                transform: "scale(1.05)",
-              }}
-              onClick={() => cancleCreate()}
-            >
-              <Text color="#3980F3" fontSize="20">
-                Cancel
-              </Text>
-            </Flex>
-            <Flex
-              border="1px solid #3980F3"
-              borderRadius="5px"
-              justifyContent="center"
-              alignItems="center"
-              marginLeft="15px"
-              width="150px"
-              height="48px"
-              _hover={{
-                bgColor: "#DADEF2",
-                color: "blue", // เปลี่ยน color ของ Text เมื่อ hover
-                cursor: "pointer",
-                transform: "scale(1.05)",
-              }}
-              onClick={() => handleSave()}
-            >
-              <Text color="#3980F3" fontSize="20">
-                Save
-              </Text>
-            </Flex>
+            <div onClick={() => { cancleCreate() }}>
+              <CancelButton></CancelButton>
+            </div>
+            <div onClick={() => { handleSave() }}>
+              <SaveButton></SaveButton>
+            </div>
           </Flex>
-        </Flex >
+        </Flex>
       </>
     );
   };

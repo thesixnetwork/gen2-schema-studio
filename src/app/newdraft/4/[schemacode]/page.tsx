@@ -24,10 +24,10 @@ import CustomButton from "@/components/CustomButton";
 // import { testFunc  } from './action'
 // import { cookies } from 'next/headers'
 import { Suspense } from "react";
-import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
+import { Skeleton, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import Stepmenu from "@/components/Stepmenu";
 import Loading from "@/components/Loading";
 
@@ -41,9 +41,10 @@ export default function Page({
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter()
-  const [schemaCode, setSchemaCode] = useState("")
-  const [stepDraft, setStepDraft] = useState(3)
+  const [onEditOrCreate, setOnEditOrCreate] = useState(false);
+  const router = useRouter();
+  const [schemaCode, setSchemaCode] = useState("");
+  const [stepDraft, setStepDraft] = useState(3);
 
   useEffect(() => {
     (async () => {
@@ -61,15 +62,15 @@ export default function Page({
 
   const getDraftInfo = () => {
     if (isDaft !== null) {
-      console.log("isDaft:", isDaft)
-      setSchemaCode(isDaft.schema_info.code)
-      setStepDraft(isDaft.current_state)
+      // console.log("isDaft:", isDaft);
+      setSchemaCode(isDaft.schema_info.code);
+      setStepDraft(isDaft.current_state);
     }
-  }
+  };
 
   useEffect(() => {
-    getDraftInfo()
-  }, [isDaft])
+    getDraftInfo();
+  }, [isDaft]);
   // const isDaft = await getSchemaInfo(schemacode);
   // console.log(JSON.stringify(isDaft, null, 2));
   return (
@@ -88,25 +89,39 @@ export default function Page({
           </Text>
           <Divider borderColor={"brand"} />
           <TapState isCurren={4} schemaCode={schemacode} /> */}
-          <Stepmenu schemacode={schemaCode} currentStep={4} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
-          <Box >
+          <Stepmenu
+            schemacode={schemaCode}
+            currentStep={4}
+            schemacodeNavigate={schemacode}
+            stepDraft={stepDraft}
+          ></Stepmenu>
+          <Box marginTop="40px">
             <CradNewDaft
               isDaft={isDaft}
               isState={4}
               setIsDaft={setIsDaft}
               schemacode={schemacode}
+              setOnEditOrCreate={setOnEditOrCreate}
             />
           </Box>
-          <Flex width="100%" justifyContent="space-between" marginTop="36px">
-            {/* <CustomButton text={"Back"} isCurren={4} schemaCode={schemacode} />
-            <CustomButton text={"Next"} isCurren={4} schemaCode={schemacode} /> */}
-            <div onClick={() => { router.push(`/newdraft/3/${schemacode}`, { scroll: false }) }}>
-              <BackPageButton></BackPageButton>
-            </div>
-            <div onClick={() => { router.push(`/newdraft/5/${schemacode}`, { scroll: false }) }} >
-              <NextPageButton></NextPageButton>
-            </div>
-          </Flex>
+          {!onEditOrCreate && (
+            <Flex width="100%" justifyContent="space-between" marginTop="36px">
+              <div
+                onClick={() => {
+                  router.push(`/newdraft/3/${schemacode}`, { scroll: false });
+                }}
+              >
+                <BackPageButton></BackPageButton>
+              </div>
+              <div
+                onClick={() => {
+                  router.push(`/newdraft/5/${schemacode}`, { scroll: false });
+                }}
+              >
+                <NextPageButton></NextPageButton>
+              </div>
+            </Flex>
+          )}
         </Flex>
       )}
 
@@ -116,9 +131,7 @@ export default function Page({
         </Flex>
       )}
 
-      {loading && !isDaft && (
-        <Loading></Loading>
-      )}
+      {loading && !isDaft && <Loading></Loading>}
     </>
   );
 }

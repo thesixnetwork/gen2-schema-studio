@@ -97,7 +97,7 @@ export default function Layout({
                     <div className=" w-full h-[15vh]">
                         <HomeNavBar />
                     </div>
-                    <div className=" w-[95%] min-h-[67vh] ">
+                    <div className=" w-[95%] min-h-[75vh] ">
                         <Flex bgColor="" width={"100%"} height={"100%"} className="" >
                             <Box className=" duration-500   " bgColor=""  width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
@@ -107,7 +107,7 @@ export default function Layout({
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>
                                 {isSideBarShow &&
-                                    <Box  width={"100%"}>
+                                    <Box   width={"100%"}>
                                         <div >
                                             <HomeSidebar />
                                         </div>

@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
 import { useRouter } from 'next/navigation'
 import Loading from './Loading';
+import { getListDraft } from '@/service/getListDraft';
 type Props = {}
 
 export default function HomeCard({ }: Props) {
@@ -20,34 +21,34 @@ export default function HomeCard({ }: Props) {
     const [listDraft, setListdraft] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isLoading2, setIsLoading2] = useState(true)
-    const getListDraft = async () => {
-        const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
-        const params = {};
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        };
+    // const getListDraft = async () => {
+    //     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
+    //     const params = {};
+    //     const headers = {
+    //         "Content-Type": "application/json",
+    //         Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    //     };
 
-        try {
-            const response = await axios.get(apiUrl, {
-                params: params,
-                headers: headers,
-            });
-            console.log("list :", response.data.data.sesstion);
-            setListdraft(response.data.data.sesstion);
-            // return response.data.data.sesstion;
+    //     try {
+    //         const response = await axios.get(apiUrl, {
+    //             params: params,
+    //             headers: headers,
+    //         });
+    //         console.log("list :", response.data.data.sesstion);
+    //         setListdraft(response.data.data.sesstion);
+    //         // return response.data.data.sesstion;
 
-        } catch (error) {
-            // console.error("Error:", error);
-            // return null
-        }
-    }
+    //     } catch (error) {
+    //         // console.error("Error:", error);
+    //         // return null
+    //     }
+    // }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                
-                await getListDraft();
+                const list_draft = await getListDraft();
+                setListdraft(list_draft)
                 setIsLoading(false);
             } catch (error) {
                 // Handle errors here

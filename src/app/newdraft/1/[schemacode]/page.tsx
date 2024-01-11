@@ -2,7 +2,7 @@
 
 import TapState from "@/components/TapState";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react"
 import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
@@ -25,7 +25,7 @@ export default function Page({
 }) {
     const router = useRouter()
     const { data: session } = useSession()
-    console.log(session)
+    // console.log(session)
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingNext, setIsLoadingNext] = useState(false)
     const [isLoadingFindSchemaCode, setIsLoadingFindSchemaCode] = useState(false)
@@ -42,9 +42,9 @@ export default function Page({
         (async () => {
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
-                console.log(schemaInfo)
-                setIsDaft(schemaInfo)
-                setIsLoading(false)
+                // console.log(schemaInfo);
+                setIsDaft(schemaInfo);
+                setIsLoading(false);
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
@@ -53,19 +53,22 @@ export default function Page({
         })();
     }, [schemacode]);
 
-    const getDraftInfo = () => {
+
+
+    const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            console.log("isDaft:", isDaft)
-            setSchemaCode(isDaft.schema_info.code)
-            setCollectionName(isDaft.schema_info.name)
-            setDescription(isDaft.schema_info.description)
-            setStepDraft(isDaft.current_state)
+            // console.log("isDaft:", isDaft);
+            setSchemaCode(isDaft.schema_info.code);
+            setCollectionName(isDaft.schema_info.name);
+            setDescription(isDaft.schema_info.description);
+            setStepDraft(isDaft.current_state);
         }
-    }
+    }, [isDaft]);
 
     useEffect(() => {
-        getDraftInfo()
-    }, [isDaft])
+        getDraftInfo();
+    }, [isDaft, getDraftInfo]);
+
     // const isDaft = await getSchemaInfo(schemacode);
     // console.log(JSON.stringify(isDaft, null, 2));
 
@@ -81,48 +84,47 @@ export default function Page({
         setDescription(value);
     };
 
-    const validateSchemaCode = async () => {
-        setIsLoadingFindSchemaCode(true)
-        const findSchemaCodeStatus = await findSchemaCode(schemaCode)
-        console.log("findSchemaCodeStatus :", findSchemaCodeStatus)
+    const validateSchemaCode = useCallback(async () => {
+        setIsLoadingFindSchemaCode(true);
+        const findSchemaCodeStatus = await findSchemaCode(schemaCode);
+        // console.log("findSchemaCodeStatus :", findSchemaCodeStatus);
         if (uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
-            setValidate(false)
+            setValidate(false);
         } else {
-            setValidate(true)
-        };
+            setValidate(true);
+        }
 
         if (uppercaseTest(schemaCode)) {
-            setErrorMessage("Uppercase is not allowed")
+            setErrorMessage("Uppercase is not allowed");
         } else if (spaceTest(schemaCode)) {
-            setErrorMessage("Space is not allowed")
+            setErrorMessage("Space is not allowed");
         } else if (specialCharsTest(schemaCode)) {
-            setErrorMessage("Special characters is not allowed")
+            setErrorMessage("Special characters are not allowed");
         } else if (!findSchemaCodeStatus && schemaCode !== "") {
-            setErrorMessage("Schema code is Duplicate")
-        }
-        else {
+            setErrorMessage("Schema code is Duplicate");
+        } else {
             setErrorMessage("");
         }
-        setIsLoadingFindSchemaCode(false)
-    }
-
+        setIsLoadingFindSchemaCode(false);
+    }, [schemaCode]);
 
     useEffect(() => {
-        validateSchemaCode()
-    }, [schemaCode])
+        validateSchemaCode();
+    }, [schemaCode, validateSchemaCode]);
+
 
     const create_SchemaCode = async () => {
         const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
-        console.log("createSchemaCodeStatus", createSchemaCodeStatus)
+        // console.log("createSchemaCodeStatus", createSchemaCodeStatus)
     }
 
     const edit_schemaCode = async () => {
         const editSchemaCodeStatus = await editSchemaCode(schemacode, schemaCode, collectionName, description)
-        console.log(editSchemaCodeStatus)
+        // console.log(editSchemaCodeStatus)
     }
 
     const nextPage = async () => {
-       
+
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
                 setIsLoadingNext(true)
@@ -133,13 +135,13 @@ export default function Page({
                 validateNextPage()
             }
 
-        } else if(validate && !isLoadingFindSchemaCode) {
+        } else if (validate && !isLoadingFindSchemaCode) {
             setIsLoadingNext(true)
             await edit_schemaCode()
             router.push(`/newdraft/2/${schemacode}`, { scroll: false })
             setIsLoadingNext(false)
         }
-       
+
     }
 
     const validateNextPage = () => {
@@ -170,12 +172,12 @@ export default function Page({
     return (
         <>
             {isLoading && <Loading></Loading>}
-            <div className=" w-full h-full min-h-[67vh] flex flex-col justify-between items-center pb-10 ">
+            <div className=" w-full h-full min-h-[75vh] flex flex-col justify-between items-center  ">
                 <Stepmenu schemacode={schemaCode} currentStep={1} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
                 <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode} loading={isLoadingFindSchemaCode}></InputCardOneLine>
                 <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} loading={false} ></InputCardOneLine>
                 <InputCardOneLine title={"Description"} require={false} placeholder={"WhaleGate Gen2 NFT With SIX"} validate={true} errorMassage={""} value={description} onChange={handleInputChangeDescription} loading={false} ></InputCardOneLine>
-                <div className=' w-[90%] h-20 flex justify-between items-center'>
+                <div className=' w-[90%]  flex justify-between items-center'>
                     <div onClick={backPage}>
                         <BackPageButton></BackPageButton>
                     </div>

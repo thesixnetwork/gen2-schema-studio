@@ -22,7 +22,7 @@ import CustomButton from "@/components/CustomButton";
 import { Skeleton } from "@chakra-ui/react";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import Stepmenu from "@/components/Stepmenu";
 import Loading from "@/components/Loading";
 
@@ -34,22 +34,24 @@ export default function Page({
 }: {
   params: { schemacode: string };
 }) {
-  const { data: session } = useSession();
-  // console.log(session)
+  // const { data: session } = useSession();
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter()
-  const [schemaCode, setSchemaCode] = useState("")
-  const [stepDraft, setStepDraft] = useState(4)
+  const [onEditOrCreate, setOnEditOrCreate] = useState(false);
+  const router = useRouter();
+  const [schemaCode, setSchemaCode] = useState("");
+  const [stepDraft, setStepDraft] = useState(4);
+  // console.log(schemacode)
+  // console.log(isDaft)
 
   useEffect(() => {
     (async () => {
       try {
         const send = await getSchemaInfo(schemacode);
         setIsDaft(send);
-        setSchemaCode(send.schema_info.code)
-        setStepDraft(send.current_state)
+        setSchemaCode(send.schema_info.code);
+        setStepDraft(send.current_state);
         setLoading(false);
         // Process the response or update state as needed
       } catch (error) {
@@ -76,25 +78,39 @@ export default function Page({
           </Text>
           <Divider borderColor={"brand"} />
           <TapState isCurren={5} schemaCode={schemacode} /> */}
-          <Stepmenu schemacode={schemaCode} currentStep={5} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
-          <Box>
+          <Stepmenu
+            schemacode={schemaCode}
+            currentStep={5}
+            schemacodeNavigate={schemacode}
+            stepDraft={stepDraft}
+          ></Stepmenu>
+          <Box marginTop="40px">
             <CradNewDaft
               isDaft={isDaft}
               isState={5}
               setIsDaft={setIsDaft}
               schemacode={schemacode}
+              setOnEditOrCreate={setOnEditOrCreate}
             />
           </Box>
-          <Flex width="100%" justifyContent="space-between" marginTop="36px">
-            {/* <CustomButton text={"Back"} isCurren={5} schemaCode={schemacode} />
-            <CustomButton text={"Next"} isCurren={5} schemaCode={schemacode} /> */}
-            <div onClick={() => { router.push(`/newdraft/4/${schemacode}`, { scroll: false }) }}>
-              <BackPageButton></BackPageButton>
-            </div>
-            <div onClick={() => { router.push(`/newdraft/6/${schemacode}`, { scroll: false }) }} >
-              <NextPageButton loading={false}></NextPageButton>
-            </div>
-          </Flex>
+          {!onEditOrCreate && (
+            <Flex width="100%" justifyContent="space-between" marginTop="36px">
+              <div
+                onClick={() => {
+                  router.push(`/newdraft/4/${schemacode}`, { scroll: false });
+                }}
+              >
+                <BackPageButton></BackPageButton>
+              </div>
+              <div
+                onClick={() => {
+                  router.push(`/newdraft/6/${schemacode}`, { scroll: false });
+                }}
+              >
+                <NextPageButton loading={false}></NextPageButton>
+              </div>
+            </Flex>
+          )}
         </Flex>
       )}
 
@@ -104,9 +120,7 @@ export default function Page({
         </Flex>
       )}
 
-      {loading && !isDaft && (
-        <Loading></Loading>
-      )}
+      {loading && !isDaft && <Loading></Loading>}
     </>
   );
 }

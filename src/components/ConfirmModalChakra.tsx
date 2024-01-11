@@ -56,6 +56,7 @@ const ConfirmModalChakra = (props: Props) => {
   return (
     <>
       <Modal
+      
         // initialFocusRef={initialRef}
         // finalFocusRef={finalRef}
         isOpen={isOpen}
