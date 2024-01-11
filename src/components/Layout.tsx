@@ -37,7 +37,7 @@ export default function Layout({
   const [rpcEndpoint, setRpcEndpoint] = useState<string>(
     process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value"
   );
-  console.log(rpcEndpoint)
+//   console.log(rpcEndpoint)
   const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE;
   const [exponent, setExponent] = useState(1e6);
   //--------------------------------------Authen Refresh Token----------------------------------------//
@@ -106,7 +106,7 @@ export default function Layout({
   const loginApi = async () => {
     const offlineSigner = window.getOfflineSigner(chainId);
     const keplrAccounts = await offlineSigner.getAccounts();
-    console.log("gust");
+    // console.log("gust");
     const signedMessage = await offlineSigner.keplr.signArbitrary(
       chainId,
       keplrAccounts[0].address,
@@ -155,7 +155,7 @@ export default function Layout({
     }
   }, [session?.expires]);
   ///////////////////////
- console.log("session",session)
+//  console.log("session",session)
   return (
     <>
       {pathname !== "/" ? (

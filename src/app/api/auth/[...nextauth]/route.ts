@@ -53,11 +53,11 @@ export const authOptions: NextAuthOptions = {
         // console.log("account",user)
         token.user = user;
       }
-      console.log("token",token.exp)
-      console.log("Math.floor(Date.now() / 1000)", Math.floor(Date.now() / 1000))
-      if(token.iat + 60 < Math.floor(Date.now() / 1000)) {
-        console.log("reeeeeee")
-      }
+      // console.log("token",token.exp)
+      // console.log("Math.floor(Date.now() / 1000)", Math.floor(Date.now() / 1000))
+      // if(token.iat + 60 < Math.floor(Date.now() / 1000)) {
+      //   console.log("reeeeeee")
+      // }
       // if (token.exp - 120 > token.exp) {
       //   // console.log("account2222", token);
       //   const re = await refreshAccessToken(token);
@@ -103,10 +103,10 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     // maxAge: 1800000
-    maxAge: 11000
+    maxAge: 1400
   },
   jwt:{
-    maxAge: 12000
+    maxAge: 1400
   },
   secret: process.env.NEXTAUTH_SECRET, // store this in a .env file
 };
