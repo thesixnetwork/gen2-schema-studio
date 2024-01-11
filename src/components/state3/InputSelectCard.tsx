@@ -17,7 +17,7 @@ function InputSelectCard(props: Props) {
 
         <div className=' w-96 h-10 flex  items-center    '>
           <div onClick={() => { props.onChange("string") }} className={`w-[50%] h-full border border-Act6 rounded-l-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${props.value === "string" ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>abc</div>
-          <div onClick={() => { props.onChange("number") }} className={`w-[50%] h-full border border-Act6  hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${props.value === "number" ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>123</div>
+          <div onClick={() => { props.onChange("number") }} className={`w-[50%] h-full border border-Act6  hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${(props.value === "number" || props.value === "float" ) ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>123</div>
           <div onClick={() => { props.onChange("boolean") }} className={`w-[50%] h-full border border-Act6 rounded-r-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${props.value === "boolean" ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>Y/N</div>
         </div>
       </div>

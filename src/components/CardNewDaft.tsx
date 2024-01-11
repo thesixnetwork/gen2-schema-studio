@@ -120,10 +120,10 @@ const CaradNewDaft: React.FC<{
 
   return (
     <>
-      <Flex flexWrap={"wrap"}>
+      <Flex className=" w-full min-h-[75vh] flex justify-center items-center ">
         {!onEdit && !onCreate && (
-          <div className=" w-full h-[70vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
-            <div onClick={() => {setOnCreate(true), setOnEditOrCreate(true)}}>
+          <div className=" w-full h-[75vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
+            <div onClick={() => { setOnCreate(true), setOnEditOrCreate(true) }}>
               <NewCollecitonCard></NewCollecitonCard>
             </div>
             {isAttributes &&
@@ -143,15 +143,15 @@ const CaradNewDaft: React.FC<{
                     //   item.default_mint_value!.float_attribute_value!.value.toString()
                     // }
                     value={
-                      item.data_type === "string" && item.default_mint_value?.string_attribute_value ? 
-                      item.default_mint_value?.string_attribute_value.value:
-                      item.data_type === "number" && item.default_mint_value?.number_attribute_value ?
-                      item.default_mint_value?.number_attribute_value.value:
-                      item.data_type === "boolean" && item.default_mint_value?.boolean_attribute_value ?
-                      item.default_mint_value?.boolean_attribute_value.value.toString():
-                      item.default_mint_value?.float_attribute_value && item.default_mint_value?.float_attribute_value.value.toString()
+                      item.data_type === "string" && item.default_mint_value?.string_attribute_value ?
+                        item.default_mint_value?.string_attribute_value.value :
+                        item.data_type === "number" && item.default_mint_value?.number_attribute_value ?
+                          item.default_mint_value?.number_attribute_value.value :
+                          item.data_type === "boolean" && item.default_mint_value?.boolean_attribute_value ?
+                            item.default_mint_value?.boolean_attribute_value.value.toString() :
+                            item.default_mint_value?.float_attribute_value && item.default_mint_value?.float_attribute_value.value.toString()
                     }
-                    onSettingBarClick={() => {handleEdit(item, index), setOnEditOrCreate(true)}}
+                    onSettingBarClick={() => { handleEdit(item, index), setOnEditOrCreate(true) }}
                     onDelete={() => handleDel(index)}
                   ></AttributeCardAndDelete>
                 </div>
@@ -292,27 +292,33 @@ const CaradNewDaft: React.FC<{
           ))} */}
 
         {onEdit && !onCreate && isAttribute && (
-          <CardEditDaft
-            isAttribute={isAttribute}
-            isAttributes={isAttributes}
-            setIsAttributes={setIsAttributes}
-            indexEdit={indexEdit}
-            rawData={isDaft}
-            setOnEdit={setOnEdit}
-            isState={isState}
-            onEdit={onEdit}
-            schemacode={schemacode}
-          />
+          <div className=" w-full h-full">
+            <CardEditDaft
+              isAttribute={isAttribute}
+              isAttributes={isAttributes}
+              setIsAttributes={setIsAttributes}
+              indexEdit={indexEdit}
+              rawData={isDaft}
+              setOnEdit={setOnEdit}
+              isState={isState}
+              onEdit={onEdit}
+              schemacode={schemacode}
+              setOnEditOrCreate={setOnEditOrCreate}
+            />
+          </div>
         )}
         {onCreate && !onEdit && (
-          <CreateAttribute
-            rawData={isDaft}
-            setIsAttributes={setIsAttributes}
-            isAttributes={isAttributes}
-            setOnCreate={setOnCreate}
-            isState={isState}
-            schemacode={schemacode}
-          />
+          <div className=" w-full h-full">
+            <CreateAttribute
+              rawData={isDaft}
+              setIsAttributes={setIsAttributes}
+              isAttributes={isAttributes}
+              setOnCreate={setOnCreate}
+              isState={isState}
+              schemacode={schemacode}
+              setOnEditOrCreate={setOnEditOrCreate}
+            />
+          </div>
         )}
       </Flex>
     </>
