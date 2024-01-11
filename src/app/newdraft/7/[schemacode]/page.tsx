@@ -48,7 +48,7 @@ export default function Page({
 
   const router = useRouter();
   const [chainId, setChainId] = useState("fivenet");
-  const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET);
+  const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET2);
   const [stepDraft, setStepDraft] = useState(6);
 
   useEffect(() => {

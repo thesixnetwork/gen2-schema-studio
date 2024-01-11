@@ -28,6 +28,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const [stepDraft, setStepDraft] = useState(5);
   const [actionIndex, setActionIndex] = useState(0);
   const [isEdit, setIsEdit] = useState(false);
+  const [isNameEmpty, setIsNameEmpty] = useState(false);
   const getIsEdited = getCookie("isEditAction");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const [isError, setIsError] = useState(false);
@@ -189,12 +190,33 @@ const Page = ({ params }: { params: { param: string } }) => {
     setCookie("isCreateNewThen", "false");
   }, []);
 
+  useEffect(() => {
+    if (
+      (params.param === "create-new-action" && createNewAction[0].name === "") ||
+      (updatedAction &&
+        updatedAction[actionIndex] &&
+        updatedAction[actionIndex].name === "")
+    ) {
+      setIsNameEmpty(true);
+      console.log("emptyy");
+    } else {
+      setIsNameEmpty(false);
+      console.log("not empty");
+    }
+  }, [updatedAction, actionIndex, createNewAction]);
+
   return (
     <>
       {loading && <Loading />}
       <header>
-        <Stepmenu schemacode={schemacode} currentStep={6}  schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
+        <Stepmenu
+          schemacode={schemacode}
+          currentStep={6}
+          schemacodeNavigate={schemacode}
+          stepDraft={stepDraft}
+        ></Stepmenu>
       </header>
+      <button onClick={() => console.log(createNewAction)}>log her</button>
       <div className="w-fit max-w-screen-md mx-auto mt-12">
         {(typeof actionIndex === "number" || isCreateNewAction) && (
           <div className="flex flex-col items-center gap-y-8">
@@ -253,6 +275,7 @@ const Page = ({ params }: { params: { param: string } }) => {
                 params.param === "create-new-action" ? true : false
               }
               isError={isError}
+              isNameEmpty={isNameEmpty}
             />
             <ActionInputThenWhen
               actionType="then"
@@ -269,6 +292,7 @@ const Page = ({ params }: { params: { param: string } }) => {
                 params.param === "create-new-action" ? true : false
               }
               isError={isError}
+              isNameEmpty={isNameEmpty}
             />
           </div>
         )}

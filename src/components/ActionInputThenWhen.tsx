@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
 import { IActions } from "@/type/Nftmngr";
 import { useRouter } from "next/navigation";
 import ConfirmModalChakra from "./ConfirmModalChakra";
+import AlertModal from "./AlertModal";
 
 interface ActionInputThenWhenProps {
   actionType: string;
@@ -13,12 +13,14 @@ interface ActionInputThenWhenProps {
   schemaRevision: string;
   isCreateNewAction: boolean;
   isError: boolean;
+  isNameEmpty: boolean;
 }
 
 const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
   const router = useRouter();
   const actionName = props.action[props.actionIndex]?.name || "";
   const [showModal, setShowModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [showModalIndex, setShowModalIndex] = useState<number>(0);
   const [action, setAction] = useState<string | string[]>(
     props.actionType === "then"
@@ -64,6 +66,16 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
       setCookie("action-desc", props.action[props.actionIndex]?.desc);
     }
     setCookie("isCreateNewThen", "true");
+
+    if (props.isNameEmpty) {
+      setIsOpen(true);
+    } else {
+      router.push(
+        props.actionType === "when"
+          ? `/newdraft/6/${schemacode}/action-form/when/${props.schemaRevision}/${actionName}/create-new-when`
+          : `/newdraft/6/${schemacode}/action-form/then/${props.schemaRevision}/${actionName}/create-new-then`
+      );
+    }
   };
 
   useEffect(() => {
@@ -73,6 +85,7 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
       setAction(props.action[props.actionIndex]?.then);
     }
   }, [props.action, props.actionIndex]);
+
 
   return (
     <div className="border justify-between w-[40vw] relative rounded-2xl bg-white">
@@ -178,25 +191,26 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
             props.action[props.actionIndex]?.when === "null")) ||
           props.actionType === "then") && (
           <div className="flex items-center">
-            <Link
-              href={
-                props.actionType === "when"
-                  ? `/newdraft/6/${schemacode}/action-form/when/${props.schemaRevision}/${actionName}/create-new-when`
-                  : `/newdraft/6/${schemacode}/action-form/then/${props.schemaRevision}/${actionName}/create-new-then`
-              }
+            {props.isNameEmpty && (
+              <AlertModal
+                title="Name can't be empty"
+                type="error"
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+              />
+            )}
+            <button
+              className={`${
+                props.isError
+                  ? "text-gray-500"
+                  : "text-Act6 hover:scale-110 duration-300"
+              } border border-dashed w-fit rounded-sm text-md px-4 py-1.5`}
+              onClick={handleCreateNewAction}
+              disabled={props.isError}
             >
-              <button
-                className={`${
-                  props.isError
-                    ? "text-gray-500"
-                    : "text-Act6 hover:scale-110 duration-300"
-                } border border-dashed w-fit rounded-sm text-md px-4 py-1.5`}
-                onClick={handleCreateNewAction}
-                disabled={props.isError}
-              >
-                <span>+ New Condition</span>
-              </button>
-            </Link>
+              <span>+ New Condition</span>
+            </button>
+
             {props.isError && (
               <span className="text-red-500 ml-4">
                 *Name can&apos;t be empty or error

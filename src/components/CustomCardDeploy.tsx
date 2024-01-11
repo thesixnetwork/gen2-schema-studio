@@ -49,7 +49,7 @@ const CustomCardDeploy: React.FC<Props> = ({
   schemacode,
 }) => {
   const { data: session } = useSession();
-  const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET);
+  const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET2);
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const getTokenFromCookie = getCookie("token");
