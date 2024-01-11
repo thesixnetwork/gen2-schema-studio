@@ -30,6 +30,7 @@ import { MsgCreateNFTSchema } from "@/type/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { GasPrice } from "@cosmjs/stargate/build/fee";
 import ConfirmModalChakra from "./ConfirmModalChakra";
+import { getCookie } from "@/service/getCookie";
 
 interface Props {
   text: string;
@@ -50,132 +51,158 @@ const CustomCardDeploy: React.FC<Props> = ({
   const { data: session } = useSession();
   const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET);
   const router = useRouter();
-
+  const [showModal, setShowModal] = useState(false);
+  const getTokenFromCookie = getCookie("token");
+  const [showAlert, setShowAlert] = useState("none");
+  const [isOpen,setIsOpen] = useState(false)
   const handleDeploy = async (str: string) => {
     // console.log(2222222)
     // console.log(str)
-    const isConfirmed = await ConfirmModal(
-      `Are you sure you want to ${str}?`,
-      str
-    );
+    // const isConfirmed = await ConfirmModal(
+    //   `Are you sure you want to ${str}?`,
+    //   str
+    // );
 
-    if (isConfirmed) {
-      // Perform the deployment logic
-      console.log("Deployment confirmed");
-      let msgArray: Array<EncodeObject> = [];
+    // if (isConfirmed) {
+    //   // Perform the deployment logic
+    //   console.log(isDaft);
+    //   console.log("Deployment confirmed");
+    // } else {
+    //   <AlertModal title="Deployment failed" type="error" />;
+    //   console.log("Deployment canceled");
+    // }
+    setShowModal(true);
+  };
 
-      const encodeBase64Schema = Buffer.from(JSON.stringify(isDaft)).toString(
-        "base64"
-      );
-      console.log("schemaInfo", isDaft);
+  const deploy = async () => {
+    let msgArray: Array<EncodeObject> = [];
 
-      if (!isDaft) {
-        await Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "NOT FOUND SCHEMA INFO",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
+    const encodeBase64Schema = Buffer.from(
+      JSON.stringify(isDaft?.schema_info)
+    ).toString("base64");
+    console.log("schemaInfo", isDaft);
 
-      if (isAccount && offlineSigner && isDaft) {
-        const msgCreateNFTSchema: MsgCreateNFTSchema = {
-          creator: isAccount[0].address,
-          nftSchemaBase64: encodeBase64Schema,
-        };
-        const msgCreateNFTSchemaEndcode: EncodeObject = {
-          typeUrl: "/thesixnetwork.sixnft.nftmngr.MsgCreateNFTSchema",
-          value: MsgCreateNFTSchema.fromPartial(msgCreateNFTSchema),
-        };
-        // const msgCreateNFTSchemaEndcode = await TomsgCreateNFTSchema(msgCreateNFTSchema)
-        const types = [
-          [
-            "/thesixnetwork.sixnft.nftmngr.MsgCreateNFTSchema",
-            MsgCreateNFTSchema,
-          ],
-        ];
+    if (!isDaft) {
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "NOT FOUND SCHEMA INFO",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
 
-        // const registry = new Registry(types);
-        const registry = new Registry();
-        registry.register(
+    if (isAccount && offlineSigner && isDaft) {
+      const msgCreateNFTSchema: MsgCreateNFTSchema = {
+        creator: isAccount[0].address,
+        nftSchemaBase64: encodeBase64Schema,
+      };
+      const msgCreateNFTSchemaEndcode: EncodeObject = {
+        typeUrl: "/thesixnetwork.sixnft.nftmngr.MsgCreateNFTSchema",
+        value: MsgCreateNFTSchema.fromPartial(msgCreateNFTSchema),
+      };
+      // const msgCreateNFTSchemaEndcode = await TomsgCreateNFTSchema(msgCreateNFTSchema)
+      const types = [
+        [
           "/thesixnetwork.sixnft.nftmngr.MsgCreateNFTSchema",
-          MsgCreateNFTSchema
-        );
-        // const registry = new Registry().register(types);
+          MsgCreateNFTSchema,
+        ],
+      ];
 
-        const rpcClient = await SigningStargateClient.connectWithSigner(
-          rpcEndpoint,
-          offlineSigner,
-          {
-            registry: registry,
-            gasPrice: GasPrice.fromString("1.25usix"),
-          }
-        );
+      // const registry = new Registry(types);
+      const registry = new Registry();
+      registry.register(
+        "/thesixnetwork.sixnft.nftmngr.MsgCreateNFTSchema",
+        MsgCreateNFTSchema
+      );
+      // const registry = new Registry().register(types);
 
-        console.log("rpcClient", rpcClient);
-        msgArray.push(msgCreateNFTSchemaEndcode);
-
-        try {
-          const txResponse = await rpcClient.signAndBroadcast(
-            isAccount[0].address,
-            msgArray,
-            "auto",
-            ``
-          );
-          console.log("tx-----", txResponse);
-          const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
-          const requestData = {
-            payload: {
-              schema_code: schemacode,
-              status: "Testnet",
-              current_state: "7",
-            },
-          };
-          await axios
-            .post(apiUrl, requestData, {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.user.accessToken}`,
-              },
-            })
-            .then((response) => {
-              console.log("API Response Deploy :", response.data);
-              console.log(requestData);
-              // You can handle the API response here
-            })
-            .catch((error) => {
-              console.error("API Error:", error);
-              // Handle errors here
-            });
-
-          <AlertModal title="Deployed successfully" type="warning" />;
-
-          router.push("/");
-        } catch (error) {
-          console.error(error);
-          <AlertModal title="Deployment failed" type="error" />;
+      const rpcClient = await SigningStargateClient.connectWithSigner(
+        rpcEndpoint,
+        offlineSigner,
+        {
+          registry: registry,
+          gasPrice: GasPrice.fromString("1.25usix"),
         }
+      );
+
+      console.log("rpcClient", rpcClient);
+      msgArray.push(msgCreateNFTSchemaEndcode);
+
+      try {
+        const txResponse = await rpcClient.signAndBroadcast(
+          isAccount[0].address,
+          msgArray,
+          "auto",
+          ``
+        );
+        console.log("tx-----", txResponse);
+        const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
+        const requestData = {
+          payload: {
+            schema_code: schemacode,
+            status: "Testnet",
+            current_state: "7",
+          },
+        };
+        await axios
+          .post(apiUrl, requestData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${getTokenFromCookie}`,
+            },
+          })
+          .then((response) => {
+            console.log("API Response Deploy :", response.data);
+            console.log(requestData);
+            console.log("success ja");
+            // You can handle the API response here
+            setShowAlert("success");
+            setIsOpen(true)
+          })
+          .catch((error) => {
+            console.log("fail ja");
+            setShowAlert("fail");
+            setIsOpen(true)
+            console.error("API Error:", error);
+            // Handle errors here
+          });
+
+        // router.push("/home");
+      } catch (error) {
+        console.log("fail ja");
+        setShowAlert("fail");
+        setIsOpen(true)
+        console.log("showAlert",showAlert)
+        console.error(error);
       }
-    } else {
-      <AlertModal title="Deployment failed" type="error" />;
-      console.log("Deployment canceled");
     }
   };
 
-  const [showAlert, setShowAlert] = useState(false);
-
-  const handleButtonClick = () => {
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 2000);
-  };
+  useEffect(() => {
+    if (showAlert === "success" || showAlert === "fail") {
+      // Display AlertModal or take other actions
+      console.log("showAlert changed:", showAlert);
+    }
+  }, [showAlert]);
 
   return (
     <>
-      <button onClick={handleButtonClick}>logg</button>
-      {showAlert && <AlertModal title="Deployed succesfuly" type="warning" />}
+      {showAlert === "success" && isOpen && (
+        <AlertModal title="Deployed successfully" type="warning" isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
+      {showAlert === "fail" && isOpen  && (
+        <AlertModal title="Something went wrong" type="error" isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
+      {showModal && (
+        <ConfirmModalChakra
+          title="Are you sure to deploy on testnet?"
+          function={() => deploy()}
+          isOpen={showModal}
+          setIsOpen={setShowModal}
+          confirmButtonTitle="Yes, deploy"
+        />
+      )}
       {text === "Mainnet" && (
         <Flex
           width="200px"

@@ -24,7 +24,7 @@ import {
 import _ from "lodash";
 
 import IActions from "@/type/IActions";
-
+import AlertModal from "@/components/AlertModal";
 import InputNode from "./CustomNode/InputNode";
 
 import SaveButton from "@/components/button/SaveButton";
@@ -93,6 +93,8 @@ const initialNodes: Node[] = [
 ];
 
 const WhenFlow = (props: WhenFlowProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [errorModalMessage, setModalErrorMessase] = useState("Something went wrong")
   const [metaData, setMetaData] = useState("");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -598,9 +600,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              Swal.fire(
-                "First node can't be value node, attribute node or param node"
-              );
+              setModalErrorMessase("First node can't be value node, attribute node (@) or param node (P)")
+              setIsOpen(true)
             } else if (
               (type == "moreThanNode" ||
                 type == "lessThanNode" ||
@@ -608,9 +609,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "lessThanAndEqualNode") &&
               node.data.dataType === "boolean"
             ) {
-              Swal.fire(
-                "The boolean type can only be used with the equal node (==) or not equal node (!=) ."
-              );
+              setModalErrorMessase("The boolean type can only be used with the equal node (==) or not equal node (!=) .")
+              setIsOpen(true)
             } else {
               updatedNodes.push(updateNode(node, type));
               setNodes(updatedNodes);
@@ -1054,9 +1054,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              Swal.fire(
-                "First node can't be value node, attribute node or param node"
-              );
+              setModalErrorMessase("First node can't be value node, attribute node(@) or param node(P)")
+              setIsOpen(true)
             } else {
               updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
@@ -1145,6 +1144,9 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   return (
     <div className="flex justify-between px-8">
+      { isOpen  && (
+        <AlertModal title={errorModalMessage} type="error" isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
       <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="when"
