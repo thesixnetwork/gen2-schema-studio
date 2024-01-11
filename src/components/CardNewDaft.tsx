@@ -82,7 +82,7 @@ const CaradNewDaft: React.FC<{
         },
         schema_code: schemacode,
         status: "Draft",
-        current_state: "4",
+        current_state: isState.toString(),
       },
     };
     const isConfirm = await ConfirmModal("Do you want to Delelte ?", "Cancle");

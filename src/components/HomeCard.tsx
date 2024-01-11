@@ -11,21 +11,27 @@ import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
 import { useRouter } from 'next/navigation'
 import Loading from './Loading';
+import { useSession } from "next-auth/react";
+
+
 type Props = {}
 
 export default function HomeCard({ }: Props) {
     const router = useRouter()
+  const { data: session } = useSession();
+
     const items = ['Draft', 'Live', 'Testnet'];
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isLoading2, setIsLoading2] = useState(true)
+    console.log(session)
     const getListDraft = async () => {
         const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
         const params = {};
         const headers = {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+            Authorization: `Bearer ${session?.user.accessToken}`,
         };
 
         try {

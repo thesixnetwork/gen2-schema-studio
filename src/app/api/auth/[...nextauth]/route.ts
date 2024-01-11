@@ -15,7 +15,7 @@ async function refreshAccessToken(token: any) {
     };
     // console.log(requestData)
     const req = await axios.post(apiUrl, requestData);
-
+    // console.log(req.data)
     // const refreshedTokens = await response.json()
 
     if (req.data.statusCode !== "V:0001") {
@@ -53,13 +53,25 @@ export const authOptions: NextAuthOptions = {
         // console.log("account",user)
         token.user = user;
       }
-      if (token.exp - 120 > token.exp) {
-        // console.log("account2222", token);
-        const re = await refreshAccessToken(token);
-        // console.log("account2", ss);
-
-        return re;
+      console.log("token",token.exp)
+      console.log("Math.floor(Date.now() / 1000)", Math.floor(Date.now() / 1000))
+      if(token.iat + 60 < Math.floor(Date.now() / 1000)) {
+        console.log("reeeeeee")
       }
+      // if (token.exp - 120 > token.exp) {
+      //   // console.log("account2222", token);
+      //   const re = await refreshAccessToken(token);
+      //   console.log("account2", re);
+
+      //   return re;
+      // }
+      // if (token.iat - 120 < Math.floor(Date.now() / 1000)) {
+      //   // console.log("account2222", token);
+      //   const re = await refreshAccessToken(token);
+      //   console.log("account2", re);
+
+      //   return re;
+      // }
       // console.log("account", token.exp);
       return token;
     },
@@ -90,7 +102,11 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 1800000
+    // maxAge: 1800000
+    maxAge: 11000
+  },
+  jwt:{
+    maxAge: 12000
   },
   secret: process.env.NEXTAUTH_SECRET, // store this in a .env file
 };
