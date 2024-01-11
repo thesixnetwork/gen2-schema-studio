@@ -11,44 +11,48 @@ import { useEffect, useState } from 'react';
 import HomeDraftCard from './HomeDraftCard';
 import { useRouter } from 'next/navigation'
 import Loading from './Loading';
-import { getListDraft } from '@/service/getListDraft';
+import { useSession } from "next-auth/react";
+
+
 type Props = {}
 
 export default function HomeCard({ }: Props) {
     const router = useRouter()
+    const { data: session } = useSession();
+
     const items = ['Draft', 'Live', 'Testnet'];
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isLoading2, setIsLoading2] = useState(true)
-    // const getListDraft = async () => {
-    //     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
-    //     const params = {};
-    //     const headers = {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    //     };
+    console.log(session)
+    const getListDraft = async () => {
+        const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
+        const params = {};
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`,
+        };
 
-    //     try {
-    //         const response = await axios.get(apiUrl, {
-    //             params: params,
-    //             headers: headers,
-    //         });
-    //         console.log("list :", response.data.data.sesstion);
-    //         setListdraft(response.data.data.sesstion);
-    //         // return response.data.data.sesstion;
+        try {
+            const response = await axios.get(apiUrl, {
+                params: params,
+                headers: headers,
+            });
+            console.log("list :", response.data.data.sesstion);
+            setListdraft(response.data.data.sesstion);
+            // return response.data.data.sesstion;
 
-    //     } catch (error) {
-    //         // console.error("Error:", error);
-    //         // return null
-    //     }
-    // }
+        } catch (error) {
+            // console.error("Error:", error);
+            // return null
+        }
+    }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const list_draft = await getListDraft();
-                setListdraft(list_draft)
                 setIsLoading(false);
             } catch (error) {
                 // Handle errors here
@@ -56,13 +60,13 @@ export default function HomeCard({ }: Props) {
                 setIsLoading(false);
             }
         };
-    
+
         fetchData();
     }, []);
 
     return (
         <div>
-            { isLoading && <Loading></Loading>
+            {isLoading && <Loading></Loading>
             }
             {items.map((item, index) => (
                 <div className=' flex flex-col'>
