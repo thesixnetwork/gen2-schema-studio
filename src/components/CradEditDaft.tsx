@@ -33,6 +33,8 @@ import CancelButton from "./button/CancelButton";
 import { isError } from "util";
 import InputCardOneLine from "./state1/InputCardOneLine";
 import InputSelectCard from "./state3/InputSelectCard";
+import ConfirmModalChakra from "./ConfirmModalChakra";
+
 
 // import { Button, ButtonGroup } from '@chakra-ui/react'
 
@@ -68,6 +70,7 @@ const CaradEditDaft: React.FC<{
     const [dataType, setDataType] = useState(isAttribute.data_type)
     const [traitType, setTraitType] = useState(isAttribute.display_option.opensea.trait_type)
     const [isError, setIsError] = useState(false);
+    const [isOpen, setIsOpen] = useState(false)
 
 
     const [newAttributes, setNewAttributes] =
@@ -440,15 +443,8 @@ const CaradEditDaft: React.FC<{
     };
 
     const cancleEdit = async () => {
-      const isConfirm = await ConfirmModal(
-        "There are some edits that haven't been saved yet. Do you want to Cancle ?",
-        "Cancle"
-      );
-      if (isConfirm) {
         setOnEdit(false);
         setOnEditOrCreate(false)
-      }
-      return;
     };
 
     console.log("errorMessage", errorMessage);
@@ -791,7 +787,7 @@ const CaradEditDaft: React.FC<{
                     className=" text-Act7 "
                     // className={` w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={
-                      newAttributes.default_mint_value.number_attribute_value?.value ||newAttributes.default_mint_value.float_attribute_value?.value
+                      newAttributes.default_mint_value.number_attribute_value?.value || newAttributes.default_mint_value.float_attribute_value?.value
                     }
                     precision={2}
                     step={0.1}
@@ -831,7 +827,7 @@ const CaradEditDaft: React.FC<{
             alignItems="center"
           >
 
-            <div onClick={() => { cancleEdit() }}>
+            <div onClick={() => { setIsOpen(true) }}>
               <CancelButton></CancelButton>
             </div>
             <div onClick={() => { handleSave() }}>
@@ -839,6 +835,8 @@ const CaradEditDaft: React.FC<{
             </div>
           </Flex>
         </div>
+        <ConfirmModalChakra title={'Are you sure go back ? '} confirmButtonTitle={'Yes, Go back'} function={cancleEdit} isOpen={isOpen} setIsOpen={setIsOpen}
+        ></ConfirmModalChakra>
       </>
     );
   };
