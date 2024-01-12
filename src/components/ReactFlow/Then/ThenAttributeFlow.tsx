@@ -103,6 +103,10 @@ const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
+const nodeTypes = {
+  customInputNode: InputNode,
+};
+
 const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   // const param = useParams();
   const [reactFlowInstance, setReactFlowInstance] =
@@ -110,12 +114,15 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const nodeTypes = useMemo(() => {
-    return {
-      customInputNode: InputNode,
-      textUpdate: InputNode,
-    };
-  }, []);
+  // const nodeTypes = useMemo(() => {
+  //   return {
+  //     customInputNode: InputNode,
+  //   };
+  // }, []);
+
+  // const nodeTypes = {
+  //   myCustomNode: InputNode,
+  // };
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );

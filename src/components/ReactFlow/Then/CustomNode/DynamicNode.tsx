@@ -259,14 +259,14 @@ const DynamicNode = (props: CircleNodeProps) => {
           Select Your Attribute
         </p>
         <select
-          value={selectAttributeValue.name}
+          value={String(selectAttributeValue.name)}
           id=""
           name=""
           form=""
           className="rounded-sm text-main2 bg-white w-full"
           onChange={handleSelectAttribute}
         >
-          <option value={selectAttributeValue.name} disabled selected hidden>
+          <option value={String(selectAttributeValue.name)} disabled selected hidden>
             {selectAttributeValue.name === "" ||
             selectAttributeValue.name === undefined
               ? "-- select type --"
@@ -509,9 +509,6 @@ const DynamicNode = (props: CircleNodeProps) => {
               value={inputValue}
             />
           </div>
-          {/* ) : (
-            <div></div>
-          )} */}
         </div>
       </div>
     </>
