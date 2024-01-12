@@ -138,6 +138,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     if (params.param === "create-new-action") {
       setIsCreateNewAction(true);
       setCookie("isCreateNewAction", "true");
+      console.log("this>>", getActionThenFromCookie)
       setCreateNewAction((prev) => [
         {
           ...prev[0],
@@ -208,6 +209,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   return (
     <>
       {loading && <Loading />}
+      <button onClick={()=>console.log(createNewAction)} className="text-red-500">logg</button>
       <header>
         <Stepmenu
           schemacode={schemacode}

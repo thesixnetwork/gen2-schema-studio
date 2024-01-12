@@ -64,6 +64,7 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
     } else {
       setCookie("action-name", props.action[props.actionIndex]?.name);
       setCookie("action-desc", props.action[props.actionIndex]?.desc);
+      setCookie("action-then-arr", JSON.stringify(props.action[props.actionIndex]?.then));
     }
     setCookie("isCreateNewThen", "true");
 
