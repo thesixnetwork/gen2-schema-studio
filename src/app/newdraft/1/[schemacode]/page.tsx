@@ -166,10 +166,10 @@ export default function Page({
         //     router.push(`/aboutgen2`, { scroll: false })
         // }
 
-        if (schemacode === "newintegration" || schemaCode === "") {
+        if (schemacode === "newintegration" && schemaCode === "") {
             router.push(`/aboutgen2`, { scroll: false })
-        } else if (schemacode === "newintegration" || schemaCode !== "") {
-            setIsOpenBack(true)
+        } else if (schemacode === "newintegration" && schemaCode !== "") {
+           setIsOpenBack(true)  
         }
         else {
             router.push(`/home`, { scroll: false })
@@ -195,7 +195,7 @@ export default function Page({
                 </div>
                 <ConfirmModalChakra title={'Are you sure to create ? '} confirmButtonTitle={'Yes, Create'} function={create_SchemaCode} isOpen={isOpen} setIsOpen={setIsOpen}
                 ></ConfirmModalChakra>
-                <ConfirmModalChakra title={'Are you sure to go back ? '} confirmButtonTitle={'Yes, Create'} function={() => { router.push(`/aboutgen2`, { scroll: false }) }} isOpen={isOpenBack} setIsOpen={setIsOpenBack}
+                <ConfirmModalChakra title={'Are you sure to go back ? '} confirmButtonTitle={'Yes, Go back'} function={() => { router.push(`/aboutgen2`, { scroll: false }) }} isOpen={isOpenBack} setIsOpen={setIsOpenBack}
                 ></ConfirmModalChakra>
             </div>
         </>

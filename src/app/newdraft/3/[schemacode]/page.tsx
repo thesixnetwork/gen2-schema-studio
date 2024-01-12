@@ -23,6 +23,7 @@ import Loading from "@/components/Loading";
 import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
 import { IOriginAttributes } from "@/type/Nftmngr";
 import AttributeCardAndDelete from "@/components/state3/AttributeCardAndDelete";
+import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 
 export default function Page({
     params: { schemacode },
@@ -33,6 +34,7 @@ export default function Page({
     const [isMain, setIsMain] = useState(true)
     const [isNewAttribute, setIsNewAttribute] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
+    const [initialDaft, setInitialDaft] = useState(null)
     const [name, setName] = useState("")
     const [schemaCode, setSchemaCode] = useState("")
     const [contractAddres, setContractAddres] = useState("")
@@ -46,6 +48,7 @@ export default function Page({
     const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [stepDraft, setStepDraft] = useState(2)
+    const [isOpen, setIsOpen] = useState(false)
     const router = useRouter()
 
 
@@ -54,6 +57,7 @@ export default function Page({
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
                 setIsDaft(schemaInfo)
+                setInitialDaft(schemaInfo)
                 setContractAddres(schemaInfo.schema_info.origin_data.origin_contract_address)
                 setIsLoading(false)
                 // Process the response or update state as needed
@@ -78,17 +82,17 @@ export default function Page({
     }, [isDaft])
 
     const get_origin_attributes_form_contract = async (contract: string) => {
-        const object1:IOriginAttributes[] = isDaft.schema_info.origin_data.origin_attributes; // Assuming isDaft has a type
-        const object2:IOriginAttributes[] = await getOriginAttributFromContract(contract);
-    
+        const object1: IOriginAttributes[] = isDaft.schema_info.origin_data.origin_attributes; // Assuming isDaft has a type
+        const object2: IOriginAttributes[] = await getOriginAttributFromContract(contract);
+
         // Check if object1 is defined and has a 'some' method
         const uniqueObjects = object2.filter(
             obj2 => !object1 || (Array.isArray(object1) && object1.some(obj1 => obj1.name === obj2.name))
         );
         ////////////////
 
-        console.log("uniqueObjects",uniqueObjects)
-    
+        console.log("uniqueObjects", uniqueObjects)
+
     };
     const getAttribute = async () => {
         if (contractAddres !== "" && contractAddres !== null) {
@@ -344,17 +348,21 @@ export default function Page({
     }
 
     const backPage = () => {
-        // if (originBaseURI !== "" || originContractAddress !== "") {
-        //     alert("You are working")
-        // } else {
+        if (initialDaft !== isDaft) {
+            setIsOpen(true)
+        } else {
+            navigate_back()
+        }
+    }
+
+    const navigate_back = () => {
         router.push(`/newdraft/2/${schemacode}`, { scroll: false })
-        // }
     }
 
     //------------------------Post data to base --------------------------------------------//
 
     useEffect(() => {
-        console.log("isNewAttribute",isNewAttribute)
+        console.log("isNewAttribute", isNewAttribute)
     }, [isNewAttribute])
     return (
         <>
@@ -421,6 +429,8 @@ export default function Page({
                         </div>
                     </div>
                 }
+                <ConfirmModalChakra title={'Are you sure go back ? '} confirmButtonTitle={'Yes, Go back'} function={navigate_back} isOpen={isOpen} setIsOpen={setIsOpen}
+                ></ConfirmModalChakra>
             </div>
         </>
     );

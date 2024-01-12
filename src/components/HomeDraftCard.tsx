@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import test_img from "../../public/pic/BuaKaw_Pic.png";
 import draft_icon from "../../public/pic/draft_icon_nobg.png";
+import testnet_icon from "../../public/pic/testnet-icon.png";
 import Image from "next/image";
 import axios from "axios";
 import logoNFTGen2 from "../../public/pic/logo-nftgen2.png";
@@ -73,7 +74,7 @@ function HomeDraftCard(props: Props) {
           <p className=" font-bold text-sm">collection</p>
           <Image
             className=" absolute right-0 top-0 w-10"
-            src={draft_icon}
+            src={props.type === "testnet" ? testnet_icon :draft_icon}
             alt={""}
           ></Image>
         </div>

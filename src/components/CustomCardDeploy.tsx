@@ -138,6 +138,7 @@ const CustomCardDeploy: React.FC<Props> = ({
         );
         console.log("tx-----", txResponse);
         const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
+        console.log("url",apiUrl)
         const requestData = {
           payload: {
             schema_code: schemacode,

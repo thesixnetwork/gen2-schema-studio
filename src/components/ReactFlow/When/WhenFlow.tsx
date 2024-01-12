@@ -94,7 +94,7 @@ const initialNodes: Node[] = [
 
 const WhenFlow = (props: WhenFlowProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [errorModalMessage, setModalErrorMessase] = useState("Something went wrong")
+  const [errorModalMessage, setModalErrorMessage] = useState("Something went wrong")
   const [metaData, setMetaData] = useState("");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -232,7 +232,8 @@ const WhenFlow = (props: WhenFlowProps) => {
         node.attributeName.type === "param_function"
       ) {
         outputNode.data.showType = "paramNode";
-        outputNode.data.value = node.value;
+        outputNode.data.dataType = node.attributeName.attributeName.dataType;
+        outputNode.data.value = node.attributeName.attributeName.value;
       } else if (node.type === "meta_function") {
         outputNode.data.showType = "attributeNode";
         outputNode.data.value = node.attributeName.value;
@@ -600,7 +601,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              setModalErrorMessase("First node can't be value node, attribute node (@) or param node (P)")
+              setModalErrorMessage("First node can't be value node, attribute node (@) or param node (P)")
               setIsOpen(true)
             } else if (
               (type == "moreThanNode" ||
@@ -609,7 +610,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "lessThanAndEqualNode") &&
               node.data.dataType === "boolean"
             ) {
-              setModalErrorMessase("The boolean type can only be used with the equal node (==) or not equal node (!=) .")
+              setModalErrorMessage("The boolean type can only be used with the equal node (==) or not equal node (!=) .")
               setIsOpen(true)
             } else {
               updatedNodes.push(updateNode(node, type));
@@ -676,7 +677,8 @@ const WhenFlow = (props: WhenFlowProps) => {
           ) {
             const dataType = nodes[j].data.value;
             console.log("1", nodes[i].data);
-            if (dataType.includes(".")) {
+            console.log("logjuf", dataType)
+            if (dataType.toString().includes(".")) {
               nodes[i].data.dataTypeFromValue = "float";
               nodes[j].data.dataType = "float";
             } else {
@@ -839,7 +841,8 @@ const WhenFlow = (props: WhenFlowProps) => {
             showType: "addNode",
           },
         };
-        setUpdatedNodes(cloneUpdatedNodes);
+        console.log("clone",cloneUpdatedNodes)
+        setNodes(cloneUpdatedNodes);
       }
       if (element.type !== "remove") {
         onNodesChange(changes);
@@ -1054,7 +1057,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              setModalErrorMessase("First node can't be value node, attribute node(@) or param node(P)")
+              setModalErrorMessage("First node can't be value node, attribute node(@) or param node(P)")
               setIsOpen(true)
             } else {
               updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
