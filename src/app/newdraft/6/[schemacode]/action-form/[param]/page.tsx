@@ -209,7 +209,6 @@ const Page = ({ params }: { params: { param: string } }) => {
   return (
     <>
       {loading && <Loading />}
-      <button onClick={()=>console.log(createNewAction)} className="text-red-500">logg</button>
       <header>
         <Stepmenu
           schemacode={schemacode}

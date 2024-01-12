@@ -54,10 +54,11 @@ export default function HomeCard({}: Props) {
       try {
         const list_draft = await getListDraft();
         console.log(">>.", list_draft);
+        console.log("five",fivenetScan)
         setListdraft(list_draft);
         const test_draft = await getDataTestnet();
         console.log(">>>.", test_draft);
-        setTestDraft(test_draft);
+        setTestDraft(test_draft.data.result);
         setIsLoading(false);
       } catch (error) {
         // Handle errors here
