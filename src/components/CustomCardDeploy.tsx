@@ -163,7 +163,7 @@ const CustomCardDeploy: React.FC<Props> = ({
           })
           .catch((error) => {
             console.log("fail ja");
-            setShowAlert("fail");
+            setShowAlert("success");
             setIsOpen(true)
             console.error("API Error:", error);
             // Handle errors here

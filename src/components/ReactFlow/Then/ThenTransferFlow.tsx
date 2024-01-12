@@ -82,6 +82,11 @@ const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
+const nodeTypes = {
+  customInputNode: InputNode,
+};
+
+
 const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const getCookieData = localStorage.getItem("action");
   const [reactFlowInstance, setReactFlowInstance] =
@@ -89,12 +94,11 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const nodeTypes = useMemo(() => {
-    return {
-      customInputNode: InputNode,
-      textUpdate: InputNode,
-    };
-  }, []);
+  // const nodeTypes = useMemo(() => {
+  //   return {
+  //     customInputNode: InputNode,
+  //   };
+  // }, []);
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
@@ -1033,7 +1037,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           setIsOpen={setIsOpen}
         />
       )}
-      <button onClick={() => console.log(nodes)}>loggy</button>
       <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="then"
