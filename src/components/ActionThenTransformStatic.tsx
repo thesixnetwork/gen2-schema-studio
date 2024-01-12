@@ -145,7 +145,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
         );
         }
 
-        if (originalMetaFunction === "create-new-then") {
+        if (getIsCreateNewThenFromCookie === "true") {
           if (!tempArrCookie.includes(originalMetaFunction)) {
               updatedTempArrCookie = tempArrCookie
             updatedTempArrCookie.push(metaDataToAdd);
