@@ -26,6 +26,7 @@ import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
 import Link from "next/link";
 import { IActions } from "@/type/Nftmngr";
+import AlertModal from "@/components/AlertModal";
 
 // import SyntaxHighlighter from "react-syntax-highlighter";
 
@@ -115,6 +116,8 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const schemacode = getCookie("schemaCode");
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorModalMessage, setModalErrorMessage] = useState("");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -435,28 +438,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     setNodes(updatedNodes);
   };
 
-  const findSchemaCode = async () => {
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${props.schemaRevision}`;
-    const params = {};
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    };
-    await axios
-      .get(apiUrl, {
-        params: params,
-        headers: headers,
-      })
-      .then((response) => {
-        setActionData(
-          response.data.data.schema_info.schema_info.onchain_data.actions
-        );
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
-
   const focusNode = () => {
     const positionX = [];
     const positionY = [];
@@ -487,7 +468,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     changes.forEach((element) => {
       console.log("here", element);
     });
-    // onEdgesChange(changes);
   };
 
   const handleNodesChange = (changes: NodeChange[]) => {
@@ -497,16 +477,29 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         console.log("-------------here", element);
         console.log("--1", element.id);
         console.log("--2", element.id);
-        const cloneUpdatedNodes = [...nodes];
-        console.log(cloneUpdatedNodes);
-        cloneUpdatedNodes[nodeIndex] = {
-          ...nodes[nodeIndex],
-          data: {
-            ...nodes[nodeIndex].data,
-            showType: "addNode",
-          },
-        };
-        setUpdatedNodes(cloneUpdatedNodes);
+        if (element.id === "1") {
+          setModalErrorMessage(
+            "You can't delete the first node(Select your attribute)."
+          );
+          setIsOpen(true);
+        } else if (element.id === "2") {
+          setModalErrorMessage("You can't delete amount node.");
+          setIsOpen(true);
+        } else if (element.id === "3") {
+          setModalErrorMessage("You can't delete to node.");
+          setIsOpen(true);
+        } else {
+          const cloneUpdatedNodes = [...nodes];
+          console.log(cloneUpdatedNodes);
+          cloneUpdatedNodes[nodeIndex] = {
+            ...nodes[nodeIndex],
+            data: {
+              ...nodes[nodeIndex].data,
+              showType: "addNode",
+            },
+          };
+          setNodes(cloneUpdatedNodes);
+        }
       }
       if (element.type !== "remove") {
         onNodesChange(changes);
@@ -676,20 +669,20 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       const metaDataToAdd =
         typeof metaData === "string" ? metaData : JSON.stringify(metaData);
 
-        let updatedTempArrCookie
-        if(getActionThenIndexCookie){
-          
-           updatedTempArrCookie =tempArrCookie.map((item:string, index:number) =>
-          index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+      let updatedTempArrCookie;
+      if (getActionThenIndexCookie) {
+        updatedTempArrCookie = tempArrCookie.map(
+          (item: string, index: number) =>
+            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
         );
-        }
+      }
 
-        if (originalMetaFunction === "create-new-then") {
-          if (!tempArrCookie.includes(originalMetaFunction)) {
-              updatedTempArrCookie = tempArrCookie
-            updatedTempArrCookie.push(metaDataToAdd);
-          }
+      if (originalMetaFunction === "create-new-then") {
+        if (!tempArrCookie.includes(originalMetaFunction)) {
+          updatedTempArrCookie = tempArrCookie;
+          updatedTempArrCookie.push(metaDataToAdd);
         }
+      }
 
       setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
     }
@@ -1030,12 +1023,17 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     }
   }, [isGenerateGPT]);
 
-  useEffect(() => {
-    findSchemaCode();
-  }, []);
-
   return (
     <div className="flex justify-between px-8 ">
+      {isOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
+      <button onClick={() => console.log(nodes)}>loggy</button>
       <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="then"
