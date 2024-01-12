@@ -95,7 +95,7 @@ export default function Page({
             schemacodeNavigate={schemacode}
             stepDraft={stepDraft}
           ></Stepmenu>
-          <Box className=" w-full h-full p-10" >
+          <Box className=" w-full h-full px-10 my-10" >
             <CradNewDaft
               isDaft={isDaft}
               isState={4}
@@ -105,22 +105,24 @@ export default function Page({
             />
           </Box>
           {!onEditOrCreate && (
-            <Flex width="100%" justifyContent="space-between" marginTop="36px">
-              <div
-                onClick={() => {
-                  router.push(`/newdraft/3/${schemacode}`, { scroll: false });
-                }}
-              >
-                <BackPageButton></BackPageButton>
-              </div>
-              <div
-                onClick={() => {
-                  router.push(`/newdraft/5/${schemacode}`, { scroll: false });
-                }}
-              >
-                <NextPageButton></NextPageButton>
-              </div>
-            </Flex>
+            <div className=" w-full flex justify-center items-center">
+              <Flex className=" w-[90%] flex justify-between items-center"  >
+                <div
+                  onClick={() => {
+                    router.push(`/newdraft/3/${schemacode}`, { scroll: false });
+                  }}
+                >
+                  <BackPageButton></BackPageButton>
+                </div>
+                <div
+                  onClick={() => {
+                    router.push(`/newdraft/5/${schemacode}`, { scroll: false });
+                  }}
+                >
+                  <NextPageButton></NextPageButton>
+                </div>
+              </Flex>
+            </div>
           )}
         </Flex>
       )}

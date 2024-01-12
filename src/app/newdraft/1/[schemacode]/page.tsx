@@ -16,6 +16,7 @@ import Loading from "@/components/Loading";
 import { useRouter } from 'next/navigation'
 import { CircularProgress } from '@chakra-ui/react'
 import Stepmenu from "@/components/Stepmenu";
+import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 
 
 export default function Page({
@@ -36,6 +37,8 @@ export default function Page({
     const [validate, setValidate] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
     const [stepDraft, setStepDraft] = useState(0)
+    const [isOpen, setIsOpen] = useState(false)
+    const [isOpenBack, setIsOpenBack] = useState(false)
 
 
     useEffect(() => {
@@ -114,7 +117,10 @@ export default function Page({
 
 
     const create_SchemaCode = async () => {
+        setIsLoadingNext(true)
         const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
+        router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
+        setIsLoadingNext(false)
         // console.log("createSchemaCodeStatus", createSchemaCodeStatus)
     }
 
@@ -123,14 +129,13 @@ export default function Page({
         // console.log(editSchemaCodeStatus)
     }
 
+
+
     const nextPage = async () => {
 
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
-                setIsLoadingNext(true)
-                await create_SchemaCode()
-                router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
-                setIsLoadingNext(false)
+                setIsOpen(true)
             } else {
                 validateNextPage()
             }
@@ -161,9 +166,12 @@ export default function Page({
         //     router.push(`/aboutgen2`, { scroll: false })
         // }
 
-        if (schemacode === "newintegration") {
+        if (schemacode === "newintegration" || schemaCode === "") {
             router.push(`/aboutgen2`, { scroll: false })
-        } else {
+        } else if (schemacode === "newintegration" || schemaCode !== "") {
+            setIsOpenBack(true)
+        }
+        else {
             router.push(`/home`, { scroll: false })
         }
     }
@@ -185,6 +193,10 @@ export default function Page({
                         <NextPageButton loading={isLoadingNext}></NextPageButton>
                     </div>
                 </div>
+                <ConfirmModalChakra title={'Are you sure to create ? '} confirmButtonTitle={'Yes, Create'} function={create_SchemaCode} isOpen={isOpen} setIsOpen={setIsOpen}
+                ></ConfirmModalChakra>
+                <ConfirmModalChakra title={'Are you sure to go back ? '} confirmButtonTitle={'Yes, Create'} function={() => { router.push(`/aboutgen2`, { scroll: false }) }} isOpen={isOpenBack} setIsOpen={setIsOpenBack}
+                ></ConfirmModalChakra>
             </div>
         </>
     );

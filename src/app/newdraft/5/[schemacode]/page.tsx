@@ -95,22 +95,24 @@ export default function Page({
             />
           </Box>
           {!onEditOrCreate && (
-            <Flex width="100%" justifyContent="space-between" marginTop="36px">
-              <div
-                onClick={() => {
-                  router.push(`/newdraft/4/${schemacode}`, { scroll: false });
-                }}
-              >
-                <BackPageButton></BackPageButton>
-              </div>
-              <div
-                onClick={() => {
-                  router.push(`/newdraft/6/${schemacode}`, { scroll: false });
-                }}
-              >
-                <NextPageButton loading={false}></NextPageButton>
-              </div>
-            </Flex>
+            <div className=" w-full flex justify-center items-center">
+              <Flex className=" w-[90%] flex justify-between items-center" >
+                <div
+                  onClick={() => {
+                    router.push(`/newdraft/4/${schemacode}`, { scroll: false });
+                  }}
+                >
+                  <BackPageButton></BackPageButton>
+                </div>
+                <div
+                  onClick={() => {
+                    router.push(`/newdraft/6/${schemacode}`, { scroll: false });
+                  }}
+                >
+                  <NextPageButton loading={false}></NextPageButton>
+                </div>
+              </Flex>
+            </div>
           )}
         </Flex>
       )}
