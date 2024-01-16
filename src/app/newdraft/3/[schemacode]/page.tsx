@@ -372,10 +372,10 @@ export default function Page({
             {isLoading &&
                 <Loading></Loading>
             }
-            <div className=" w-full   flex flex-col justify-between items-center ">
+            <div className=" w-full h-[75vh]    flex flex-col justify-between items-center ">
                 <Stepmenu schemacode={schemaCode} currentStep={3} schemacodeNavigate={schemacode} stepDraft={stepDraft} onEditing={isDaft !== initialDaft}></Stepmenu>
                 {isMain ?
-                    <div className=" w-full h-[67vh] grid grid-cols-4 gap-4 overflow-scroll px-10 my-10">
+                    <div className="  w-full h-full  grid grid-cols-4 gap-4 overflow-scroll py-3 px-10 my-3 ">
                         <div onClick={() => { createNewAttribute() }}>
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
@@ -423,7 +423,7 @@ export default function Page({
                 }
                 {isMain &&
 
-                    <div className=' w-[90%]  flex justify-between items-center'>
+                    <div className=' w-[90%]   flex justify-between items-center'>
                         <div onClick={backPage}>
                             <BackPageButton></BackPageButton>
                         </div>

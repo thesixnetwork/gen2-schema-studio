@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react"
 import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
-import { uppercaseTest, spaceTest, specialCharsTest } from "@/validateService/validate";
+import { uppercaseTest, spaceTest, specialCharsTest ,dotCountTest } from "@/validateService/validate";
 import { findSchemaCode } from "@/validateService/findSchemaCode";
 import { createSchemaCode } from "@/postDataService/createSchemaCode";
 import { editSchemaCode } from "@/postDataService/editSchemaCode";
@@ -92,7 +92,7 @@ export default function Page({
         setIsLoadingFindSchemaCode(true);
         const findSchemaCodeStatus = await findSchemaCode(schemaCode);
         // console.log("findSchemaCodeStatus :", findSchemaCodeStatus);
-        if (uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
+        if (dotCountTest(schemaCode) || uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
             setValidate(false);
         } else {
             setValidate(true);
@@ -104,9 +104,12 @@ export default function Page({
             setErrorMessage("Space is not allowed");
         } else if (specialCharsTest(schemaCode)) {
             setErrorMessage("Special characters are not allowed");
-        } else if (!findSchemaCodeStatus && schemaCode !== "") {
+        } else if (dotCountTest(schemaCode)) {
+            setErrorMessage("Schema code should contain at most one dot");
+        }else if (!findSchemaCodeStatus && schemaCode !== "") {
             setErrorMessage("Schema code is Duplicate");
-        } else {
+        }
+         else {
             setErrorMessage("");
         }
         setIsLoadingFindSchemaCode(false);

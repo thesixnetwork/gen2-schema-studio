@@ -10,8 +10,8 @@ export function uppercaseTest(str: string) {
 export function spaceTest(str: string) {
     const specialChars = / /;
     return specialChars.test(str);
-
 }
+
 export function specialCharsTest(str: string) {
     const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,<>\/?~]/;
     return specialChars.test(str);
@@ -20,4 +20,14 @@ export function specialCharsTest(str: string) {
 export function specialCharsTestTraitType(str: string) {
     const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,<>?~]/;
     return specialChars.test(str);
+}
+
+export function dotCountTest(str: string) {
+    const dotRegex = /\./g;
+
+    // Check for more than one dot
+    const dotCount = (str.match(dotRegex) || []).length;
+
+  
+    return (dotCount > 1);
 }
