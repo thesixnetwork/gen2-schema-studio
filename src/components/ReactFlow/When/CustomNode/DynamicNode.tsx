@@ -127,6 +127,15 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
+  function getElementWidth(element) {
+    if (!element) {
+      console.error("Element is null or undefined");
+      return null;
+    }
+
+    return element.offsetWidth;
+  }
+
   useEffect(() => {
     console.log("!valuenodetype: ", valueNodeType);
   }, [valueNodeType]);
@@ -199,6 +208,12 @@ const DynamicNode = (props: CircleNodeProps) => {
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      onClick={() =>
+        console.log(
+          getElementWidth(document.getElementById(props.data.showType))
+        )
+      }
+      id={props.data.showType}
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
@@ -283,6 +298,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      id={props.data.showType}
     >
       <Handle type="target" position={Position.Top} />
 
@@ -291,6 +307,11 @@ const DynamicNode = (props: CircleNodeProps) => {
           className={`${
             hovered ? "text-indigo-600 font-bold " : "text-Act6 font-bold"
           }`}
+          onClick={() =>
+            console.log(
+              getElementWidth(document.getElementById(props.data.showType))
+            )
+          }
         >
           @:&nbsp;
         </p>
@@ -336,12 +357,18 @@ const DynamicNode = (props: CircleNodeProps) => {
         onDragOver={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        id={props.data.showType}
       >
         <div className="flex h-full w-32 items-center justify-between flex-col">
           <p
             className={`font-bold ${
               hovered ? "text-indigo-600 " : "text-Act6"
             } `}
+            onClick={() =>
+              console.log(
+                getElementWidth(document.getElementById(props.data.showType))
+              )
+            }
           >
             Param:
           </p>
@@ -381,6 +408,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     </>
   ) : (
     <div
+      id={props.data.showType}
       className={`w-10 h-10 rounded-full flex items-center justify-center border
                 ${
                   props.data.showType === "orNode"
@@ -413,6 +441,11 @@ const DynamicNode = (props: CircleNodeProps) => {
         className={`${
           hovered ? "text-indigo-600 font-bold" : "text-Act6 font-bold"
         }`}
+        onClick={() =>
+          console.log(
+            getElementWidth(document.getElementById(props.data.showType))
+          )
+        }
       >
         {props.data.showType === "orNode"
           ? "OR"

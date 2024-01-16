@@ -67,8 +67,14 @@ interface WhenFlowProps {
 }
 
 const nodeWidthAndHeight = {
-  width: 150,
-  height: 57,
+  width: 40,
+  height: 40,
+  width_value: 102,
+  height_value: 40,
+  width_attribute: 154,
+  height_attribute: 40,
+  width_param: 147,
+  height_param: 40,
   width_input: 151.2,
   height_input: 35.2,
   grid_padding: 60,
@@ -396,8 +402,8 @@ const WhenFlow = (props: WhenFlowProps) => {
               showType: "valueNode",
               dataType: "",
               label: { x: node.position.x, y: node.position.y },
-              width: nodeWidthAndHeight.width_input,
-              height: nodeWidthAndHeight.height_input,
+              width: nodeWidthAndHeight.width_value,
+              height: nodeWidthAndHeight.height_value,
             },
           };
         } else if (type === "attributeNode") {
@@ -409,8 +415,8 @@ const WhenFlow = (props: WhenFlowProps) => {
               value: "",
               showType: "attributeNode",
               label: { x: node.position.x, y: node.position.y },
-              width: nodeWidthAndHeight.width_input,
-              height: nodeWidthAndHeight.height_input,
+              width: nodeWidthAndHeight.width_attribute,
+              height: nodeWidthAndHeight.height_attribute,
             },
           };
         } else if (type === "paramNode") {
@@ -421,8 +427,8 @@ const WhenFlow = (props: WhenFlowProps) => {
               value: "",
               showType: "paramNode",
               label: { x: node.position.x, y: node.position.y },
-              width: nodeWidthAndHeight.width_input,
-              height: nodeWidthAndHeight.height_input,
+              width: nodeWidthAndHeight.width_param,
+              height: nodeWidthAndHeight.height_param,
               dataTypeFromValue: "",
             },
           };
@@ -984,8 +990,17 @@ const WhenFlow = (props: WhenFlowProps) => {
                 showType: type,
                 dataType: "",
                 label: { x: updatedNode.position.x, y: updatedNode.position.y },
-                width: nodeWidthAndHeight.width_input,
-                height: nodeWidthAndHeight.height_input,
+                width:
+                  type === "valueNode"
+                    ? nodeWidthAndHeight.width_value
+                    : type === "attributeNode"
+                    ? nodeWidthAndHeight.width_attribute
+                    : nodeWidthAndHeight.width_param,
+                height: type === "valueNode"
+                ? nodeWidthAndHeight.height_value
+                : type === "attributeNode"
+                ? nodeWidthAndHeight.height_attribute
+                : nodeWidthAndHeight.height_param,
               },
             };
           }
