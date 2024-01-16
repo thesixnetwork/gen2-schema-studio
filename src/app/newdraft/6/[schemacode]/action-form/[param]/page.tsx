@@ -7,10 +7,10 @@ import { useState, useEffect } from "react";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import postUpdateAction6 from "@/service/postUpdateAction6";
 import postCreateAction6 from "@/service/postCreateAction6";
+import postImageUrlAction6 from "@/service/postImageUrlAction6";
 import { setCookie } from "@/service/setCookie";
 import { cookies } from "next/headers";
 import { getCookie } from "@/service/getCookie";
-import postImageUrlAction6 from "@/service/postImageUrlAction6";
 import Loading from "@/components/Loading";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
@@ -38,7 +38,8 @@ const Page = ({ params }: { params: { param: string } }) => {
   const getActionNameFromCookie = getCookie("action-name") ?? "";
   const getActionDescFromCookie = getCookie("action-desc") ?? "";
   const getActionThenFromCookie = getCookie("action-then-arr");
-  const getIsTransformFromCookie = getCookie("isTransform") ?? "";
+  const getIsTransformDynamicFromCookie = getCookie("isTransformDynamic") ?? "";
+  const getIsCreateDyanamicImage =getCookie("isCreateDyanamicImage") ?? "";
   const getImgSourceFromCookie = getCookie("imgSource") ?? "";
   const getPrefixFromCookie = getCookie("prefix") ?? "";
   const getPostfixFromCookie = getCookie("postfix") ?? "";
@@ -80,14 +81,24 @@ const Page = ({ params }: { params: { param: string } }) => {
           setCookie("isCreateNewAction", "false");
         }
       }
-
-      if (getIsTransformFromCookie === "true") {
+      if( getIsCreateDyanamicImage === "true"){
         await postImageUrlAction6(
           schemacode,
           decodeURIComponent(getImgSourceFromCookie),
           getPrefixFromCookie,
           getPostfixFromCookie,
-          getImgFormatFromCookie
+          getImgFormatFromCookie,
+          "false"
+        );
+      }else if (getIsTransformDynamicFromCookie === "true") {
+        console.log("post transform")
+        await postImageUrlAction6(
+          schemacode,
+          decodeURIComponent(getImgSourceFromCookie),
+          getPrefixFromCookie,
+          getPostfixFromCookie,
+          getImgFormatFromCookie,
+          "true"
         );
       }
       router.push(`/newdraft/6/${schemacode}`);
@@ -201,7 +212,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   }, []);
 
   useEffect(() => {
-    console.log("work")
+    console.log("work");
     if (
       (params.param === "create-new-action" &&
         createNewAction[0].name === "") ||
@@ -229,7 +240,6 @@ const Page = ({ params }: { params: { param: string } }) => {
       setWhenRequired(false);
     }
   }, [updatedAction, actionIndex, createNewAction]);
-
 
   return (
     <>

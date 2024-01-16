@@ -8,7 +8,8 @@ const postImageUrlAction6 = async (
   imgSource: string,
   prefix: string,
   postfix: string,
-  imgFormat: string
+  imgFormat: string,
+  isEdit: string
 ) => {
   console.log(postfix)
   console.log(prefix)
@@ -25,8 +26,10 @@ const postImageUrlAction6 = async (
     prefix: prefix,
     format: imgFormat.replace(".", ""),
     dynamic: "true",
-    isEdit: "true"
+    isEdit: isEdit
   };
+
+  console.log(requestData)
 
   try {
     console.log("posting...")

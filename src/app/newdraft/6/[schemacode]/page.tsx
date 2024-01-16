@@ -31,7 +31,7 @@ import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 const Page = ({ params }: { params: { schemacode: string } }) => {
   const [action, setAction] = useState<Array<any>>([]);
   const [loading, setLoading] = useState(true);
-  const [stepDraft, setStepDraft] = useState(5)
+  const [stepDraft, setStepDraft] = useState(5);
   const [tokenAttributes, setTokenAttributes] = useState<ItokenAttributes[]>(
     []
   );
@@ -75,6 +75,8 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
     deleteCookie("action-when");
     deleteCookie("action-then");
     deleteCookie("action-then-arr");
+    deleteCookie("isTransformDynamic")
+    deleteCookie("isCreateDyanamicImage");
   }, []);
 
   useEffect(() => {
@@ -97,7 +99,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
           );
           setNftAttributes(response.schema_info.onchain_data.nft_attributes);
           setLoading(false);
-          setStepDraft(response.current_state)
+          setStepDraft(response.current_state);
         } else {
           console.error("Invalid :", response);
           setLoading(false);
@@ -110,19 +112,23 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
   }, [schemacode]);
 
   useEffect(() => {
-    setCookie("schemaCode", schemacode);    
+    setCookie("schemaCode", schemacode);
   }, []);
-
 
   return (
     <>
       {loading && <Loading />}
       <header>
-        <Stepmenu schemacode={schemacode} currentStep={6} schemacodeNavigate={schemacode} stepDraft={stepDraft} />
+        <Stepmenu
+          schemacode={schemacode}
+          currentStep={6}
+          schemacodeNavigate={schemacode}
+          stepDraft={stepDraft}
+        />
       </header>
       <section className="mt-12">
-      <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center">
-        <ActionCreateCard />
+        <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center">
+          <ActionCreateCard />
           {action !== undefined &&
             action.map((item, index) => (
               <div key={index}>
@@ -136,7 +142,6 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
                 />
               </div>
             ))}
-
         </div>
         <div className="w-full flex justify-between px-24 my-12">
           <Link href={`/newdraft/5/${schemacode}`}>

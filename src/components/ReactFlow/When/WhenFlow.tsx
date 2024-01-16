@@ -58,7 +58,6 @@ interface NodeProps {
   };
 }
 
-
 interface WhenFlowProps {
   metaFunction: string;
   setMetaFunction: React.Dispatch<React.SetStateAction<string>>;
@@ -94,13 +93,15 @@ const initialNodes: Node[] = [
 
 const WhenFlow = (props: WhenFlowProps) => {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false)
-  const [errorModalMessage, setModalErrorMessage] = useState("Something went wrong")
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorModalMessage, setModalErrorMessage] = useState(
+    "Something went wrong"
+  );
   const [metaData, setMetaData] = useState("");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
-  const getCookieData = localStorage.getItem('action');
+  const getCookieData = localStorage.getItem("action");
   const schemacode = getCookie("schemaCode");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const nodeTypes = useMemo(() => {
@@ -147,7 +148,7 @@ const WhenFlow = (props: WhenFlowProps) => {
       parentNodeId: null | string = null,
       parentPositionY = 0
     ) => {
-      console.log(">..",node)
+      console.log(">..", node);
       const nodeId = `${nodeIdCounter++}`;
       console.log("---node>", node);
       const outputNode = {
@@ -326,7 +327,7 @@ const WhenFlow = (props: WhenFlowProps) => {
     event.preventDefault();
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = "move";
-  }
+    }
   };
 
   const onDrop = async (event: DragEvent) => {
@@ -602,8 +603,10 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              setModalErrorMessage("First node can't be value node, attribute node (@) or param node (P)")
-              setIsOpen(true)
+              setModalErrorMessage(
+                "First node can't be value node, attribute node (@) or param node (P)"
+              );
+              setIsOpen(true);
             } else if (
               (type == "moreThanNode" ||
                 type == "lessThanNode" ||
@@ -611,8 +614,10 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "lessThanAndEqualNode") &&
               node.data.dataType === "boolean"
             ) {
-              setModalErrorMessage("The boolean type can only be used with the equal node (==) or not equal node (!=) .")
-              setIsOpen(true)
+              setModalErrorMessage(
+                "The boolean type can only be used with the equal node (==) or not equal node (!=) ."
+              );
+              setIsOpen(true);
             } else {
               updatedNodes.push(updateNode(node, type));
               setNodes(updatedNodes);
@@ -678,7 +683,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           ) {
             const dataType = nodes[j].data.value;
             console.log("1", nodes[i].data);
-            console.log("logjuf", dataType)
+            console.log("logjuf", dataType);
             if (dataType.toString().includes(".")) {
               nodes[i].data.dataTypeFromValue = "float";
               nodes[j].data.dataType = "float";
@@ -842,7 +847,7 @@ const WhenFlow = (props: WhenFlowProps) => {
             showType: "addNode",
           },
         };
-        console.log("clone",cloneUpdatedNodes)
+        console.log("clone", cloneUpdatedNodes);
         setNodes(cloneUpdatedNodes);
       }
       if (element.type !== "remove") {
@@ -851,10 +856,13 @@ const WhenFlow = (props: WhenFlowProps) => {
     });
   };
 
-
   const handleSaveAction = async () => {
-    const updateActionWhenByName = (array:IActions[], name:string, newWhen:string) => {
-      console.log("::1",array)
+    const updateActionWhenByName = (
+      array: IActions[],
+      name: string,
+      newWhen: string
+    ) => {
+      console.log("::1", array);
       const updatedArray = array.map((action) => {
         if (action.name === name) {
           return { ...action, when: newWhen };
@@ -864,12 +872,14 @@ const WhenFlow = (props: WhenFlowProps) => {
       return updatedArray;
     };
 
-    if(metaData.startsWith("meta")){
+    if (metaData.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = Array.from(JSON.parse(getCookieData));
         // console.log("logger", parsedCookieData);
-        const newAction = JSON.stringify(updateActionWhenByName(parsedCookieData, props.actionName, metaData));
-        console.log("log ja",parsedCookieData)
+        const newAction = JSON.stringify(
+          updateActionWhenByName(parsedCookieData, props.actionName, metaData)
+        );
+        console.log("log ja", parsedCookieData);
         console.log("123--", newAction);
         console.log("setted already");
         localStorage.setItem("action", newAction);
@@ -885,12 +895,14 @@ const WhenFlow = (props: WhenFlowProps) => {
       }
       setCookie("isEditAction", "true");
       setCookie("action-when", metaData);
-      router.push( isCreateNewActionCookie === "true"
-      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
-    }else{
-      setModalErrorMessage("Please create your when")
-      setIsOpen(true)
+      router.push(
+        isCreateNewActionCookie === "true"
+          ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+          : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+      );
+    } else {
+      setModalErrorMessage("Please create your when");
+      setIsOpen(true);
     }
   };
 
@@ -1067,8 +1079,10 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              setModalErrorMessage("First node can't be value node, attribute node(@) or param node(P)")
-              setIsOpen(true)
+              setModalErrorMessage(
+                "First node can't be value node, attribute node(@) or param node(P)"
+              );
+              setIsOpen(true);
             } else {
               updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
@@ -1157,8 +1171,13 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   return (
     <div className="flex justify-between px-8">
-      { isOpen  && (
-        <AlertModal title={errorModalMessage} type="error" isOpen={isOpen} setIsOpen={setIsOpen} />
+      {isOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
       )}
       <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
@@ -1189,6 +1208,7 @@ const WhenFlow = (props: WhenFlowProps) => {
         <div>
           <div className="flex justify-end gap-x-8 mt-4">
             <Link
+              onClick={() => setCookie("isEditAction", "true")}
               href={
                 isCreateNewActionCookie === "true"
                   ? `/newdraft/6/${schemacode}/action-form/create-new-action`
@@ -1197,9 +1217,7 @@ const WhenFlow = (props: WhenFlowProps) => {
             >
               <CancelButton />
             </Link>
-            <button
-              onClick={handleSaveAction}
-            >
+            <button onClick={handleSaveAction}>
               <SaveButton />
             </button>
           </div>

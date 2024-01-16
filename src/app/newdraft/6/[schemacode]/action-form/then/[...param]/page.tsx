@@ -8,6 +8,9 @@ import ActionThenTransformDynamic from "@/components/ActionThenTransformDynamic"
 import ActionThenTransformStatic from "@/components/ActionThenTransformStatic";
 import { useState, useEffect } from "react";
 import { getCookie } from "@/service/getCookie";
+import { setCookie } from "@/service/setCookie";
+import Link from "next/link";
+import CancelButton from "@/components/button/CancelButton";
 
 const Page = ({ params }: { params: { param: string } }) => {
   // const [metaFunction, setMetaFunction] = useState("");
@@ -16,6 +19,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const schemaRevision = params.param[0];
   const actionName = params.param[1];
   const dataFromCookie = getCookie("action-then");
+  const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const [metaFunction, setMetaFunction] = useState(
     params.param[2]?.startsWith("meta.SetImage")
       ? decodeURIComponent(dataFromCookie ?? "")
@@ -33,8 +37,8 @@ const Page = ({ params }: { params: { param: string } }) => {
       setActionThenType("updateAttribute");
     } else if (metaFunction.startsWith("meta.Transfer")) {
       setActionThenType("transferNumber");
-    }else if ( metaFunction.startsWith("create-new-then")){
-      setActionThenType("create-new-then")
+    } else if (metaFunction.startsWith("create-new-then")) {
+      setActionThenType("create-new-then");
     }
   }, []);
 
@@ -46,7 +50,6 @@ const Page = ({ params }: { params: { param: string } }) => {
     setTransformType(transformType);
   };
 
-
   // useEffect(()=>{
   //   setMetaFunction("")
   // },[actionThenType])
@@ -54,15 +57,15 @@ const Page = ({ params }: { params: { param: string } }) => {
     <section className="text-black">
       {actionThenType === "create-new-then" && (
         <div className="px-8">
-
-        <ActionHeader 
-        type="then"
-        actionName={actionName}
-        metaFunction={metaFunction}
-        transformType={transformType}
-        actionThenType={actionThenType}
-        handleActionThenTypeChange={handleActionThenTypeChange}
-        handleTransformTypeChange={handleTransformTypeChange}/>
+          <ActionHeader
+            type="then"
+            actionName={actionName}
+            metaFunction={metaFunction}
+            transformType={transformType}
+            actionThenType={actionThenType}
+            handleActionThenTypeChange={handleActionThenTypeChange}
+            handleTransformTypeChange={handleTransformTypeChange}
+          />
         </div>
       )}
       {actionThenType === "updateAttribute" && (
@@ -118,6 +121,20 @@ const Page = ({ params }: { params: { param: string } }) => {
           handleTransformTypeChange={handleTransformTypeChange}
           metaFunction={metaFunction}
         />
+      )}
+      {((actionThenType === "" || actionThenType === "create-new-then") ||
+        (actionThenType === "transform" && transformType === "")) && (
+        <Link
+          onClick={() => setCookie("isEditAction", "true")}
+          className="flex justify-end	px-8 pt-4"
+          href={
+            isCreateNewActionCookie === "true"
+              ? `/newdraft/6/${schemaRevision}/action-form/create-new-action`
+              : `/newdraft/6/${schemaRevision}/action-form/${actionName}`
+          }
+        >
+          <CancelButton />
+        </Link>
       )}
     </section>
   );

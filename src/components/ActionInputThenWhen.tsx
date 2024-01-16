@@ -14,7 +14,7 @@ interface ActionInputThenWhenProps {
   isCreateNewAction: boolean;
   isError: boolean;
   isNameEmpty: boolean;
-  setAction: any
+  setAction?: any;
 }
 
 const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {

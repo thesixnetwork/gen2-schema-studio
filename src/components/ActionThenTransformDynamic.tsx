@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button, Select } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import ActionHeader from "@/components/ActionHeader";
+import Loading from "./Loading";
 import { getDynamicImage } from "@/service/getDynamicImage";
 import AlertModal from "./AlertModal";
 import { useRouter } from "next/navigation";
@@ -120,7 +121,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
 
       tempArr = updatedArray;
     };
-    if(metaData.startsWith("meta")){
+    if (metaData.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
         updateActionThenByName(
@@ -130,30 +131,32 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
           metaData
         );
       }
-  
+
       if (isCreateNewActionCookie) {
         const tempArrCookie = getActionThanArrCookie
           ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
           : [];
-  
+
         const metaDataToAdd =
           typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-  
+
         let updatedTempArrCookie;
         if (getActionThenIndexCookie) {
           updatedTempArrCookie = tempArrCookie.map(
             (item: string, index: number) =>
-              index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+              index === parseInt(getActionThenIndexCookie)
+                ? metaDataToAdd
+                : item
           );
         }
-  
+
         if (getIsCreateNewThenFromCookie === "true") {
           if (!tempArrCookie.includes(originalMetaFunction)) {
-              updatedTempArrCookie = tempArrCookie
+            updatedTempArrCookie = tempArrCookie;
             updatedTempArrCookie.push(metaDataToAdd);
           }
         }
-  
+
         setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
       localStorage.setItem("action", JSON.stringify(tempArr));
@@ -164,16 +167,20 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
       setCookie("imgFormat", imgFormat);
       setCookie("prefix", prefix);
       setCookie("postfix", postfix);
-      router.push(isCreateNewActionCookie === "true"
-      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
-    }else{
-      setIsOpen(true)
-      setErrorModalMessage("Please create your then")
+      setCookie("isTransformDynamic", "true");
+      router.push(
+        isCreateNewActionCookie === "true"
+          ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+          : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+      );
+    } else {
+      setIsOpen(true);
+      setErrorModalMessage("Please create your then");
     }
   };
 
   const findImageUrl = async () => {
+    setLoading(true)
     const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_image_url/${props.schemaRevision}`;
     const params = {};
     const headers = {
@@ -192,24 +199,25 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
           setPostfix(response.data.data.image_url.postfix);
         }
         // setIsNext(true);
-        setLoading(false);
         console.log(":: res ::", response);
       })
       .catch((error) => {
         console.error("Error:", error);
-        setLoading(false);
+        setCookie("isCreateDyanamicImage", "true");
+        setLoading(false)
       });
     let tempObj;
     if (schemacode) {
       tempObj = await getDynamicImage(schemacode);
     }
-    console.log(tempObj);
+
     if (tempObj) {
       setImgSource(tempObj.path);
       setImgFormat("." + tempObj.format);
       if (tempObj.postfix !== null) {
         setPostfix(tempObj.postfix);
       }
+      setLoading(false);
     }
   };
 
@@ -232,7 +240,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
 
   return (
     <>
-     {isOpen && (
+      {isOpen && (
         <AlertModal
           title={errorModalMessage}
           type="error"
@@ -240,202 +248,195 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
           setIsOpen={setIsOpen}
         />
       )}
-    <div className="flex flex-col  px-8">
-      <ActionHeader
-        type="then"
-        actionName={props.actionName}
-        metaFunction={metaData}
-        transformType={props.transformType}
-        actionThenType={props.actionThenType}
-        handleActionThenTypeChange={props.handleActionThenTypeChange}
-        handleTransformTypeChange={props.handleTransformTypeChange}
-      />
-      {props.transformType === "dynamic" && (
-        <div className="w-full flex justify-center gap-x-20	items-center mt-4">
-          {loading ? (
-            // <CircularProgress
-            //   className=" text-white"
-            //   sx={{
-            //     width: 300,
-            //     color: "white",
-            //   }}
-            // ></CircularProgress>
-            <div>Loading</div>
-          ) : (
-            <div className="flex flex-col">
-              <div className="border rounded-2xl p-8 flex justify-center bg-white">
-                <div className="w-[40vw] flex flex-col justify-between ">
-                  <div className="mb-2">
-                    <h2 className="text-main2 font-semibold">Image Path</h2>
-                    <input
-                      id=""
-                      type="text"
-                      className="my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
-                      placeholder="example: https://techsauce-nft.sixprotocol.com/techsauce/"
-                      onChange={(e) => {
-                        onChange(e);
-                      }}
-                      value={imgSource}
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <h2 className="text-main2 font-semibold">
-                      Origin Image Format
-                    </h2>
-                    <Select
-                      onChange={(e) => {
-                        setImgFormat(e.target.value);
-                      }}
-                      value={imgFormat}
-                      defaultValue={imgFormat}
-                      className="text-Act6 px-4 py-2 my-2 bg-[#F5F6FA] border  border-Act6 rounded-md hover:bg-opacity-60"
-                    >
-                      <option value="" disabled selected hidden>
-                        -- select --
-                      </option>
-                      <option value=".png">png</option>
-                      <option value=".jpeg">jpeg</option>
-                      <option value=".jpg">jpg</option>
-                      <option value=".gif">gif</option>
-                    </Select>
-                  </div>
-                  <div className="my-4">
-                    <div className="flex">
-                      <h2 className="text-main2 font-semibold">Token Id</h2>
-                      <span className="text-main2">
-                        (For Preview Transformed Tokens)
-                      </span>
+      <div className="flex flex-col  px-8">
+        <ActionHeader
+          type="then"
+          actionName={props.actionName}
+          metaFunction={metaData}
+          transformType={props.transformType}
+          actionThenType={props.actionThenType}
+          handleActionThenTypeChange={props.handleActionThenTypeChange}
+          handleTransformTypeChange={props.handleTransformTypeChange}
+        />
+        {props.transformType === "dynamic" && (
+          <div className="w-full flex justify-center gap-x-20	items-center mt-4">
+            {loading ? (
+              <Loading />
+            ) : (
+              <div className="flex flex-col">
+                <div className="border rounded-2xl p-8 flex justify-center bg-white">
+                  <div className="w-[40vw] flex flex-col justify-between ">
+                    <div className="mb-2">
+                      <h2 className="text-main2 font-semibold">Image Path</h2>
+                      <input
+                        id=""
+                        type="text"
+                        className="my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
+                        placeholder="example: https://techsauce-nft.sixprotocol.com/techsauce/"
+                        onChange={(e) => {
+                          onChange(e);
+                        }}
+                        value={imgSource}
+                      />
                     </div>
-                    <input
-                      id=""
-                      type="text"
-                      className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
-                      placeholder="example: 1"
-                      onChange={(e) => {
-                        handleTokenId(e.target.value);
-                      }}
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <h2 className="text-main2 font-semibold">
-                      Dynamic Image Prefix
-                    </h2>
-                    <input
-                      id=""
-                      type="text"
-                      className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
-                      placeholder="example: -original"
-                      onChange={(e) => setPrefix(e.target.value)}
-                      value={prefix}
-                    />
-                    {imgSource !== "" && (
-                      <div className="bg-[#F5F6FA] rounded-md p-3 mb-2">
-                        <span className="text-Act6">
-                          {checkBackslash(imgSource)}
-                        </span>
-                        <span className="text-red-600">
-                          &#123;&#123;token_id&#125;&#125;
-                        </span>
-                        <span className="text-Act6">
-                          {prefix}
-                          {imgFormat}
+                    <div className="mb-2">
+                      <h2 className="text-main2 font-semibold">
+                        Origin Image Format
+                      </h2>
+                      <Select
+                        onChange={(e) => {
+                          setImgFormat(e.target.value);
+                        }}
+                        value={imgFormat}
+                        defaultValue={imgFormat}
+                        className="text-Act6 px-4 py-2 my-2 bg-[#F5F6FA] border  border-Act6 rounded-md hover:bg-opacity-60"
+                      >
+                        <option value="" disabled selected hidden>
+                          -- select --
+                        </option>
+                        <option value=".png">png</option>
+                        <option value=".jpeg">jpeg</option>
+                        <option value=".jpg">jpg</option>
+                        <option value=".gif">gif</option>
+                      </Select>
+                    </div>
+                    <div className="my-4">
+                      <div className="flex">
+                        <h2 className="text-main2 font-semibold">Token Id</h2>
+                        <span className="text-main2">
+                          (For Preview Transformed Tokens)
                         </span>
                       </div>
-                    )}
-                    <div className="flex items-center h-36">
-                      {imgBeforeTransformError ? (
-                        <p className="flex items-center text-center h-full">
-                          Image couldn&apos;t be load
-                        </p>
-                      ) : (
-                        imgSource !== "" && (
-                          <div className="h-full rounded-lg border-2 overflow-hidden">
-                            <img
-                              src={`${checkBackslash(
-                                imgSource
-                              )}${tokenId}${prefix}${imgFormat}`}
-                              alt="preview-image"
-                              className="h-36 w-auto"
-                              onError={() => setImgBeforeTransformError(true)}
-                            />
-                          </div>
-                        )
-                      )}
+                      <input
+                        id=""
+                        type="text"
+                        className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
+                        placeholder="example: 1"
+                        onChange={(e) => {
+                          handleTokenId(e.target.value);
+                        }}
+                      />
                     </div>
-                  </div>
-                  <div className="mb-2">
-                    <h2 className="text-main2 font-semibold">
-                      Dynamic Image Posfix
-                    </h2>
-                    <input
-                      id=""
-                      type="text"
-                      className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
-                      placeholder="example: -transformed"
-                      onChange={(e) => setPostfix(e.target.value)}
-                      value={postfix}
-                    />
-                    {imgSource !== "" && (
-                      <div className="bg-[#F5F6FA] rounded-md p-3 mb-2">
-                        <span className="text-Act6">
-                          {checkBackslash(imgSource)}
-                        </span>
-                        <span className="text-red-600">
-                          &#123;&#123;token_id&#125;&#125;
-                        </span>
-                        <span className="text-Act6">
-                          {postfix}
-                          {imgFormat}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center h-36">
-                      {imgAfterTransformError ? (
-                        <p className="flex items-center text-center h-full">
-                          Image couldn&apos;t be load
-                        </p>
-                      ) : (
-                        imgSource !== "" && (
-                          <div className="h-full rounded-lg border-2 overflow-hidden">
-                            <img
-                              src={`${checkBackslash(
-                                imgSource
-                              )}${tokenId}${postfix}${imgFormat}`}
-                              alt="preview-image"
-                              className="h-36 w-auto"
-                              onError={() => setImgAfterTransformError(true)}
-                            />
-                          </div>
-                        )
+                    <div className="mb-2">
+                      <h2 className="text-main2 font-semibold">
+                        Dynamic Image Prefix
+                      </h2>
+                      <input
+                        id=""
+                        type="text"
+                        className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
+                        placeholder="example: -original"
+                        onChange={(e) => setPrefix(e.target.value)}
+                        value={prefix}
+                      />
+                      {imgSource !== "" && (
+                        <div className="bg-[#F5F6FA] rounded-md p-3 mb-2">
+                          <span className="text-Act6">
+                            {checkBackslash(imgSource)}
+                          </span>
+                          <span className="text-red-600">
+                            &#123;&#123;token_id&#125;&#125;
+                          </span>
+                          <span className="text-Act6">
+                            {prefix}
+                            {imgFormat}
+                          </span>
+                        </div>
                       )}
+                      <div className="flex items-center h-36">
+                        {imgBeforeTransformError ? (
+                          <p className="flex items-center text-center h-full">
+                            Image couldn&apos;t be load
+                          </p>
+                        ) : (
+                          imgSource !== "" && (
+                            <div className="h-full rounded-lg border-2 overflow-hidden">
+                              <img
+                                src={`${checkBackslash(
+                                  imgSource
+                                )}${tokenId}${prefix}${imgFormat}`}
+                                alt="preview-image"
+                                className="h-36 w-auto"
+                                onError={() => setImgBeforeTransformError(true)}
+                              />
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <div className="mb-2">
+                      <h2 className="text-main2 font-semibold">
+                        Dynamic Image Posfix
+                      </h2>
+                      <input
+                        id=""
+                        type="text"
+                        className=" my-2 rounded-sm bg-[#F5F6FA] text-Act6 text-[14px] border-[1px] border-Act6 focus:border-Act6 placeholder-gray-300 border-dashed p-1 focus:outline-none w-full h-[40px]"
+                        placeholder="example: -transformed"
+                        onChange={(e) => setPostfix(e.target.value)}
+                        value={postfix}
+                      />
+                      {imgSource !== "" && (
+                        <div className="bg-[#F5F6FA] rounded-md p-3 mb-2">
+                          <span className="text-Act6">
+                            {checkBackslash(imgSource)}
+                          </span>
+                          <span className="text-red-600">
+                            &#123;&#123;token_id&#125;&#125;
+                          </span>
+                          <span className="text-Act6">
+                            {postfix}
+                            {imgFormat}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center h-36">
+                        {imgAfterTransformError ? (
+                          <p className="flex items-center text-center h-full">
+                            Image couldn&apos;t be load
+                          </p>
+                        ) : (
+                          imgSource !== "" && (
+                            <div className="h-full rounded-lg border-2 overflow-hidden">
+                              <img
+                                src={`${checkBackslash(
+                                  imgSource
+                                )}${tokenId}${postfix}${imgFormat}`}
+                                alt="preview-image"
+                                className="h-36 w-auto"
+                                onError={() => setImgAfterTransformError(true)}
+                              />
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="flex justify-end gap-x-8 mt-4">
+                  <Link
+                    href={
+                      isCreateNewActionCookie === "true"
+                        ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+                        : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+                    }
+                    onClick={() => setCookie("isEditAction", "true")}
+                  >
+                    <CancelButton />
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      await saveAction();
+                    }}
+                  >
+                    <SaveButton />
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-end gap-x-8 mt-4">
-                <Link
-                  href={
-                    isCreateNewActionCookie === "true"
-                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
-                  }
-                  onClick={() => setCookie("isEditAction", "true")}
-                >
-                  <CancelButton />
-                </Link>
-                <button
-                  onClick={async () => {
-                    await saveAction();
-                  }}
-                >
-                  <SaveButton />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+            )}
+          </div>
+        )}
+      </div>
     </>
   );
 };
