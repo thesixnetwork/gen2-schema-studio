@@ -16,11 +16,11 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import Menu from "./Sidebar/Menu";
+import AlertModal from "../../AlertModal";
 
 // import SyntaxHighlighter from "react-syntax-highlighter";
 import OpenAI from "openai";
 import { useState, useRef } from "react";
-import Swal from "sweetalert2";
 import GenerateGPTimg from "../../../../public/pic/GenerateGPT.png";
 import GenerateGPTimgWhite from "../../../../public/pic/GenerateGPT-white.png";
 import Image from "next/image";
@@ -52,6 +52,8 @@ export default function Flowbar(props: MetaDataProps) {
   const [outputFromGPT, setOutputFromGPT] = useState("");
   const initialRef = useRef(null);
   const finalRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
 
   // const Robot = styled(SmartToyIcon)({
   //   borderRadius: "16px",
@@ -83,7 +85,7 @@ export default function Flowbar(props: MetaDataProps) {
     try {
       const response = await openai.completions.create({
         model: "gpt-3.5-turbo-instruct-0914",
-        prompt: `I want to transform from statement text into programming condition comparison. For example the statement is when points are more than 100 the result will be "meta.GetNumber('points') > 100.\nWhere meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules.\n- If the attribute data type is boolean , result will be meta.GetBoolean('attributeName') == true \n- more than one comparison join together. For example statement when points are more than 100 and already check in , the result will be meta.GetNumber('points') > 100 && meta.GetBoolean('checked_in') == true\n- These are the symbol which cannot be used '!' for example if not check in the output can't be !meta.GetBoolean('checked_in') the output must be meta.GetBoolean('checked_in') == false and the answer should be only meta function do not provide any guildline \n\nWhat if the statement is\n${inputValue}\n\n\n\nWhat would be the answer ===>`,
+        prompt: `I want to transform from statement text into programming condition comparison. For example the statement is when points are more than 100 the result will be "meta.GetNumber('points') > 100.\nWhere meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules.\n- If the attribute data type is boolean , result will be meta.GetBoolean('attributeName') == true \n- more than one comparison join together. For example statement when points are more than 100 and already check in , the result will be meta.GetNumber('points') > 100 && meta.GetBoolean('checked_in') == true\n- These are the symbol which cannot be used '!' for example if not check in the output can't be !meta.GetBoolean('checked_in') the output must be meta.GetBoolean('checked_in') == false and the answer must be only meta function do not provide any guideline \n\nWhat if the statement is\n${inputValue}\n\n\n\nWhat would be the answer ===>`,
         temperature: 1,
         max_tokens: 256,
         top_p: 1,
@@ -102,12 +104,8 @@ export default function Flowbar(props: MetaDataProps) {
   const handleCreate = () => {
     onClose();
     if (!outputFromGPT.startsWith("meta")) {
-      Swal.fire({
-        icon: "error",
-        title: "Output must start with meta",
-        showConfirmButton: false,
-        timer: 3000,
-      });
+      setErrorModalMessage("Output must start with meta");
+      setIsModalOpen(true);
     } else {
       props.setMetaData(outputFromGPT);
       props.setIsGenerateGPT(true);
@@ -120,86 +118,18 @@ export default function Flowbar(props: MetaDataProps) {
   };
 
   return (
+    <>
+    {isModalOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+        />
+      )}
     <div className="w-80 bg-[#DADEF2] flex text-3xl">
       <div className="flex flex-col pl-6 pt-6 gap-y-8">
-        <div className="flex">
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-main2">Operator</span>
-            <div className="flex ">
-              <div className="flex flex-col border-r border-Act6 pr-2">
-                <Menu
-                  nodeName="andNode"
-                  title="AND"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-                <Menu
-                  nodeName="orNode"
-                  title="OR"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-              </div>
-              <div className="pl-2">
-                <div className="flex">
-                  <Menu
-                    nodeName="equalNode"
-                    title="="
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="moreThanNode"
-                    title=">"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="moreThanAndEqualNode"
-                    title=">="
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                </div>
-                <div className="flex">
-                  <Menu
-                    nodeName="notEqualNode"
-                    title="≠"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="lessThanNode"
-                    title="<"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="lessThanAndEqualNode"
-                    title="<="
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex">
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-main2">Operand</span>
-            <div className="flex">
-              <Menu
-                nodeName="valueNode"
-                title="V"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-              <Menu
-                nodeName="attributeNode"
-                title="@"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-              <Menu
-                nodeName="paramNode"
-                title="P"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex">
+      <div className="flex">
           <div className="flex flex-col">
             <span className="text-sm font-bold text-main2">AI Generate</span>
             <button
@@ -293,7 +223,85 @@ export default function Flowbar(props: MetaDataProps) {
             </Modal>
           </div>
         </div>
+        <div className="flex">
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-main2">Operator</span>
+            <div className="flex ">
+              <div className="flex flex-col border-r border-Act6 pr-2">
+                <Menu
+                  nodeName="andNode"
+                  title="AND"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="orNode"
+                  title="OR"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+              </div>
+              <div className="pl-2">
+                <div className="flex">
+                  <Menu
+                    nodeName="equalNode"
+                    title="="
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="moreThanNode"
+                    title=">"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="moreThanAndEqualNode"
+                    title=">="
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                </div>
+                <div className="flex">
+                  <Menu
+                    nodeName="notEqualNode"
+                    title="≠"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="lessThanNode"
+                    title="<"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="lessThanAndEqualNode"
+                    title="<="
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex">
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-main2">Operand</span>
+            <div className="flex">
+              <Menu
+                nodeName="valueNode"
+                title="V"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+              <Menu
+                nodeName="attributeNode"
+                title="@"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+              <Menu
+                nodeName="paramNode"
+                title="P"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+    </>
   );
 }

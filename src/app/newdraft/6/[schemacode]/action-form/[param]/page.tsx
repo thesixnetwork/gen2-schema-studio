@@ -18,7 +18,7 @@ import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
 import { useRouter } from "next/navigation";
 import Stepmenu from "@/components/Stepmenu";
-
+import AlertModal from "@/components/AlertModal";
 const Page = ({ params }: { params: { param: string } }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -43,6 +43,10 @@ const Page = ({ params }: { params: { param: string } }) => {
   const getPrefixFromCookie = getCookie("prefix") ?? "";
   const getPostfixFromCookie = getCookie("postfix") ?? "";
   const getImgFormatFromCookie = getCookie("imgFormat") ?? "";
+  const [nameRequired, setNameRequired] = useState(false);
+  const [whenRequired, setWhenRequired] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
   const [createNewAction, setCreateNewAction] = useState([
     {
       name: "",
@@ -56,33 +60,38 @@ const Page = ({ params }: { params: { param: string } }) => {
   ]);
 
   const handleSave = async () => {
-    setLoading(true);
-    if (params.param === "create-new-action") {
-      await postCreateAction6(
-        schemacode,
-        createNewAction[0].name,
-        createNewAction[0].desc,
-        createNewAction[0].when,
-        createNewAction[0].then
-      );
+    if (nameRequired || whenRequired) {
+      setIsOpen(true);
+      setErrorModalMessage("Please fill in all required fields");
     } else {
-      if (updatedAction) {
-        await postUpdateAction6(schemacode, updatedAction);
-        setCookie("isEditAction", "false");
-        setCookie("isCreateNewAction", "false");
+      setLoading(true);
+      if (params.param === "create-new-action") {
+        await postCreateAction6(
+          schemacode,
+          createNewAction[0].name,
+          createNewAction[0].desc,
+          createNewAction[0].when,
+          createNewAction[0].then
+        );
+      } else {
+        if (updatedAction) {
+          await postUpdateAction6(schemacode, updatedAction);
+          setCookie("isEditAction", "false");
+          setCookie("isCreateNewAction", "false");
+        }
       }
-    }
 
-    if (getIsTransformFromCookie === "true") {
-      await postImageUrlAction6(
-        schemacode,
-        decodeURIComponent(getImgSourceFromCookie),
-        getPrefixFromCookie,
-        getPostfixFromCookie,
-        getImgFormatFromCookie
-      );
+      if (getIsTransformFromCookie === "true") {
+        await postImageUrlAction6(
+          schemacode,
+          decodeURIComponent(getImgSourceFromCookie),
+          getPrefixFromCookie,
+          getPostfixFromCookie,
+          getImgFormatFromCookie
+        );
+      }
+      router.push(`/newdraft/6/${schemacode}`);
     }
-    router.push(`/newdraft/6/${schemacode}`);
   };
 
   useEffect(() => {
@@ -138,7 +147,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     if (params.param === "create-new-action") {
       setIsCreateNewAction(true);
       setCookie("isCreateNewAction", "true");
-      console.log("this>>", getActionThenFromCookie)
+      console.log("this>>", getActionThenFromCookie);
       setCreateNewAction((prev) => [
         {
           ...prev[0],
@@ -192,24 +201,47 @@ const Page = ({ params }: { params: { param: string } }) => {
   }, []);
 
   useEffect(() => {
+    console.log("work")
     if (
-      (params.param === "create-new-action" && createNewAction[0].name === "") ||
+      (params.param === "create-new-action" &&
+        createNewAction[0].name === "") ||
       (updatedAction &&
         updatedAction[actionIndex] &&
         updatedAction[actionIndex].name === "")
     ) {
       setIsNameEmpty(true);
-      console.log("emptyy");
+      setNameRequired(true);
     } else {
       setIsNameEmpty(false);
+      setNameRequired(false);
       console.log("not empty");
     }
+
+    if (
+      (params.param === "create-new-action" &&
+        createNewAction[0].when === "") ||
+      (updatedAction &&
+        updatedAction[actionIndex] &&
+        updatedAction[actionIndex].when === "")
+    ) {
+      setWhenRequired(true);
+    } else {
+      setWhenRequired(false);
+    }
   }, [updatedAction, actionIndex, createNewAction]);
+
 
   return (
     <>
       {loading && <Loading />}
-      <button onClick={()=>console.log(createNewAction)} className="text-red-500">logg</button>
+      {isOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
       <header>
         <Stepmenu
           schemacode={schemacode}
@@ -218,7 +250,6 @@ const Page = ({ params }: { params: { param: string } }) => {
           stepDraft={stepDraft}
         ></Stepmenu>
       </header>
-      <button onClick={() => console.log(createNewAction)}>log her</button>
       <div className="w-fit max-w-screen-md mx-auto mt-12">
         {(typeof actionIndex === "number" || isCreateNewAction) && (
           <div className="flex flex-col items-center gap-y-8">
@@ -268,6 +299,11 @@ const Page = ({ params }: { params: { param: string } }) => {
                 params.param === "create-new-action"
                   ? createNewAction || []
                   : updatedAction || []
+              }
+              setAction={
+                params.param === "create-new-action"
+                  ? setCreateNewAction
+                  : setUpdatedAction
               }
               actionIndex={
                 params.param === "create-new-action" ? 0 : actionIndex

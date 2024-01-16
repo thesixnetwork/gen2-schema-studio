@@ -13,6 +13,9 @@ import ActionHeader from "@/components/ActionHeader";
 import { IActions } from "@/type/Nftmngr";
 import { getCookie } from "@/service/getCookie";
 import { setCookie } from "@/service/setCookie";
+import { useRouter } from "next/navigation";
+import AlertModal from "@/components/AlertModal";
+
 interface ActionThenTransformStaticProps {
   metaFunction: string;
   actionName: string;
@@ -25,6 +28,9 @@ interface ActionThenTransformStaticProps {
 }
 
 const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
   const [imgSource, setImgSource] = useState("");
   const [imgSourceError, setImgSourceError] = useState(false);
   const [metaFunction, setMetaFunction] = useState<string>("");
@@ -119,45 +125,54 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
       tempArr = updatedArray;
     };
 
-    if (getCookieData) {
-      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-      updateActionThenByName(
-        parsedCookieData,
-        props.actionName,
-        originalMetaFunction,
-        metaData
-      );
-    }
-
-    if (isCreateNewActionCookie) {
-      const tempArrCookie = getActionThanArrCookie
-        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
-        : [];
-
-      const metaDataToAdd =
-        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-
-        let updatedTempArrCookie
-        if(getActionThenIndexCookie){
-          
-           updatedTempArrCookie = tempArrCookie.map((item:string, index:number) =>
-          index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+    if(metaData.startsWith("meta")){
+      if (getCookieData) {
+        const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+        updateActionThenByName(
+          parsedCookieData,
+          props.actionName,
+          originalMetaFunction,
+          metaData
         );
-        }
-
-        if (getIsCreateNewThenFromCookie === "true") {
-          if (!tempArrCookie.includes(originalMetaFunction)) {
-              updatedTempArrCookie = tempArrCookie
-            updatedTempArrCookie.push(metaDataToAdd);
+      }
+  
+      if (isCreateNewActionCookie) {
+        const tempArrCookie = getActionThanArrCookie
+          ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+          : [];
+  
+        const metaDataToAdd =
+          typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+  
+          let updatedTempArrCookie
+          if(getActionThenIndexCookie){
+            
+             updatedTempArrCookie = tempArrCookie.map((item:string, index:number) =>
+            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+          );
           }
-        }
-
-      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+  
+          if (getIsCreateNewThenFromCookie === "true") {
+            if (!tempArrCookie.includes(originalMetaFunction)) {
+                updatedTempArrCookie = tempArrCookie
+              updatedTempArrCookie.push(metaDataToAdd);
+            }
+          }
+  
+        setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+      }
+  
+      localStorage.setItem("action", JSON.stringify(tempArr));
+      setCookie("action-then", metaData);
+      setCookie("isEditAction", "true");
+      router.push(isCreateNewActionCookie === "true"
+      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
+    }else{
+      setErrorModalMessage("Please create your then")
+      setIsOpen(true)
     }
 
-    localStorage.setItem("action", JSON.stringify(tempArr));
-    setCookie("action-then", metaData);
-    setCookie("isEditAction", "true");
   };
 
   useEffect(() => {
@@ -209,6 +224,14 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   }, [imgSource]);
   return (
     <>
+    {isOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
       {props.transformType !== "dynamic" && (
         <div className="px-8 flex flex-col">
           <ActionHeader
@@ -292,18 +315,13 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
                 >
                   <CancelButton />
                 </Link>
-                <Link
-                  href={
-                    isCreateNewActionCookie === "true"
-                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
-                  }
+                <button
                   onClick={async () => {
                     await saveAction();
                   }}
                 >
                   <SaveButton />
-                </Link>
+                </button>
               </div>
             </div>
           )}

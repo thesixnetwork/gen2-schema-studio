@@ -9,6 +9,8 @@ import { Button, Select } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import ActionHeader from "@/components/ActionHeader";
 import { getDynamicImage } from "@/service/getDynamicImage";
+import AlertModal from "./AlertModal";
+import { useRouter } from "next/navigation";
 
 import SaveButton from "./button/SaveButton";
 import CancelButton from "./button/CancelButton";
@@ -27,6 +29,7 @@ interface ActionThenTransformDynamicProps {
 }
 
 const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
+  const router = useRouter();
   const [imgSource, setImgSource] = useState("");
   const [postfix, setPostfix] = useState("");
   const [prefix, setPrefix] = useState("");
@@ -43,6 +46,8 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const schemacode = getCookie("schemaCode");
   const getActionThenIndexCookie = getCookie("actionThenIndex");
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );
@@ -115,50 +120,57 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
 
       tempArr = updatedArray;
     };
-
-    if (getCookieData) {
-      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-      updateActionThenByName(
-        parsedCookieData,
-        props.actionName,
-        originalMetaFunction,
-        metaData
-      );
-    }
-
-    if (isCreateNewActionCookie) {
-      const tempArrCookie = getActionThanArrCookie
-        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
-        : [];
-
-      const metaDataToAdd =
-        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-
-      let updatedTempArrCookie;
-      if (getActionThenIndexCookie) {
-        updatedTempArrCookie = tempArrCookie.map(
-          (item: string, index: number) =>
-            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+    if(metaData.startsWith("meta")){
+      if (getCookieData) {
+        const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+        updateActionThenByName(
+          parsedCookieData,
+          props.actionName,
+          originalMetaFunction,
+          metaData
         );
       }
-
-      if (getIsCreateNewThenFromCookie === "true") {
-        if (!tempArrCookie.includes(originalMetaFunction)) {
-            updatedTempArrCookie = tempArrCookie
-          updatedTempArrCookie.push(metaDataToAdd);
+  
+      if (isCreateNewActionCookie) {
+        const tempArrCookie = getActionThanArrCookie
+          ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+          : [];
+  
+        const metaDataToAdd =
+          typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+  
+        let updatedTempArrCookie;
+        if (getActionThenIndexCookie) {
+          updatedTempArrCookie = tempArrCookie.map(
+            (item: string, index: number) =>
+              index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+          );
         }
+  
+        if (getIsCreateNewThenFromCookie === "true") {
+          if (!tempArrCookie.includes(originalMetaFunction)) {
+              updatedTempArrCookie = tempArrCookie
+            updatedTempArrCookie.push(metaDataToAdd);
+          }
+        }
+  
+        setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
-
-      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+      localStorage.setItem("action", JSON.stringify(tempArr));
+      setCookie("action-then", metaData);
+      setCookie("isEditAction", "true");
+      setCookie("isTransfrom", "true");
+      setCookie("imgSource", imgSource);
+      setCookie("imgFormat", imgFormat);
+      setCookie("prefix", prefix);
+      setCookie("postfix", postfix);
+      router.push(isCreateNewActionCookie === "true"
+      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
+    }else{
+      setIsOpen(true)
+      setErrorModalMessage("Please create your then")
     }
-    localStorage.setItem("action", JSON.stringify(tempArr));
-    setCookie("action-then", metaData);
-    setCookie("isEditAction", "true");
-    setCookie("isTransfrom", "true");
-    setCookie("imgSource", imgSource);
-    setCookie("imgFormat", imgFormat);
-    setCookie("prefix", prefix);
-    setCookie("postfix", postfix);
   };
 
   const findImageUrl = async () => {
@@ -219,6 +231,15 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
   }, [imgSource, imgFormat, prefix, postfix, tokenId]);
 
   return (
+    <>
+     {isOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
     <div className="flex flex-col  px-8">
       <ActionHeader
         type="then"
@@ -402,24 +423,20 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                 >
                   <CancelButton />
                 </Link>
-                <Link
-                  href={
-                    isCreateNewActionCookie === "true"
-                      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-                      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
-                  }
+                <button
                   onClick={async () => {
                     await saveAction();
                   }}
                 >
                   <SaveButton />
-                </Link>
+                </button>
               </div>
             </div>
           )}
         </div>
       )}
     </div>
+    </>
   );
 };
 

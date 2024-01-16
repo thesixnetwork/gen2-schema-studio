@@ -43,6 +43,7 @@ import {
 import axios from "axios";
 import Swal from "sweetalert2";
 import ActionHeader from "@/components/ActionHeader";
+import { useRouter } from "next/navigation";
 import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
 interface ThenTransferFlowProps {
@@ -89,6 +90,7 @@ const nodeTypes = {
 
 const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const getCookieData = localStorage.getItem("action");
+  const router = useRouter();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -654,45 +656,52 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
       tempArr = updatedArray;
     };
-
-    if (getCookieData) {
-      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-      updateActionThenByName(
-        parsedCookieData,
-        props.actionName,
-        originalMetaFunction,
-        metaData
-      );
-    }
-
-    if (isCreateNewActionCookie) {
-      const tempArrCookie = getActionThanArrCookie
-        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
-        : [];
-
-      const metaDataToAdd =
-        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-
-      let updatedTempArrCookie;
-      if (getActionThenIndexCookie) {
-        updatedTempArrCookie = tempArrCookie.map(
-          (item: string, index: number) =>
-            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+    if (metaData.startsWith("meta")){
+      if (getCookieData) {
+        const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+        updateActionThenByName(
+          parsedCookieData,
+          props.actionName,
+          originalMetaFunction,
+          metaData
         );
       }
-
-      if (getIsCreateNewThenFromCookie === "true") {
-        if (!tempArrCookie.includes(originalMetaFunction)) {
-          updatedTempArrCookie = tempArrCookie;
-          updatedTempArrCookie.push(metaDataToAdd);
+  
+      if (isCreateNewActionCookie) {
+        const tempArrCookie = getActionThanArrCookie
+          ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+          : [];
+  
+        const metaDataToAdd =
+          typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+  
+        let updatedTempArrCookie;
+        if (getActionThenIndexCookie) {
+          updatedTempArrCookie = tempArrCookie.map(
+            (item: string, index: number) =>
+              index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+          );
         }
+  
+        if (getIsCreateNewThenFromCookie === "true") {
+          if (!tempArrCookie.includes(originalMetaFunction)) {
+            updatedTempArrCookie = tempArrCookie;
+            updatedTempArrCookie.push(metaDataToAdd);
+          }
+        }
+  
+        setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
-
-      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+      localStorage.setItem("action", JSON.stringify(tempArr));
+      setCookie("action-then", metaData);
+      setCookie("isEditAction", "true");
+      router.push(isCreateNewActionCookie === "true"
+      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
+    }else{
+      setModalErrorMessage("Please create your then")
+      setIsOpen(true)
     }
-    localStorage.setItem("action", JSON.stringify(tempArr));
-    setCookie("action-then", metaData);
-    setCookie("isEditAction", "true");
   };
 
   const convertObjectToNode = (outputObj) => {
@@ -1079,18 +1088,13 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           >
             <CancelButton />
           </Link>
-          <Link
-            href={
-              isCreateNewActionCookie === "true"
-                ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-                : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
-            }
+          <button
             onClick={async () => {
               await saveAction();
             }}
           >
             <SaveButton />
-          </Link>
+          </button>
         </div>
       </div>
       <Flowbar

@@ -27,6 +27,7 @@ import {
 import axios from "axios";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ActionHeader from "@/components/ActionHeader";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
@@ -109,6 +110,7 @@ const nodeTypes = {
 
 const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   // const param = useParams();
+  const router = useRouter();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -561,7 +563,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             "You can't delete the first node(Select your attribute)."
           );
           setIsOpen(true);
-        }else {
+        } else {
           const cloneUpdatedNodes = [...nodes];
           console.log(cloneUpdatedNodes);
           cloneUpdatedNodes[nodeIndex] = {
@@ -874,48 +876,60 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       console.log("temp", tempArr);
     };
 
-    if (getCookieData) {
-      const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-      console.log("///===>", parsedCookieData);
-      updateActionThenByName(
-        parsedCookieData,
-        props.actionName,
-        originalMetaFunction,
-        metaData
-      );
-    }
-
-    if (isCreateNewActionCookie) {
-      const tempArrCookie = getActionThanArrCookie
-        ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
-        : [];
-
-      const metaDataToAdd =
-        typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-
-      let updatedTempArrCookie;
-      if (getActionThenIndexCookie) {
-        updatedTempArrCookie = tempArrCookie.map(
-          (item: string, index: number) =>
-            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+    if (metaData.startsWith("meta")) {
+      if (getCookieData) {
+        const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
+        console.log("///===>", parsedCookieData);
+        updateActionThenByName(
+          parsedCookieData,
+          props.actionName,
+          originalMetaFunction,
+          metaData
         );
       }
 
-      if (getIsCreateNewThenFromCookie === "true") {
-        if (!tempArrCookie.includes(originalMetaFunction)) {
-          updatedTempArrCookie = tempArrCookie;
-          updatedTempArrCookie.push(metaDataToAdd);
+      if (isCreateNewActionCookie) {
+        const tempArrCookie = getActionThanArrCookie
+          ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
+          : [];
+
+        const metaDataToAdd =
+          typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+
+        let updatedTempArrCookie;
+        if (getActionThenIndexCookie) {
+          updatedTempArrCookie = tempArrCookie.map(
+            (item: string, index: number) =>
+              index === parseInt(getActionThenIndexCookie)
+                ? metaDataToAdd
+                : item
+          );
         }
+
+        if (getIsCreateNewThenFromCookie === "true") {
+          if (!tempArrCookie.includes(originalMetaFunction)) {
+            updatedTempArrCookie = tempArrCookie;
+            updatedTempArrCookie.push(metaDataToAdd);
+          }
+        }
+
+        setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
 
-      setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
+      console.log("::==>", tempArr);
+
+      localStorage.setItem("action", JSON.stringify(tempArr));
+      setCookie("action-then", metaData);
+      setCookie("isEditAction", "true");
+      router.push(
+        isCreateNewActionCookie === "true"
+          ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+          : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+      );
+    } else {
+      setModalErrorMessage("Please create your then");
+      setIsOpen(true);
     }
-
-    console.log("::==>", tempArr);
-
-    localStorage.setItem("action", JSON.stringify(tempArr));
-    setCookie("action-then", metaData);
-    setCookie("isEditAction", "true");
   };
 
   const removeNodeSuffix = (input: string) => {
@@ -1161,18 +1175,13 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           >
             <CancelButton />
           </Link>
-          <Link
-            href={
-              isCreateNewActionCookie === "true"
-                ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-                : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
-            }
+          <button
             onClick={async () => {
               await saveAction();
             }}
           >
             <SaveButton />
-          </Link>
+          </button>
         </div>
       </div>
       <Flowbar

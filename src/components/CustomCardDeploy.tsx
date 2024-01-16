@@ -31,7 +31,7 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { GasPrice } from "@cosmjs/stargate/build/fee";
 import ConfirmModalChakra from "./ConfirmModalChakra";
 import { getCookie } from "@/service/getCookie";
-
+import Loading from "./Loading";
 interface Props {
   text: string;
   isAccount?: any;
@@ -55,6 +55,7 @@ const CustomCardDeploy: React.FC<Props> = ({
   const getTokenFromCookie = getCookie("token");
   const [showAlert, setShowAlert] = useState("none");
   const [isOpen,setIsOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const handleDeploy = async (str: string) => {
     // console.log(2222222)
     // console.log(str)
@@ -76,7 +77,7 @@ const CustomCardDeploy: React.FC<Props> = ({
 
   const deploy = async () => {
     let msgArray: Array<EncodeObject> = [];
-
+    setLoading(true)
     const encodeBase64Schema = Buffer.from(
       JSON.stringify(isDaft?.schema_info)
     ).toString("base64");
@@ -160,12 +161,15 @@ const CustomCardDeploy: React.FC<Props> = ({
             // You can handle the API response here
             setShowAlert("success");
             setIsOpen(true)
+            setLoading(false)
           })
           .catch((error) => {
             console.log("fail ja");
             setShowAlert("success");
             setIsOpen(true)
             console.error("API Error:", error);
+            setLoading(false)
+
             // Handle errors here
           });
 
@@ -176,6 +180,7 @@ const CustomCardDeploy: React.FC<Props> = ({
         setIsOpen(true)
         console.log("showAlert",showAlert)
         console.error(error);
+        setLoading(false)
       }
     }
   };
@@ -189,6 +194,7 @@ const CustomCardDeploy: React.FC<Props> = ({
 
   return (
     <>
+    {loading && <Loading />}
       {showAlert === "success" && isOpen && (
         <AlertModal title="Deployed successfully" type="warning" isOpen={isOpen} setIsOpen={setIsOpen} />
       )}

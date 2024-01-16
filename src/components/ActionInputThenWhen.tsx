@@ -14,6 +14,7 @@ interface ActionInputThenWhenProps {
   isCreateNewAction: boolean;
   isError: boolean;
   isNameEmpty: boolean;
+  setAction: any
 }
 
 const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
@@ -42,9 +43,10 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
   };
 
   const handleDeleteWhen = () => {
-    props.action[props.actionIndex].when = "";
+    const updatedActionCopy = [...props.action];
+    updatedActionCopy[props.actionIndex].when = "";
     setAction("");
-    console.log("deleted");
+    props.setAction(updatedActionCopy);
   };
 
   const handleDeleteThen = (index: number) => {

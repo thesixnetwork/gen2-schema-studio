@@ -34,17 +34,18 @@ const AlertModal = (props: Props) => {
 
   const handleClose = () => {
     onClose();
+    props.setIsOpen(false)
+  };
+
+  const handleCloseButton = () => {
+    setIsClose(true);
+    props.setIsOpen(false);
+    console.log("dddd");
+    onClose();
   };
 
   useEffect(() => {
     props.isOpen && onOpen();
-    props.isOpen && console.log("yessir");
-    setTimeout(() => {
-      setIsClose(true);
-      props.setIsOpen(false);
-      console.log("dddd")
-      onClose();
-    }, 1500);
   }, [props.isOpen]);
 
   useEffect(() => {
@@ -71,6 +72,18 @@ const AlertModal = (props: Props) => {
           <ModalBody pb={6} textAlign={"center"}>
             <span className="ml-1 font-bold text-xl">{props.title}</span>
           </ModalBody>
+          <ModalFooter justifyContent={"center"}>
+            <Button
+              colorScheme="#2F3030"
+              variant="outline"
+              onClick={handleCloseButton}
+              mr={4}
+              _hover={{ borderColor: "blue.500", color: "blue.500" }}
+              bgColor={"#2F3030"}
+            >
+              Close
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

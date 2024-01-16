@@ -41,7 +41,7 @@ import {
 } from "@/function/auto-layout";
 // import { useNavigate } from "react-router-dom";
 import Link from "next/link";
-import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
 interface NodeProps {
@@ -93,6 +93,7 @@ const initialNodes: Node[] = [
 ];
 
 const WhenFlow = (props: WhenFlowProps) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false)
   const [errorModalMessage, setModalErrorMessage] = useState("Something went wrong")
   const [metaData, setMetaData] = useState("");
@@ -862,26 +863,35 @@ const WhenFlow = (props: WhenFlowProps) => {
       });
       return updatedArray;
     };
-    if (getCookieData) {
-      const parsedCookieData = Array.from(JSON.parse(getCookieData));
-      // console.log("logger", parsedCookieData);
-      const newAction = JSON.stringify(updateActionWhenByName(parsedCookieData, props.actionName, metaData));
-      console.log("log ja",parsedCookieData)
-      console.log("123--", newAction);
-      console.log("setted already");
-      localStorage.setItem("action", newAction);
-      console.log("1", parsedCookieData);
-      console.log("2", props.actionName);
-      console.log("3", metaData);
-      console.log(
-        "##4",
-        JSON.stringify(
-          updateActionWhenByName(parsedCookieData, props.actionName, metaData)
-        )
-      );
+
+    if(metaData.startsWith("meta")){
+      if (getCookieData) {
+        const parsedCookieData = Array.from(JSON.parse(getCookieData));
+        // console.log("logger", parsedCookieData);
+        const newAction = JSON.stringify(updateActionWhenByName(parsedCookieData, props.actionName, metaData));
+        console.log("log ja",parsedCookieData)
+        console.log("123--", newAction);
+        console.log("setted already");
+        localStorage.setItem("action", newAction);
+        console.log("1", parsedCookieData);
+        console.log("2", props.actionName);
+        console.log("3", metaData);
+        console.log(
+          "##4",
+          JSON.stringify(
+            updateActionWhenByName(parsedCookieData, props.actionName, metaData)
+          )
+        );
+      }
+      setCookie("isEditAction", "true");
+      setCookie("action-when", metaData);
+      router.push( isCreateNewActionCookie === "true"
+      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
+    }else{
+      setModalErrorMessage("Please create your when")
+      setIsOpen(true)
     }
-    setCookie("isEditAction", "true");
-    setCookie("action-when", metaData);
   };
 
   const removeNodeSuffix = (input: string) => {
@@ -1187,16 +1197,11 @@ const WhenFlow = (props: WhenFlowProps) => {
             >
               <CancelButton />
             </Link>
-            <Link
-              href={
-                isCreateNewActionCookie === "true"
-                  ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-                  : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
-              }
+            <button
               onClick={handleSaveAction}
             >
               <SaveButton />
-            </Link>
+            </button>
           </div>
         </div>
       </div>

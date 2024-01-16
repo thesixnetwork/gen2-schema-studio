@@ -22,6 +22,7 @@ import Swal from "sweetalert2";
 import GenerateGPTimg from "../../../../public/pic/GenerateGPT.png";
 import GenerateGPTimgWhite from "../../../../public/pic/GenerateGPT-white.png";
 import Image from "next/image";
+import AlertModal from "../../AlertModal";
 
 interface FlowbarProps {
   metaData: string;
@@ -42,13 +43,15 @@ export default function Flowbar(props: FlowbarProps) {
   const handleClose = () => setOpen(false);
   const initialRef = useRef(null);
   const finalRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
 
   const processGPT = async () => {
     let prompt;
     if (props.type === "attribute") {
-      prompt = `I want to transform from statement text into programming condition comparison. For example the statement is then decrease points 50 the result will be meta.SetNumber('points', meta.GetNumber('points') + 50) Where meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules. There are only 3 actions is increase decrease and set if type are number there will have 3 actions but if type are string and boolean actions will be only set and the answer should be only meta function do not provide any guildline if the statement is\n\"${inputValue}\"\n\n\n\nWhat would be the answer ===>`;
+      prompt = `I want to transform from statement text into programming condition comparison. For example the statement is then decrease points 50 the result will be meta.SetNumber('points', meta.GetNumber('points') + 50) Where meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules. There are only 3 actions is increase decrease and set if type are number there will have 3 actions but if type are string and boolean actions will be only set and the answer should be only meta function do not provide any guideline if the statement is\n\"${inputValue}\"\n\n\n\nWhat would be the answer ===>`;
     } else if (props.type === "transfer") {
-      prompt = `I want to transform from statement text into programming condition comparison. For example the statement is then transfer points to tokenId amount 200 the result will be meta.TransferNumber('points', params['tokenId'].GetString(), 200)  and the another example is transfer points to tokenId amount points the result will be meta.TransferNumber('points', params['token_id'].GetString(), meta.GetNumber('points'))  if the statement is\n\"${inputValue}\"\n\n\n\nWhat would be the answer ===>`;
+      prompt = `I want to transform from statement text into programming condition comparison. For example the statement is then transfer points to tokenId amount 200 the result will be meta.TransferNumber('points', params['tokenId'].GetString(), 200)  and the another example is transfer points to tokenId amount points the result will be meta.TransferNumber('points', params['token_id'].GetString(), meta.GetNumber('points')) and the answer should be only meta function do not provide any guideline if the statement is\n\"${inputValue}\"\n\n\n\nWhat would be the answer ===>`;
     }
     const openai = new OpenAI({
       apiKey: process.env.NEXT_APP_OPENAI_API_KEY,
@@ -91,12 +94,8 @@ export default function Flowbar(props: FlowbarProps) {
   const handleCreate = () => {
     onClose();
     if (!outputFromGPT.startsWith("meta")) {
-      Swal.fire({
-        icon: "error",
-        title: "Output must start with meta",
-        showConfirmButton: false,
-        timer: 3000,
-      });
+      setErrorModalMessage("Output must start with meta");
+      setIsModalOpen(true);
     } else {
       props.setMetaData(outputFromGPT);
       props.setIsGenerateGPT(true);
@@ -108,87 +107,17 @@ export default function Flowbar(props: FlowbarProps) {
   };
 
   return (
-    <div className="w-80  bg-[#DADEF2] p-6 flex flex-col justify-between">
-      <div className="flex flex-col h-full gap-y-8">
-        {props.selectedAttribute === "number" ||
-        props.selectedAttribute === "float" ||
-        props.selectedAttribute === "boolean" ||
-        props.selectedAttribute === "string" ? (
-          <>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-main2">Function</span>
-              {props.selectedAttribute === "number" ||
-              props.selectedAttribute === "float" ? (
-                <div className="flex gap-x-2">
-                  <Menu
-                    nodeName="increaseNode"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="decreaseNode"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="setNode"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                </div>
-              ) : (
-                (props.selectedAttribute === "boolean" ||
-                  props.selectedAttribute === "string") && (
-                  <>
-                    <Menu
-                      nodeName="setNode"
-                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                    />
-                  </>
-                )
-              )}
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-main2">Operand</span>
-              <div className="flex">
-                <Menu
-                  nodeName="valueNode"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-                <Menu
-                  nodeName="attributeNode"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-                <Menu
-                  nodeName="paramNode"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-              </div>
-            </div>
-          </>
-        ) : props.selectedAttribute === "none" ? (
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-main2">Operand</span>
-            <div className="flex">
-              <Menu
-                nodeName="valueNode"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-              <Menu
-                nodeName="attributeNode"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-              <Menu
-                nodeName="paramNode"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="flex justify-center items-center h-full">
-              <p>Please Select Your Attribute</p>
-            </div>
-          </>
-        )}
-        <div>
+    <>
+      {isModalOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+        />
+      )}
+      <div className="w-80  bg-[#DADEF2] p-6 flex flex-col justify-between">
+        <div className="mb-8">
           <span className="text-sm font-bold text-main2">AI Generate</span>
           <button
             className="px-4 flex items-center justify-center rounded-md border border-Act6 text-lg hover:scale-110 duration-300 text-Act6"
@@ -217,7 +146,7 @@ export default function Flowbar(props: FlowbarProps) {
                   alt="generate-icon"
                   width={20}
                 />{" "}
-                <span className="text-sm font-bold text-white">
+                <span className="text-sm font-bold text-white ml-1">
                   AI Generate
                 </span>
               </ModalHeader>
@@ -228,7 +157,11 @@ export default function Flowbar(props: FlowbarProps) {
                   <Flex>
                     <Input
                       ref={initialRef}
-                      placeholder="example: check_in and tier is gold"
+                      placeholder={`${
+                        props.type === "attribute"
+                          ? "example: set points to 200"
+                          : "transfer points to tokenId amount 1"
+                      } `}
                       color={"white"}
                       onChange={(e) => {
                         handleInput(e);
@@ -279,7 +212,89 @@ export default function Flowbar(props: FlowbarProps) {
             </ModalContent>
           </Modal>
         </div>
+        <div className="flex flex-col h-full gap-y-8">
+          {props.selectedAttribute === "number" ||
+          props.selectedAttribute === "float" ||
+          props.selectedAttribute === "boolean" ||
+          props.selectedAttribute === "string" ? (
+            <>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-main2">Function</span>
+                {props.selectedAttribute === "number" ||
+                props.selectedAttribute === "float" ? (
+                  <div className="flex gap-x-2">
+                    <Menu
+                      nodeName="increaseNode"
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                    <Menu
+                      nodeName="decreaseNode"
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                    <Menu
+                      nodeName="setNode"
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                  </div>
+                ) : (
+                  (props.selectedAttribute === "boolean" ||
+                    props.selectedAttribute === "string") && (
+                    <>
+                      <Menu
+                        nodeName="setNode"
+                        handleDoubleClickAddNode={
+                          props.handleDoubleClickAddNode
+                        }
+                      />
+                    </>
+                  )
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-main2">Operand</span>
+                <div className="flex">
+                  <Menu
+                    nodeName="valueNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="attributeNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="paramNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                </div>
+              </div>
+            </>
+          ) : props.selectedAttribute === "none" ? (
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-main2">Operand</span>
+              <div className="flex">
+                <Menu
+                  nodeName="valueNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="attributeNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="paramNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex justify-center items-center h-full">
+                <p>Please Select Your Attribute</p>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
