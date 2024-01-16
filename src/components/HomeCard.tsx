@@ -4,7 +4,7 @@ import Draft_Icon from '../../public/pic/Draft_Icon.png'
 import Live_Icon from '../../public/pic/Live_Icon.png'
 import Testnet_Icon from '../../public/pic/Testnet_Icon.png'
 import HomeNewintregationCard from './HomeNewintregationCard'
-// import { getListDraft } from '../app/home/actions'
+import { getListDraft } from '@/service/getListDraft'
 import { getAccessTokenFromLocalStorage } from '@/helpers/AuthService';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
@@ -18,41 +18,51 @@ type Props = {}
 
 export default function HomeCard({ }: Props) {
     const router = useRouter()
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
 
     const items = ['Draft', 'Live', 'Testnet'];
     // const listDraft = await getListDraft();
     const [listDraft, setListdraft] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isLoading2, setIsLoading2] = useState(true)
-    console.log(session)
-    const getListDraft = async () => {
-        const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
-        const params = {};
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.accessToken}`,
-        };
+    // const [token, setToken] = useState(session?.user?.accessToken);
+    // console.log("token", token)
+    // useEffect(() => {
+    //     // if (session && session.user) {
+    //     //     localStorage.setItem("Token", session.user.accessToken);
+    //     //   }
+    //     setToken(session?.user?.accessToken);
+    // }, []);
+    // const getListDraft = async () => {
+    //     const { data: session } = useSession();
+    //     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
+    //     const params = {};
+    //     const headers = {
+    //         "Content-Type": "application/json",
+    //         Authorization: `Bearer ${session?.user?.accessToken}`,
+    //     };
+    //     console.log("head ====>",headers)
+    //     try {
+    //         const response = await axios.get(apiUrl, {
+    //             params: params,
+    //             headers: headers,
+    //         });
+    //         console.log("list :", response.data.data.sesstion);
+    //         setListdraft(response.data.data.sesstion);
+    //         // return response.data.data.sesstion;
 
-        try {
-            const response = await axios.get(apiUrl, {
-                params: params,
-                headers: headers,
-            });
-            console.log("list :", response.data.data.sesstion);
-            setListdraft(response.data.data.sesstion);
-            // return response.data.data.sesstion;
-
-        } catch (error) {
-            // console.error("Error:", error);
-            // return null
-        }
-    }
+    //     } catch (error) {
+    //         // console.error("Error:", error);
+    //         // return null
+    //     }
+    // }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const list_draft = await getListDraft();
+                const res = await getListDraft();
+                // console.log(res)
+                setListdraft(res);
                 setIsLoading(false);
             } catch (error) {
                 // Handle errors here

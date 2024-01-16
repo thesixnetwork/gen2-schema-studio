@@ -38,6 +38,58 @@ export default function Page({
     const [isLoadingSave, setIsLoadingSave] = useState(false)
     const [stepDraft, setStepDraft] = useState(1)
 
+    const [chainMapper, setChainMapper] = useState([
+        {
+            Chain:[
+                {
+                    chain: "FIVENET",
+                    chain_id: "98"
+                },
+                {
+                    chain: "SIXNET",
+                    chain_id: "150"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "GOERLI",
+                    chain_id: "1"
+                },
+                {
+                    chain: "ETHEREUM",
+                    chain_id: "5"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "BAOBAB",
+                    chain_id: "1001"
+                },
+                {
+                    chain: "KLAYTN",
+                    chain_id: "8217"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "BNBT",
+                    chain_id: "97"
+                },
+                {
+                    chain: "BNB",
+                    chain_id: "56"
+                },
+            ]
+        }
+    ])
+    // console.log(chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
+    // console.log(chainTypeIndex)
     useEffect(() => {
         (async () => {
             try {
@@ -95,7 +147,7 @@ export default function Page({
         // const new_origin_attribute = await get_origin_attributes_form_contract(originContractAddress);
         console.log("originContractAddress",originContractAddress)
         console.log("originBaseURI",originBaseURI)
-        const saveState2_status = await saveState2(originContractAddress, originBaseURI, schemacode)
+        const saveState2_status = await saveState2(originContractAddress, originBaseURI, schemacode, chainMapper[chainIndex].Chain[chainTypeIndex].chain)
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
         setIsLoadingSave(false)
@@ -110,12 +162,13 @@ export default function Page({
         // }
     }
 
+    // console.log(chainTypeIndex)
     useEffect(() => {
 
         (async () => {
             try {
                 setIsLoadingGetBaseURI(true)
-                const origin_base_URI = await getBaseURI(originContractAddress)
+                const origin_base_URI = await getBaseURI(originContractAddress, chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
                 console.log("base_uri", origin_base_URI)
                 if (typeof origin_base_URI !== 'string') {
                     setOriginBaseURI("")
@@ -129,7 +182,7 @@ export default function Page({
                 setIsLoadingGetBaseURI(false)
             }
         })();
-    }, [originContractAddress])
+    }, [originContractAddress,chainTypeIndex,chainIndex])
 
 
 

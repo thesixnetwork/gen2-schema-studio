@@ -285,10 +285,10 @@ const CaradEditDaft: React.FC<{
     function checkType(value: string) {
       const parsedValue = parseFloat(value);
       if (Number.isInteger(parsedValue)) {
-        console.log(`${value} is an integer.`);
+        // console.log(`${value} is an integer.`);
         return false;
       } else {
-        console.log(`${value} is a float.`);
+        // console.log(`${value} is a float.`);
         return true;
       }
     }
@@ -380,7 +380,7 @@ const CaradEditDaft: React.FC<{
           } else {
             default_mint_value = {
               number_attribute_value: {
-                value: value,
+                value: parseFloat(value).toString(),
               },
             };
             data_type = "number";
@@ -402,6 +402,7 @@ const CaradEditDaft: React.FC<{
           };
           data_type = "boolean";
         }
+        console.log(default_mint_value)
         setNewAttributes((prevPerson) => ({
           ...prevPerson,
           default_mint_value: default_mint_value!,

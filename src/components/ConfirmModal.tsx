@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import { useState } from "react";
 import "../app/globals.css";
+import WarningCircle from "../../public/pic/WarningCircle.png";
 interface ConfirmModalProps {
   Texthead: string;
 }

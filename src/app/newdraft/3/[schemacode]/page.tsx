@@ -46,8 +46,61 @@ export default function Page({
     const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [stepDraft, setStepDraft] = useState(2)
+    const [chainId, setChainId] = useState("")
     const router = useRouter()
 
+    const [chainMapper, setChainMapper] = useState([
+        {
+            Chain:[
+                {
+                    chain: "FIVENET",
+                    chain_id: "98"
+                },
+                {
+                    chain: "SIXNET",
+                    chain_id: "150"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "GOERLI",
+                    chain_id: "1"
+                },
+                {
+                    chain: "ETHEREUM",
+                    chain_id: "5"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "BAOBAB",
+                    chain_id: "1001"
+                },
+                {
+                    chain: "KLAYTN",
+                    chain_id: "8217"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "BNBT",
+                    chain_id: "97"
+                },
+                {
+                    chain: "BNB",
+                    chain_id: "56"
+                },
+            ]
+        }
+    ])
+
+    // console.log(chainId)
 
     useEffect(() => {
         (async () => {
@@ -55,6 +108,7 @@ export default function Page({
                 const schemaInfo = await getSchemaInfo(schemacode);
                 setIsDaft(schemaInfo)
                 setContractAddres(schemaInfo.schema_info.origin_data.origin_contract_address)
+                setChainId(chainMapper.find(item => item.Chain.some(chain => chain.chain === schemaInfo.schema_info.origin_data.origin_chain))?.Chain.find(c => c.chain === schemaInfo.schema_info.origin_data.origin_chain)?.chain_id)
                 setIsLoading(false)
                 // Process the response or update state as needed
             } catch (error) {
@@ -93,7 +147,7 @@ export default function Page({
     const getAttribute = async () => {
         if (contractAddres !== "" && contractAddres !== null) {
             try {
-                const originAttribute = await getOriginAttributFromContract(contractAddres)
+                const originAttribute = await getOriginAttributFromContract(contractAddres,chainId)
                 console.log("originAttribute", originAttribute)
 
                 // Assuming originAttribute is an array of attributes

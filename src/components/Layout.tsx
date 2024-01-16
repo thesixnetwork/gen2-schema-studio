@@ -19,7 +19,6 @@ import Loading from "./Loading";
 import { StargateClient } from "@cosmjs/stargate";
 import { useSession, signIn } from "next-auth/react";
 
-
 export default function Layout({
   children,
 }: // modalstate,
@@ -35,9 +34,10 @@ export default function Layout({
   const [token, setToken] = useState("usix");
   const [cosmosAddress, setCosmosAddress] = useState("");
   const [rpcEndpoint, setRpcEndpoint] = useState<string>(
-    process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET || "default-fallback-value"
+    process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET ||
+      "default-fallback-value"
   );
-//   console.log(rpcEndpoint)
+  //   console.log(rpcEndpoint)
   const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE;
   const [exponent, setExponent] = useState(1e6);
   //--------------------------------------Authen Refresh Token----------------------------------------//
@@ -52,40 +52,40 @@ export default function Layout({
   }, [children]);
 
   //--------------------------------------Authen Refresh Token----------------------------------------//
-//   const [refreshTokenNumber, setRefreshTokenNumber] = useState(0);
-//   const RefreshToken = () => {
-//     setTimeout(() => {
-//       const apiUrl = `${process.env.API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`;
-//       const requestData = {
-//         refresh_token: `${getRefreshTokenFromLocalStorage()}`,
-//       };
-//       axios
-//         .post(apiUrl, requestData, {
-//           headers: {
-//             Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-//           },
-//         })
-//         .then((response) => {
-//           // console.log('API Response from refresh :', response.data);
-//           saveTokensToLocalStorage(
-//             response.data.data.access_token,
-//             response.data.data.refresh_token
-//           );
-//           const accessToken = getAccessTokenFromLocalStorage();
-//           const refreshToken = getRefreshTokenFromLocalStorage();
-//           // console.log("New Access: ", accessToken)
-//           // console.log("New Refresh: ", refreshToken)
-//           setRefreshTokenNumber(refreshTokenNumber + 1);
-//         })
-//         .catch((error) => {
-//           console.error("API Error:", error);
-//         });
-//     }, 600000);
-//   };
+  //   const [refreshTokenNumber, setRefreshTokenNumber] = useState(0);
+  //   const RefreshToken = () => {
+  //     setTimeout(() => {
+  //       const apiUrl = `${process.env.API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`;
+  //       const requestData = {
+  //         refresh_token: `${getRefreshTokenFromLocalStorage()}`,
+  //       };
+  //       axios
+  //         .post(apiUrl, requestData, {
+  //           headers: {
+  //             Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+  //           },
+  //         })
+  //         .then((response) => {
+  //           // console.log('API Response from refresh :', response.data);
+  //           saveTokensToLocalStorage(
+  //             response.data.data.access_token,
+  //             response.data.data.refresh_token
+  //           );
+  //           const accessToken = getAccessTokenFromLocalStorage();
+  //           const refreshToken = getRefreshTokenFromLocalStorage();
+  //           // console.log("New Access: ", accessToken)
+  //           // console.log("New Refresh: ", refreshToken)
+  //           setRefreshTokenNumber(refreshTokenNumber + 1);
+  //         })
+  //         .catch((error) => {
+  //           console.error("API Error:", error);
+  //         });
+  //     }, 600000);
+  //   };
 
-//   useEffect(() => {
-//     RefreshToken();
-//   }, [refreshTokenNumber]);
+  //   useEffect(() => {
+  //     RefreshToken();
+  //   }, [refreshTokenNumber]);
   //--------------------------------------Authen Refresh Token----------------------------------------//
 
   const closeSidebar = () => {
@@ -93,15 +93,15 @@ export default function Layout({
   };
 
   //-------------------- Next auth Refresh Token -------------------//
-//   const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME);
-//   const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE;
-//   const [balance, setBalance] = useState(0);
-//   const [token, setToken] = useState("usix");
-//   const [rpcEndpoint, setRpcEndpoint] = useState<string>(
-//     process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET ||
-//       "default-fallback-value"
-//   );
-//   const [exponent, setExponent] = useState(1e6);
+  //   const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME);
+  //   const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE;
+  //   const [balance, setBalance] = useState(0);
+  //   const [token, setToken] = useState("usix");
+  //   const [rpcEndpoint, setRpcEndpoint] = useState<string>(
+  //     process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET ||
+  //       "default-fallback-value"
+  //   );
+  //   const [exponent, setExponent] = useState(1e6);
 
   const loginApi = async () => {
     const offlineSigner = window.getOfflineSigner(chainId);
@@ -139,6 +139,10 @@ export default function Layout({
           address: keplrAccounts[0].address,
           balance: balance,
         });
+        localStorage.setItem(
+          "time_out",
+          Math.floor(Date.now() / 1000 + 1400).toString()
+        );
         // router.push('/home')
       })
       .catch((error: any) => {
@@ -149,13 +153,32 @@ export default function Layout({
 
   ///// check token /////
   const { data: session } = useSession();
+  //   const timestamp = new Date(session?.expires!).getTime();
+  //   const time_out = localStorage.getItem("time_out")
+  const getTimeOut = () => {
+    const timeOutString = localStorage.getItem("time_out");
+    if (timeOutString !== null) {
+      return parseInt(timeOutString, 10);
+    } else {
+      localStorage.setItem(
+        "time_out",
+        Math.floor(Date.now() / 1000 + 1400).toString()
+      );
+      const newtimeOutString = localStorage.getItem("time_out");
+      return parseInt(newtimeOutString!, 10);
+    }
+  };
+
+  //   console.log("time_out",time_out)
+//   console.log("ddddd",Math.floor(Date.now() / 1000));
+  //   Math.floor(Date.now() / 1000) > session?.expires)
   useEffect(() => {
-    if (!session && pathname !== "/") {
+    if (getTimeOut() < Math.floor(Date.now() / 1000) && pathname !== "/") {
       loginApi();
     }
-  }, [session?.expires]);
+  }, [session]);
   ///////////////////////
-//  console.log("session",session)
+  //  console.log("session",session)
   return (
     <>
       {pathname !== "/" ? (
