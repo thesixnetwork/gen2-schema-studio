@@ -1,23 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
+import ConfirmModalChakra from "./ConfirmModalChakra";
 type Props = {
   step: number;
   stepDraft: number;
   stepName: string;
   currentStep: number;
   schemaCode: string;
+  onEditing: boolean;
 };
 
 function StepmenuBox(props: Props) {
   const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false)
+
   const navigate = () => {
+    router.push(`/newdraft/${props.step}/${props.schemaCode}`, { scroll: false })
+  }
+
+  const check_navigate = () => {
     if (props.stepDraft >= props.step) {
-      router.push(`/newdraft/${props.step}/${props.schemaCode}`, { scroll: false })
+      if (props.onEditing) {
+        setIsOpen(true)
+      } else{
+        navigate()
+      }
+
     }
   }
   return (
-    <div onClick={navigate} className=" w-36 flex justify-start group duration-300 cursor-pointer ">
+    <div onClick={check_navigate} className=" w-36 flex justify-start group duration-300 cursor-pointer ">
       <div
         className={` w-10 h-full ${props.currentStep === props.step
           ? " bg-Act6 "
@@ -31,7 +44,7 @@ function StepmenuBox(props: Props) {
             ? " text-white "
             : " text-Act6  group-hover:text-white group-hover:font-bold duration-500"
             }  text-4xl 
-            ${props.stepDraft <  props.step && " font-thin"}
+            ${props.stepDraft < props.step && " font-thin"}
             `}
         >
           {props.step}
@@ -43,12 +56,14 @@ function StepmenuBox(props: Props) {
             ? " font-bold "
             : "group-hover:scale-105"
             }
-            ${((props.stepDraft >  props.step) && (props.currentStep !== props.step)) && "font-medium"}
+            ${((props.stepDraft > props.step) && (props.currentStep !== props.step)) && "font-medium"}
             `}
         >
           {props.stepName}
         </p>
       </div>
+      <ConfirmModalChakra title={'Are you sure to change page?\nYour draft isn’t saved \n (use Next button to save )'} confirmButtonTitle={'Yes'} function={navigate} isOpen={isOpen} setIsOpen={setIsOpen}
+      ></ConfirmModalChakra>
     </div>
   );
 }

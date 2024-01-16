@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react"
 import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
-import { uppercaseTest, spaceTest, specialCharsTest } from "@/validateService/validate";
+import { uppercaseTest, spaceTest, specialCharsTest ,dotCountTest } from "@/validateService/validate";
 import { findSchemaCode } from "@/validateService/findSchemaCode";
 import { createSchemaCode } from "@/postDataService/createSchemaCode";
 import { editSchemaCode } from "@/postDataService/editSchemaCode";
@@ -16,6 +16,7 @@ import Loading from "@/components/Loading";
 import { useRouter } from 'next/navigation'
 import { CircularProgress } from '@chakra-ui/react'
 import Stepmenu from "@/components/Stepmenu";
+import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 
 
 export default function Page({
@@ -30,12 +31,15 @@ export default function Page({
     const [isLoadingNext, setIsLoadingNext] = useState(false)
     const [isLoadingFindSchemaCode, setIsLoadingFindSchemaCode] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
+    const [onEdining, setOnEdining] = useState(true)
     const [schemaCode, setSchemaCode] = useState("")
     const [collectionName, setCollectionName] = useState("")
     const [description, setDescription] = useState("")
     const [validate, setValidate] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
     const [stepDraft, setStepDraft] = useState(0)
+    const [isOpen, setIsOpen] = useState(false)
+    const [isOpenBack, setIsOpenBack] = useState(false)
 
 
     useEffect(() => {
@@ -57,7 +61,7 @@ export default function Page({
 
     const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            // console.log("isDaft:", isDaft);
+            console.log("isDaft:", isDaft)
             setSchemaCode(isDaft.schema_info.code);
             setCollectionName(isDaft.schema_info.name);
             setDescription(isDaft.schema_info.description);
@@ -88,7 +92,7 @@ export default function Page({
         setIsLoadingFindSchemaCode(true);
         const findSchemaCodeStatus = await findSchemaCode(schemaCode);
         // console.log("findSchemaCodeStatus :", findSchemaCodeStatus);
-        if (uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
+        if (dotCountTest(schemaCode) || uppercaseTest(schemaCode) || spaceTest(schemaCode) || specialCharsTest(schemaCode) || (!findSchemaCodeStatus && schemaCode !== "")) {
             setValidate(false);
         } else {
             setValidate(true);
@@ -100,9 +104,12 @@ export default function Page({
             setErrorMessage("Space is not allowed");
         } else if (specialCharsTest(schemaCode)) {
             setErrorMessage("Special characters are not allowed");
-        } else if (!findSchemaCodeStatus && schemaCode !== "") {
+        } else if (dotCountTest(schemaCode)) {
+            setErrorMessage("Schema code should contain at most one dot");
+        }else if (!findSchemaCodeStatus && schemaCode !== "") {
             setErrorMessage("Schema code is Duplicate");
-        } else {
+        }
+         else {
             setErrorMessage("");
         }
         setIsLoadingFindSchemaCode(false);
@@ -114,7 +121,10 @@ export default function Page({
 
 
     const create_SchemaCode = async () => {
+        setIsLoadingNext(true)
         const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
+        router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
+        setIsLoadingNext(false)
         // console.log("createSchemaCodeStatus", createSchemaCodeStatus)
     }
 
@@ -123,14 +133,13 @@ export default function Page({
         // console.log(editSchemaCodeStatus)
     }
 
+
+
     const nextPage = async () => {
 
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
-                setIsLoadingNext(true)
-                await create_SchemaCode()
-                router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
-                setIsLoadingNext(false)
+                setIsOpen(true)
             } else {
                 validateNextPage()
             }
@@ -161,19 +170,28 @@ export default function Page({
         //     router.push(`/aboutgen2`, { scroll: false })
         // }
 
-        if (schemacode === "newintegration") {
+        if (schemacode === "newintegration" && schemaCode === "") {
             router.push(`/aboutgen2`, { scroll: false })
-        } else {
+        } else if (schemacode === "newintegration" && schemaCode !== "") {
+            setIsOpenBack(true)
+        }
+        else {
             router.push(`/home`, { scroll: false })
         }
     }
+
+    useEffect(() => {
+        if (isDaft) {
+            setOnEdining((isDaft.schema_info.code === schemaCode) && (isDaft.schema_info.name === collectionName) && (isDaft.schema_info.description === description))
+        }
+    }, [schemaCode, collectionName, description])
 
 
     return (
         <>
             {isLoading && <Loading></Loading>}
             <div className=" w-full h-full min-h-[75vh] flex flex-col justify-between items-center  ">
-                <Stepmenu schemacode={schemaCode} currentStep={1} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={1} schemacodeNavigate={schemacode} stepDraft={stepDraft} onEditing={!onEdining}></Stepmenu>
                 <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode} loading={isLoadingFindSchemaCode}></InputCardOneLine>
                 <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} loading={false} ></InputCardOneLine>
                 <InputCardOneLine title={"Description"} require={false} placeholder={"WhaleGate Gen2 NFT With SIX"} validate={true} errorMassage={""} value={description} onChange={handleInputChangeDescription} loading={false} ></InputCardOneLine>
@@ -185,6 +203,10 @@ export default function Page({
                         <NextPageButton loading={isLoadingNext}></NextPageButton>
                     </div>
                 </div>
+                <ConfirmModalChakra title={'Are you sure to create ? '} confirmButtonTitle={'Yes, Create'} function={create_SchemaCode} isOpen={isOpen} setIsOpen={setIsOpen}
+                ></ConfirmModalChakra>
+                <ConfirmModalChakra title={'Are you sure to go back ? '} confirmButtonTitle={'Yes, Go back'} function={() => { router.push(`/aboutgen2`, { scroll: false }) }} isOpen={isOpenBack} setIsOpen={setIsOpenBack}
+                ></ConfirmModalChakra>
             </div>
         </>
     );

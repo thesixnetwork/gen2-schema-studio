@@ -4,6 +4,7 @@ import Image from "next/image";
 import logo from '../../../public/pic/buakaw_collection.png'
 import HomeCard from '@/components/HomeCard';
 type Props = {}
+import getDataTestnet from '@/service/getDataTestnet';
 
 function page({ }: Props) {
 

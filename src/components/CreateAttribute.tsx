@@ -216,16 +216,8 @@ const CreateAttribute: React.FC<{
     };
 
     const cancleCreate = async () => {
-      const isConfirm = await ConfirmModal(
-        "There are some edits that haven't been saved yet. Do you want to Cancle ?",
-        "Cancle"
-      );
-      if (isConfirm) {
-        setOnCreate(false);
-        setOnEditOrCreate(false)
-
-      }
-      return;
+      setOnCreate(false);
+      setOnEditOrCreate(false)
     };
     console.log("isAttributes", isAttributes);
     // console.log("newAttributes",newAttributes)
@@ -264,30 +256,29 @@ const CreateAttribute: React.FC<{
       };
       console.log(requestData);
 
-      const isConfirmed = await ConfirmModal("Are you sure to Save ?", "Save");
-      if (isConfirmed) {
-        try {
-          const req = await axios.post(apiUrl, requestData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-            },
-          });
-          const res = req.data;
-          // console.log(res)
 
-          if (res.statusCode === "V:0001") {
-            setOnCreate(false);
-            setOnEditOrCreate(false);
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        // console.log(res)
 
-            return;
-          } else {
-            return;
-          }
-        } catch (error) {
-          console.log("error ", error);
+        if (res.statusCode === "V:0001") {
+          setOnCreate(false);
+          setOnEditOrCreate(false);
+
+          return;
+        } else {
+          return;
         }
+      } catch (error) {
+        console.log("error ", error);
       }
+
       // setOnCreate(false);
     };
 

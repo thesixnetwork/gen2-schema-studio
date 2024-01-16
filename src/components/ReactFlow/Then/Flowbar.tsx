@@ -165,21 +165,21 @@ export default function Flowbar(props: FlowbarProps) {
           </>
         ) : props.selectedAttribute === "none" ? (
           <div className="flex flex-col">
-              <span className="text-sm font-bold text-main2">Operand</span>
-              <div className="flex">
-                <Menu
-                  nodeName="valueNode"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-                <Menu
-                  nodeName="attributeNode"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-                <Menu
-                  nodeName="paramNode"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-              </div>
+            <span className="text-sm font-bold text-main2">Operand</span>
+            <div className="flex">
+              <Menu
+                nodeName="valueNode"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+              <Menu
+                nodeName="attributeNode"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+              <Menu
+                nodeName="paramNode"
+                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+              />
+            </div>
           </div>
         ) : (
           <>
@@ -189,7 +189,7 @@ export default function Flowbar(props: FlowbarProps) {
           </>
         )}
         <div>
-        <span className="text-sm font-bold text-main2">AI Generate</span>
+          <span className="text-sm font-bold text-main2">AI Generate</span>
           <button
             className="px-4 flex items-center justify-center rounded-md border border-Act6 text-lg hover:scale-110 duration-300 text-Act6"
             onClick={onOpen}
@@ -217,14 +217,14 @@ export default function Flowbar(props: FlowbarProps) {
                   alt="generate-icon"
                   width={20}
                 />{" "}
-                <Text ml={1}>AI Generate</Text>
+                <span className="text-sm font-bold text-white">
+                  AI Generate
+                </span>
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
                 <FormControl>
-                  <FormLabel fontWeight="semibold" color="white">
-                    Input
-                  </FormLabel>
+                  <span className="mb-4 font-semibold text-white">Input</span>
                   <Flex>
                     <Input
                       ref={initialRef}
@@ -246,9 +246,7 @@ export default function Flowbar(props: FlowbarProps) {
                   </Flex>
                 </FormControl>
                 <Box>
-                  <Text fontWeight="semibold" color="white" mb="1rem">
-                    Output
-                  </Text>
+                  <span className="mb-4 font-semibold text-white">Output</span>
                   <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
                     <Text color="white" mb="1rem">
                       {outputFromGPT}

@@ -32,6 +32,7 @@ import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
 import { setCookie } from "@/service/setCookie";
 import { getCookie } from "@/service/getCookie";
+import AlertModal from "@/components/AlertModal";
 interface ThenAttributeFlowProps {
   metaFunction: string;
   actionName: string;
@@ -102,6 +103,10 @@ const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
+const nodeTypes = {
+  customInputNode: InputNode,
+};
+
 const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   // const param = useParams();
   const [reactFlowInstance, setReactFlowInstance] =
@@ -109,20 +114,21 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const nodeTypes = useMemo(() => {
-    return {
-      customInputNode: InputNode,
-      textUpdate: InputNode,
-    };
-  }, []);
+  // const nodeTypes = useMemo(() => {
+  //   return {
+  //     customInputNode: InputNode,
+  //   };
+  // }, []);
+
+  // const nodeTypes = {
+  //   myCustomNode: InputNode,
+  // };
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );
 
   console.log("--nodeOrigin--", nodeOrigin);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-
-  const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("");
   const { setCenter, project } = useReactFlow();
   const [selectedAttribute, setSelectedAttribute] = useState("");
@@ -139,6 +145,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const schemacode = getCookie("schemaCode");
   const isEditInCreateNewAction = getCookie("isEditInCreateNewAction");
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorModalMessage, setModalErrorMessage] = useState("");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -539,7 +547,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     changes.forEach((element) => {
       console.log("here", element);
     });
-    // onEdgesChange(changes);
   };
 
   const handleNodesChange = (changes: NodeChange[]) => {
@@ -549,16 +556,23 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         console.log("-------------here", element);
         console.log("--1", element.id);
         console.log("--2", element.id);
-        const cloneUpdatedNodes = [...nodes];
-        console.log(cloneUpdatedNodes);
-        cloneUpdatedNodes[nodeIndex] = {
-          ...nodes[nodeIndex],
-          data: {
-            ...nodes[nodeIndex].data,
-            showType: "addNode",
-          },
-        };
-        setUpdatedNodes(cloneUpdatedNodes);
+        if (element.id === "1") {
+          setModalErrorMessage(
+            "You can't delete the first node(Select your attribute)."
+          );
+          setIsOpen(true);
+        }else {
+          const cloneUpdatedNodes = [...nodes];
+          console.log(cloneUpdatedNodes);
+          cloneUpdatedNodes[nodeIndex] = {
+            ...nodes[nodeIndex],
+            data: {
+              ...nodes[nodeIndex].data,
+              showType: "addNode",
+            },
+          };
+          setNodes(cloneUpdatedNodes);
+        }
       }
       if (element.type !== "remove") {
         onNodesChange(changes);
@@ -887,7 +901,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         );
       }
 
-      if (originalMetaFunction === "create-new-then") {
+      if (getIsCreateNewThenFromCookie === "true") {
         if (!tempArrCookie.includes(originalMetaFunction)) {
           updatedTempArrCookie = tempArrCookie;
           updatedTempArrCookie.push(metaDataToAdd);
@@ -1094,6 +1108,14 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   return (
     <div className="flex justify-between px-8 ">
+      {isOpen && (
+        <AlertModal
+          title={errorModalMessage}
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
       <div className="flex flex-col w-[64vw] mr-12">
         <div>
           <ActionHeader
@@ -1111,8 +1133,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={nodeTypes}
-                onEdgesChange={onEdgesChange}
-                onNodesChange={onNodesChange}
+                onEdgesChange={handleEdgesChange}
+                onNodesChange={handleNodesChange}
                 onConnect={onConnect}
                 onInit={onInit}
                 onDrop={onDrop}

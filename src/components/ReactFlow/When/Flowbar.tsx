@@ -228,14 +228,14 @@ export default function Flowbar(props: MetaDataProps) {
                     alt="generate-icon"
                     width={20}
                   />{" "}
-                  <Text ml={1}>AI Generate</Text>
+                  <span className="ml-1 text-sm font-semibold text-white">
+                    AI Generate
+                  </span>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
                   <FormControl>
-                    <FormLabel fontWeight="semibold" color="white" mb="1rem">
-                      Input
-                    </FormLabel>
+                    <span className="mb-4 font-semibold text-white">Input</span>
                     <Flex mb="1rem">
                       <Input
                         ref={initialRef}
@@ -257,9 +257,9 @@ export default function Flowbar(props: MetaDataProps) {
                     </Flex>
                   </FormControl>
                   <Box>
-                    <Text fontWeight="semibold" color="white" mb="1rem">
+                    <span className="mb-4 font-semibold text-white">
                       Output
-                    </Text>
+                    </span>
                     <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
                       <Text color="white" mb="1rem">
                         {outputFromGPT}

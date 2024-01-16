@@ -48,7 +48,7 @@ export default function Page({
 
   const router = useRouter();
   const [chainId, setChainId] = useState("fivenet");
-  const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET);
+  const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET2);
   const [stepDraft, setStepDraft] = useState(6);
 
   useEffect(() => {
@@ -72,7 +72,6 @@ export default function Page({
   const getAccount = async () => {
     const offlineSigner = await window.getOfflineSigner(chainId);
     const keplrAccounts = await offlineSigner.getAccounts();
-
     setOfflineSigner(offlineSigner);
     setIsAccount(keplrAccounts);
   };
@@ -80,10 +79,15 @@ export default function Page({
   return (
     <>
       <header>
-        <Stepmenu schemacode={schemacode} currentStep={7}  schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
+        <Stepmenu
+          schemacode={schemacode}
+          currentStep={7}
+          schemacodeNavigate={schemacode}
+          stepDraft={stepDraft}
+        ></Stepmenu>
       </header>
       {isDaft && (
-        <Flex flexWrap={"wrap"} my={24}>
+        <Flex display={"flex"} flexDirection={"column"} my={24}>
           <Flex
             id="con-card-deploy"
             width="100%"
@@ -106,6 +110,7 @@ export default function Page({
             </Link>
             <BackToHomeButton />
           </div>
+          
         </Flex>
       )}
       {!isDaft && !loading && (

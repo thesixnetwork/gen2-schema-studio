@@ -129,7 +129,7 @@ const ActionInput = (props: ActionInputProps) => {
               isError
                 ? "border-red-500 focus:border-red-500 text-red-500"
                 : "border-Act6 focus:border-Act6"
-            } placeholder-gray-300 border-dashed p-1 focus:outline-none  w-96 h-10`}
+            } placeholder-gray-300 border-dashed p-1 focus:outline-none w-24 sm-32 lg:w-60 xl:w-96 h-10`}
             value={value}
             onChange={(e) => {
               handleValueChange(e);

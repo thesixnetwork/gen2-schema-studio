@@ -24,7 +24,7 @@ import {
 import _ from "lodash";
 
 import IActions from "@/type/IActions";
-
+import AlertModal from "@/components/AlertModal";
 import InputNode from "./CustomNode/InputNode";
 
 import SaveButton from "@/components/button/SaveButton";
@@ -93,6 +93,8 @@ const initialNodes: Node[] = [
 ];
 
 const WhenFlow = (props: WhenFlowProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [errorModalMessage, setModalErrorMessage] = useState("Something went wrong")
   const [metaData, setMetaData] = useState("");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -230,7 +232,8 @@ const WhenFlow = (props: WhenFlowProps) => {
         node.attributeName.type === "param_function"
       ) {
         outputNode.data.showType = "paramNode";
-        outputNode.data.value = node.value;
+        outputNode.data.dataType = node.attributeName.attributeName.dataType;
+        outputNode.data.value = node.attributeName.attributeName.value;
       } else if (node.type === "meta_function") {
         outputNode.data.showType = "attributeNode";
         outputNode.data.value = node.attributeName.value;
@@ -598,9 +601,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              Swal.fire(
-                "First node can't be value node, attribute node or param node"
-              );
+              setModalErrorMessage("First node can't be value node, attribute node (@) or param node (P)")
+              setIsOpen(true)
             } else if (
               (type == "moreThanNode" ||
                 type == "lessThanNode" ||
@@ -608,9 +610,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "lessThanAndEqualNode") &&
               node.data.dataType === "boolean"
             ) {
-              Swal.fire(
-                "The boolean type can only be used with the equal node (==) or not equal node (!=) ."
-              );
+              setModalErrorMessage("The boolean type can only be used with the equal node (==) or not equal node (!=) .")
+              setIsOpen(true)
             } else {
               updatedNodes.push(updateNode(node, type));
               setNodes(updatedNodes);
@@ -676,7 +677,8 @@ const WhenFlow = (props: WhenFlowProps) => {
           ) {
             const dataType = nodes[j].data.value;
             console.log("1", nodes[i].data);
-            if (dataType.includes(".")) {
+            console.log("logjuf", dataType)
+            if (dataType.toString().includes(".")) {
               nodes[i].data.dataTypeFromValue = "float";
               nodes[j].data.dataType = "float";
             } else {
@@ -839,7 +841,8 @@ const WhenFlow = (props: WhenFlowProps) => {
             showType: "addNode",
           },
         };
-        setUpdatedNodes(cloneUpdatedNodes);
+        console.log("clone",cloneUpdatedNodes)
+        setNodes(cloneUpdatedNodes);
       }
       if (element.type !== "remove") {
         onNodesChange(changes);
@@ -1054,9 +1057,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "attributeNode" ||
                 type == "paramNode")
             ) {
-              Swal.fire(
-                "First node can't be value node, attribute node or param node"
-              );
+              setModalErrorMessage("First node can't be value node, attribute node(@) or param node(P)")
+              setIsOpen(true)
             } else {
               updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
@@ -1145,6 +1147,9 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   return (
     <div className="flex justify-between px-8">
+      { isOpen  && (
+        <AlertModal title={errorModalMessage} type="error" isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
       <div className="flex flex-col w-[64vw] mr-12">
         <ActionHeader
           type="when"
