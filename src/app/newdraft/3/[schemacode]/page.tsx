@@ -70,7 +70,7 @@ export default function Page({
 
     const getDraftInfo = () => {
         if (isDaft !== "" && isDaft !== null) {
-            console.log("isDaft:", isDaft)
+            console.log("isDaft:", isDaft, "initialDaft:", initialDaft, "isEqual:", isDaft === initialDaft)
             setSchemaCode(isDaft.schema_info.code)
             setStepDraft(isDaft.current_state)
         }
@@ -121,9 +121,12 @@ export default function Page({
 
 
     useEffect(() => {
-        // if () {
-        getAttribute()
-        // }
+        if ((isDaft !== "" && isDaft !== null)) {
+            if (isDaft.schema_info.origin_data.origin_attributes.length === 0) {
+                getAttribute()
+            }
+        }
+
 
     }, [contractAddres])
 
@@ -370,7 +373,7 @@ export default function Page({
                 <Loading></Loading>
             }
             <div className=" w-full   flex flex-col justify-between items-center ">
-                <Stepmenu schemacode={schemaCode} currentStep={3} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={3} schemacodeNavigate={schemacode} stepDraft={stepDraft} onEditing={isDaft !== initialDaft}></Stepmenu>
                 {isMain ?
                     <div className=" w-full h-[67vh] grid grid-cols-4 gap-4 overflow-scroll px-10 my-10">
                         <div onClick={() => { createNewAttribute() }}>

@@ -85,27 +85,26 @@ const CaradNewDaft: React.FC<{
         current_state: isState.toString(),
       },
     };
-    const isConfirm = await ConfirmModal("Do you want to Delelte ?", "Cancle");
-    if (isConfirm) {
-      try {
-        const req = await axios.post(apiUrl, requestData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-          },
-        });
-        const res = req.data;
-        if (res.statusCode === "V:0001") {
-          setIsAttributes(updatedAttributes);
-          // console.log(res)
-          return;
-        } else {
-          return;
-        }
-      } catch (error) {
-        console.log("error ", error)
+
+    try {
+      const req = await axios.post(apiUrl, requestData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+        },
+      });
+      const res = req.data;
+      if (res.statusCode === "V:0001") {
+        setIsAttributes(updatedAttributes);
+        // console.log(res)
+        return;
+      } else {
+        return;
       }
+    } catch (error) {
+      console.log("error ", error)
     }
+
 
   };
 

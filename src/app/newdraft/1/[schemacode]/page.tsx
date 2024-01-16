@@ -31,6 +31,7 @@ export default function Page({
     const [isLoadingNext, setIsLoadingNext] = useState(false)
     const [isLoadingFindSchemaCode, setIsLoadingFindSchemaCode] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
+    const [onEdining, setOnEdining] = useState(true)
     const [schemaCode, setSchemaCode] = useState("")
     const [collectionName, setCollectionName] = useState("")
     const [description, setDescription] = useState("")
@@ -60,7 +61,7 @@ export default function Page({
 
     const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            // console.log("isDaft:", isDaft);
+            console.log("isDaft:", isDaft)
             setSchemaCode(isDaft.schema_info.code);
             setCollectionName(isDaft.schema_info.name);
             setDescription(isDaft.schema_info.description);
@@ -169,19 +170,25 @@ export default function Page({
         if (schemacode === "newintegration" && schemaCode === "") {
             router.push(`/aboutgen2`, { scroll: false })
         } else if (schemacode === "newintegration" && schemaCode !== "") {
-           setIsOpenBack(true)  
+            setIsOpenBack(true)
         }
         else {
             router.push(`/home`, { scroll: false })
         }
     }
 
+    useEffect(() => {
+        if (isDaft) {
+            setOnEdining((isDaft.schema_info.code === schemaCode) && (isDaft.schema_info.name === collectionName) && (isDaft.schema_info.description === description))
+        }
+    }, [schemaCode, collectionName, description])
+
 
     return (
         <>
             {isLoading && <Loading></Loading>}
             <div className=" w-full h-full min-h-[75vh] flex flex-col justify-between items-center  ">
-                <Stepmenu schemacode={schemaCode} currentStep={1} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
+                <Stepmenu schemacode={schemaCode} currentStep={1} schemacodeNavigate={schemacode} stepDraft={stepDraft} onEditing={!onEdining}></Stepmenu>
                 <InputCardOneLine title={"Schema code"} require={true} placeholder={"sixnetwork.whalegate"} validate={validate} errorMassage={errorMessage} value={schemaCode} onChange={handleInputChangeSchemaCode} loading={isLoadingFindSchemaCode}></InputCardOneLine>
                 <InputCardOneLine title={"Collection name"} require={false} placeholder={"WHALEGATE"} validate={true} errorMassage={""} value={collectionName} onChange={handleInputChangeCollectionName} loading={false} ></InputCardOneLine>
                 <InputCardOneLine title={"Description"} require={false} placeholder={"WhaleGate Gen2 NFT With SIX"} validate={true} errorMassage={""} value={description} onChange={handleInputChangeDescription} loading={false} ></InputCardOneLine>

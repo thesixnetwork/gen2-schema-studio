@@ -443,8 +443,8 @@ const CaradEditDaft: React.FC<{
     };
 
     const cancleEdit = async () => {
-        setOnEdit(false);
-        setOnEditOrCreate(false)
+      setOnEdit(false);
+      setOnEditOrCreate(false)
     };
 
     console.log("errorMessage", errorMessage);
@@ -480,29 +480,28 @@ const CaradEditDaft: React.FC<{
       };
       console.log(requestData);
 
-      const isConfirmed = await ConfirmModal("Are you sure to Save ?", "Save");
-      if (isConfirmed) {
-        try {
-          const req = await axios.post(apiUrl, requestData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-            },
-          });
-          const res = req.data;
-          // console.log(res);
 
-          if (res.statusCode === "V:0001") {
-            setOnEdit(false);
-            setOnEditOrCreate(false)
-            return;
-          } else {
-            return;
-          }
-        } catch (error) {
-          console.log("error ", error);
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        // console.log(res);
+
+        if (res.statusCode === "V:0001") {
+          setOnEdit(false);
+          setOnEditOrCreate(false)
+          return;
+        } else {
+          return;
         }
+      } catch (error) {
+        console.log("error ", error);
       }
+
       // setOnCreate(false);
     };
 
@@ -827,7 +826,7 @@ const CaradEditDaft: React.FC<{
             alignItems="center"
           >
 
-            <div onClick={() => { setIsOpen(true) }}>
+            <div onClick={() => { cancleEdit() }}>
               <CancelButton></CancelButton>
             </div>
             <div onClick={() => { handleSave() }}>
@@ -835,8 +834,7 @@ const CaradEditDaft: React.FC<{
             </div>
           </Flex>
         </div>
-        <ConfirmModalChakra title={'Are you sure go back ? '} confirmButtonTitle={'Yes, Go back'} function={cancleEdit} isOpen={isOpen} setIsOpen={setIsOpen}
-        ></ConfirmModalChakra>
+
       </>
     );
   };

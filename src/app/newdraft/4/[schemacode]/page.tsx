@@ -40,6 +40,7 @@ export default function Page({
   // console.log(session)
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
+  const [initialDaft, setInitialDaft] = useState(null)
   const [loading, setLoading] = useState(true);
   const [onEditOrCreate, setOnEditOrCreate] = useState(false);
   const router = useRouter();
@@ -49,8 +50,9 @@ export default function Page({
   useEffect(() => {
     (async () => {
       try {
-        const send = await getSchemaInfo(schemacode);
-        setIsDaft(send);
+        const schemaInfo = await getSchemaInfo(schemacode);
+        setIsDaft(schemaInfo);
+        setInitialDaft(schemaInfo);
         setLoading(false);
         // Process the response or update state as needed
       } catch (error) {
@@ -62,7 +64,7 @@ export default function Page({
 
   const getDraftInfo = () => {
     if (isDaft !== null) {
-      // console.log("isDaft:", isDaft);
+      console.log("isDaft:", isDaft, "initialDaft:", initialDaft, "isEqual:", isDaft === initialDaft)
       setSchemaCode(isDaft.schema_info.code);
       setStepDraft(isDaft.current_state);
     }
@@ -94,6 +96,7 @@ export default function Page({
             currentStep={4}
             schemacodeNavigate={schemacode}
             stepDraft={stepDraft}
+            onEditing={isDaft !== initialDaft}
           ></Stepmenu>
           <Box className=" w-full h-full px-10 my-10" >
             <CradNewDaft

@@ -7,14 +7,14 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ENV from '@/utils/ENV';
 
 
-export async function saveState2(originContractAddress:string,originBaseUri:string,schemaCode:string) {
+export async function saveState2(originContractAddress:string,originBaseUri:string,schemaCode:string,originChain :string) {
     const apiUrl = `${ENV.API_URL}/schema/set_schema_info`;
     const sesstion = await getServerSession(authOptions);
     const requestData = {
         "payload": {
             "schema_info": {
                 "origin_data": {
-                    "origin_chain": `FIVENET`,
+                    "origin_chain": `${originChain}`,
                     "origin_contract_address": `${originContractAddress}`,
                     "origin_base_uri": `${originBaseUri}`
                 }
