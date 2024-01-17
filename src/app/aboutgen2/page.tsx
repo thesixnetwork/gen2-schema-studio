@@ -1,17 +1,19 @@
 'use client';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import layer_pic from '../../../public/pic/layer_pic.png'
 import Image from 'next/image'
 import NextPageButton from '@/components/NextPageButton'
 import BackPageButton from '@/components/BackPageButton'
 import { useRouter } from 'next/navigation'
 import About_Gen2_Bg from '../../../public/pic/about_gen2_bg.png'
+import Beforwego_1 from '@/components/Beforwego_1';
 type Props = {}
 
 function Page({ }: Props) {
     const router = useRouter();
+    const [sterp1, setStep1] = useState(false)
     return (
-        <div className=" w-full h-full min-h-[75vh]  flex flex-col justify-between items-center pb-4 pt-12">
+        <div className=" w-full h-full min-h-[75vh]  flex flex-col justify-between items-center pb-4 pt-12 ">
             <div className=' px-[10%] w-full flex items-center justify-between'>
                 <div className='w-48 h-48 bg-2nd4 rounded-lg border border-Act6 flex justify-center items-center'>
                     <h1 className=' text-6xl text-Act6 font-thin'>NFT</h1>
@@ -42,10 +44,14 @@ function Page({ }: Props) {
                 <div onClick={() => { router.push(`/class`, { scroll: false }) }}>
                     <BackPageButton></BackPageButton>
                 </div>
-                <div onClick={() => { router.push(`/newdraft/1/newintegration`, { scroll: false }) }}>
+                <div onClick={()=>{setStep1(true)}}>
                     <NextPageButton></NextPageButton>
                 </div>
             </div>
+            {sterp1 &&
+                <Beforwego_1></Beforwego_1>
+            }
+
         </div>
     )
 }
