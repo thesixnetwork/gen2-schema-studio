@@ -32,12 +32,13 @@ import { GasPrice } from "@cosmjs/stargate/build/fee";
 import ConfirmModalChakra from "./ConfirmModalChakra";
 import { getCookie } from "@/service/getCookie";
 import Loading from "./Loading";
+import postAction7 from "@/service/postAction7";
 interface Props {
   text: string;
   isAccount?: any;
   offlineSigner?: any;
   isDaft?: ISchemaInfo;
-  schemacode?: string;
+  schemacode: string;
   onClick: () => void;
 }
 const CustomCardDeploy: React.FC<Props> = ({
@@ -54,8 +55,8 @@ const CustomCardDeploy: React.FC<Props> = ({
   const [showModal, setShowModal] = useState(false);
   const getTokenFromCookie = getCookie("token");
   const [showAlert, setShowAlert] = useState("none");
-  const [isOpen,setIsOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleDeploy = async (str: string) => {
     // console.log(2222222)
     // console.log(str)
@@ -76,8 +77,9 @@ const CustomCardDeploy: React.FC<Props> = ({
   };
 
   const deploy = async () => {
+    console.log(">>", schemacode)
     let msgArray: Array<EncodeObject> = [];
-    setLoading(true)
+    setLoading(true);
     const encodeBase64Schema = Buffer.from(
       JSON.stringify(isDaft?.schema_info)
     ).toString("base64");
@@ -138,50 +140,71 @@ const CustomCardDeploy: React.FC<Props> = ({
           ``
         );
         console.log("tx-----", txResponse);
-        const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
-        console.log("url",apiUrl)
-        const requestData = {
-          payload: {
-            schema_code: schemacode,
-            status: "Testnet",
-            current_state: "7",
-          },
-        };
-        await axios
-          .post(apiUrl, requestData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${getTokenFromCookie}`,
-            },
-          })
+        // const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
+        // console.log("url",apiUrl)
+        // const requestData = {
+        //   payload: {
+        //     schema_code: schemacode,
+        //     status: "Testnet",
+        //     current_state: "7",
+        //   },
+        // };
+        // await axios
+        //   .post(apiUrl, requestData, {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Authorization: `${getTokenFromCookie}`,
+        //     },
+        //   })
+        //   .then((response) => {
+        //     console.log("API Response Deploy :", response.data);
+        //     console.log(requestData);
+        //     console.log("success ja");
+        //     // You can handle the API response here
+        //     setShowAlert("success");
+        //     setIsOpen(true)
+        //     setLoading(false)
+        //   })
+        //   .catch((error) => {
+        //     console.log("fail ja");
+        //     setShowAlert("success");
+        //     setIsOpen(true)
+        //     console.error("API Error:", error);
+        //     setLoading(false)
+
+        //   });
+
+        await postAction7(schemacode, "Testnet")
           .then((response) => {
-            console.log("API Response Deploy :", response.data);
-            console.log(requestData);
+            console.log("API Response Deploy :", response);
             console.log("success ja");
-            // You can handle the API response here
             setShowAlert("success");
-            setIsOpen(true)
-            setLoading(false)
+            setIsOpen(true);
+            setLoading(false);
           })
           .catch((error) => {
             console.log("fail ja");
             setShowAlert("success");
-            setIsOpen(true)
+            setIsOpen(true);
             console.error("API Error:", error);
-            setLoading(false)
-
-            // Handle errors here
+            setLoading(false);
           });
 
         // router.push("/home");
       } catch (error) {
         console.log("fail ja");
         setShowAlert("fail");
-        setIsOpen(true)
-        console.log("showAlert",showAlert)
+        setIsOpen(true);
+        console.log("showAlert", showAlert);
         console.error(error);
-        setLoading(false)
+        setLoading(false);
       }
+
+      // try {
+      //   await postAction7(schemacode, "Testnet");
+      // }catch(error){
+      //   console.log(error)
+      // }
     }
   };
 
@@ -194,12 +217,22 @@ const CustomCardDeploy: React.FC<Props> = ({
 
   return (
     <>
-    {loading && <Loading />}
+      {loading && <Loading />}
       {showAlert === "success" && isOpen && (
-        <AlertModal title="Deployed successfully" type="warning" isOpen={isOpen} setIsOpen={setIsOpen} />
+        <AlertModal
+          title="Deployed successfully"
+          type="warning"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
       )}
-      {showAlert === "fail" && isOpen  && (
-        <AlertModal title="Something went wrong" type="error" isOpen={isOpen} setIsOpen={setIsOpen} />
+      {showAlert === "fail" && isOpen && (
+        <AlertModal
+          title="Something went wrong"
+          type="error"
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
       )}
       {showModal && (
         <ConfirmModalChakra
@@ -235,9 +268,7 @@ const CustomCardDeploy: React.FC<Props> = ({
             alignItems="center"
           >
             <Image src="/pic/logo-six1.png" alt="Mainnet" />
-            <span className="text-main2 font-bold pt-4">
-              Deploy to {text}
-            </span>
+            <span className="text-main2 font-bold pt-4">Deploy to {text}</span>
           </Flex>
         </Flex>
       )}
@@ -266,9 +297,7 @@ const CustomCardDeploy: React.FC<Props> = ({
             alignItems="center"
           >
             <Image src="/pic/logo-six1.png" alt="Mainnet" />
-            <span className="text-main2 font-bold pt-4">
-              Deploy to {text}
-            </span>
+            <span className="text-main2 font-bold pt-4">Deploy to {text}</span>
           </Flex>
         </Flex>
       )}

@@ -8,11 +8,12 @@ const postAction7 = async (
   status: string
 ) => {
     console.log("posting...")
+    console.log(">>",status)
   const cookieStore = cookies()
   const token = cookieStore.get('token')
   console.log(token)
   console.log(schema_code)
-  const apiUrl = `${ENV.API_URL}schema/set_actions`;
+  const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
   const requestData = {
     payload: {
         schema_code: schema_code,
