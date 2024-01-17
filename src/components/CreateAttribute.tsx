@@ -235,8 +235,8 @@ const CreateAttribute: React.FC<{
     // console.log("newAttributes",newAttributes)
 
     const handleSave = async () => {
-      if (errorMessage) {
-        await ConfirmModal(errorMessage, "Error");
+      if (errorMessage || errorMessageI || errorMessageII) {
+        await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
         console.log("Have error validate");
         return;
       }
