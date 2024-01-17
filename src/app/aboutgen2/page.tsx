@@ -7,11 +7,13 @@ import BackPageButton from '@/components/BackPageButton'
 import { useRouter } from 'next/navigation'
 import About_Gen2_Bg from '../../../public/pic/about_gen2_bg.png'
 import Beforwego_1 from '@/components/Beforwego_1';
+import Beforwego_2 from '@/components/Beforwego_2';
 type Props = {}
 
 function Page({ }: Props) {
     const router = useRouter();
     const [sterp1, setStep1] = useState(false)
+    const [sterp2, setStep2] = useState(false)
     return (
         <div className=" w-full h-full min-h-[75vh]  flex flex-col justify-between items-center pb-4 pt-12 ">
             <div className=' px-[10%] w-full flex items-center justify-between'>
@@ -44,14 +46,16 @@ function Page({ }: Props) {
                 <div onClick={() => { router.push(`/class`, { scroll: false }) }}>
                     <BackPageButton></BackPageButton>
                 </div>
-                <div onClick={()=>{setStep1(true)}}>
+                <div onClick={() => { setStep1(true) }}>
                     <NextPageButton></NextPageButton>
                 </div>
             </div>
             {sterp1 &&
-                <Beforwego_1></Beforwego_1>
+                <Beforwego_1 setParentState1={setStep1} setParentState2={setStep2} ></Beforwego_1>
             }
-
+            {sterp2 &&
+                <Beforwego_2 setParentState1={setStep1} setParentState2={setStep2}></Beforwego_2>
+            }
         </div>
     )
 }
