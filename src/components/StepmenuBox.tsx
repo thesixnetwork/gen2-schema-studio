@@ -62,7 +62,7 @@ function StepmenuBox(props: Props) {
           {props.stepName}
         </p>
       </div>
-      <ConfirmModalChakra title={'Are you sure to change page?\nYour draft isn’t saved \n (use Next button to save )'} confirmButtonTitle={'Yes'} function={navigate} isOpen={isOpen} setIsOpen={setIsOpen}
+      <ConfirmModalChakra title={'Are you sure to change page?\nYour draft isn’t saved \n (Next button to save)'} confirmButtonTitle={'Yes'} function={navigate} isOpen={isOpen} setIsOpen={setIsOpen}
       ></ConfirmModalChakra>
     </div>
   );
