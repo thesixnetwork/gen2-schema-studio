@@ -58,6 +58,22 @@ export const CheckErrorII = async (
   }
 };
 
+export const CheckErrorIII = async (
+  str: string,
+  setErrorMessage: Dispatch<SetStateAction<string>>,
+) => {
+  if (!str) {
+    setErrorMessage("Not Availible");
+    return true;
+  } else if (containsSpecialChars(str)) {
+    setErrorMessage("Special characters are not allowed");
+    return true;
+  } else {
+    setErrorMessage("");
+    return false;
+  }
+};
+
 function containsSame(
   str: string,
   att4: ItokenAttributes[],
