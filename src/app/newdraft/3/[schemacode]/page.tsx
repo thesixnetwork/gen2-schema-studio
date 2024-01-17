@@ -23,6 +23,7 @@ import Loading from "@/components/Loading";
 import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
 import { IOriginAttributes } from "@/type/Nftmngr";
 import AttributeCardAndDelete from "@/components/state3/AttributeCardAndDelete";
+import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 
 export default function Page({
     params: { schemacode },
@@ -33,6 +34,7 @@ export default function Page({
     const [isMain, setIsMain] = useState(true)
     const [isNewAttribute, setIsNewAttribute] = useState(false)
     const [isDaft, setIsDaft] = useState(null)
+    const [initialDaft, setInitialDaft] = useState(null)
     const [name, setName] = useState("")
     const [schemaCode, setSchemaCode] = useState("")
     const [contractAddres, setContractAddres] = useState("")
@@ -46,15 +48,71 @@ export default function Page({
     const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [stepDraft, setStepDraft] = useState(2)
+    const [chainId, setChainId] = useState("")
+    const [isOpen, setIsOpen] = useState(false)
     const router = useRouter()
 
+    const [chainMapper, setChainMapper] = useState([
+        {
+            Chain:[
+                {
+                    chain: "FIVENET",
+                    chain_id: "98"
+                },
+                {
+                    chain: "SIXNET",
+                    chain_id: "150"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "GOERLI",
+                    chain_id: "1"
+                },
+                {
+                    chain: "ETHEREUM",
+                    chain_id: "5"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "BAOBAB",
+                    chain_id: "1001"
+                },
+                {
+                    chain: "KLAYTN",
+                    chain_id: "8217"
+                },
+            ]
+        },
+        {
+            Chain:[
+                {
+                    chain: "BNBT",
+                    chain_id: "97"
+                },
+                {
+                    chain: "BNB",
+                    chain_id: "56"
+                },
+            ]
+        }
+    ])
+
+    // console.log(chainId)
 
     useEffect(() => {
         (async () => {
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
                 setIsDaft(schemaInfo)
+                setInitialDaft(schemaInfo)
                 setContractAddres(schemaInfo.schema_info.origin_data.origin_contract_address)
+                setChainId(chainMapper.find(item => item.Chain.some(chain => chain.chain === schemaInfo.schema_info.origin_data.origin_chain))?.Chain.find(c => c.chain === schemaInfo.schema_info.origin_data.origin_chain)?.chain_id)
                 setIsLoading(false)
                 // Process the response or update state as needed
             } catch (error) {
@@ -66,7 +124,7 @@ export default function Page({
 
     const getDraftInfo = () => {
         if (isDaft !== "" && isDaft !== null) {
-            console.log("isDaft:", isDaft)
+            console.log("isDaft:", isDaft, "initialDaft:", initialDaft, "isEqual:", isDaft === initialDaft)
             setSchemaCode(isDaft.schema_info.code)
             setStepDraft(isDaft.current_state)
         }
@@ -78,22 +136,24 @@ export default function Page({
     }, [isDaft])
 
     const get_origin_attributes_form_contract = async (contract: string) => {
-        const object1:IOriginAttributes[] = isDaft.schema_info.origin_data.origin_attributes; // Assuming isDaft has a type
-        const object2:IOriginAttributes[] = await getOriginAttributFromContract(contract);
-    
+        const object1: IOriginAttributes[] = isDaft.schema_info.origin_data.origin_attributes; // Assuming isDaft has a type
+        const object2: IOriginAttributes[] = await getOriginAttributFromContract(contract);
+
         // Check if object1 is defined and has a 'some' method
         const uniqueObjects = object2.filter(
             obj2 => !object1 || (Array.isArray(object1) && object1.some(obj1 => obj1.name === obj2.name))
         );
         ////////////////
 
-        console.log("uniqueObjects",uniqueObjects)
-    
+        console.log("uniqueObjects", uniqueObjects)
+
     };
+    // console.log(chainId)
+    // console.log(contractAddres)
     const getAttribute = async () => {
         if (contractAddres !== "" && contractAddres !== null) {
             try {
-                const originAttribute = await getOriginAttributFromContract(contractAddres)
+                const originAttribute = await getOriginAttributFromContract(contractAddres,chainId)
                 console.log("originAttribute", originAttribute)
 
                 // Assuming originAttribute is an array of attributes
@@ -117,9 +177,12 @@ export default function Page({
 
 
     useEffect(() => {
-        // if () {
-        getAttribute()
-        // }
+        if ((isDaft !== "" && isDaft !== null)) {
+            if (isDaft.schema_info.origin_data.origin_attributes.length === 0) {
+                getAttribute()
+            }
+        }
+
 
     }, [contractAddres])
 
@@ -344,27 +407,31 @@ export default function Page({
     }
 
     const backPage = () => {
-        // if (originBaseURI !== "" || originContractAddress !== "") {
-        //     alert("You are working")
-        // } else {
+        if (initialDaft !== isDaft) {
+            setIsOpen(true)
+        } else {
+            navigate_back()
+        }
+    }
+
+    const navigate_back = () => {
         router.push(`/newdraft/2/${schemacode}`, { scroll: false })
-        // }
     }
 
     //------------------------Post data to base --------------------------------------------//
 
     useEffect(() => {
-        console.log("isNewAttribute",isNewAttribute)
+        console.log("isNewAttribute", isNewAttribute)
     }, [isNewAttribute])
     return (
         <>
             {isLoading &&
                 <Loading></Loading>
             }
-            <div className=" w-full   flex flex-col justify-between items-center ">
-                <Stepmenu schemacode={schemaCode} currentStep={3} schemacodeNavigate={schemacode} stepDraft={stepDraft}></Stepmenu>
+            <div className=" w-full h-[75vh]    flex flex-col justify-between items-center ">
+                <Stepmenu schemacode={schemaCode} currentStep={3} schemacodeNavigate={schemacode} stepDraft={stepDraft} onEditing={isDaft !== initialDaft}></Stepmenu>
                 {isMain ?
-                    <div className=" w-full h-[67vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
+                    <div className="  w-full h-full  grid grid-cols-4 gap-4 overflow-scroll py-3 px-10 my-3 ">
                         <div onClick={() => { createNewAttribute() }}>
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
@@ -412,7 +479,7 @@ export default function Page({
                 }
                 {isMain &&
 
-                    <div className=' w-[90%] h-20 flex justify-between items-center'>
+                    <div className=' w-[90%]   flex justify-between items-center'>
                         <div onClick={backPage}>
                             <BackPageButton></BackPageButton>
                         </div>
@@ -421,6 +488,8 @@ export default function Page({
                         </div>
                     </div>
                 }
+                <ConfirmModalChakra title={'Are you sure go back ? '} confirmButtonTitle={'Yes, Go back'} function={navigate_back} isOpen={isOpen} setIsOpen={setIsOpen}
+                ></ConfirmModalChakra>
             </div>
         </>
     );

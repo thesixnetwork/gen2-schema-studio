@@ -46,7 +46,6 @@ interface MetaDataProps {
 }
 
 export default function Flowbar(props: MetaDataProps) {
-  console.log("here", process.env.NEXT_TEST);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [inputValue, setInputValue] = useState("");
   const [outputFromGPT, setOutputFromGPT] = useState("");
@@ -119,189 +118,197 @@ export default function Flowbar(props: MetaDataProps) {
 
   return (
     <>
-    {isModalOpen && (
+      {isModalOpen && (
         <AlertModal
           title={errorModalMessage}
           type="error"
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
+          subTitle={`example: meta.GetBoolean('check_in') == true`}
         />
       )}
-    <div className="w-80 bg-[#DADEF2] flex text-3xl">
-      <div className="flex flex-col pl-6 pt-6 gap-y-8">
-      <div className="flex">
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-main2">AI Generate</span>
-            <button
-              className="px-4 flex items-center justify-center rounded-md border border-Act6 text-lg hover:scale-110 duration-300 text-Act6"
-              onClick={onOpen}
-            >
-              <Image src={GenerateGPTimg} alt="generate-icon" width={20} />
-              <span className="ml-1">Generate</span>
-            </button>
-            <Modal
-              initialFocusRef={initialRef}
-              finalFocusRef={finalRef}
-              isOpen={isOpen}
-              onClose={onClose}
-            >
-              <ModalOverlay bg="blackAlpha.800" />
-              <ModalContent bg="rgba(0, 0, 0, 0.6)">
-                <ModalHeader
-                  color={"white"}
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Image
-                    src={GenerateGPTimgWhite}
-                    alt="generate-icon"
-                    width={20}
-                  />{" "}
-                  <span className="ml-1 text-sm font-semibold text-white">
-                    AI Generate
-                  </span>
-                </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody pb={6}>
-                  <FormControl>
-                    <span className="mb-4 font-semibold text-white">Input</span>
-                    <Flex mb="1rem">
-                      <Input
-                        ref={initialRef}
-                        placeholder="example: check_in and tier is gold"
-                        color={"white"}
-                        onChange={(e) => {
-                          handleInput(e);
-                        }}
-                      />
-                      <Button
-                        colorScheme="white"
-                        onClick={processGPT}
-                        variant={"outline"}
-                        ml={4}
-                        _hover={{ borderColor: "blue.500", color: "blue.500" }}
-                      >
-                        Process
-                      </Button>
-                    </Flex>
-                  </FormControl>
-                  <Box>
-                    <span className="mb-4 font-semibold text-white">
-                      Output
+      <div className="w-80 bg-[#DADEF2] flex text-3xl">
+        <div className="flex flex-col pl-6 pt-6 gap-y-8">
+          <div className="flex">
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-main2">AI Generate</span>
+              <button
+                className="px-4 flex items-center justify-center rounded-md border border-Act6 text-lg hover:scale-110 duration-300 text-Act6"
+                onClick={onOpen}
+              >
+                <Image src={GenerateGPTimg} alt="generate-icon" width={20} />
+                <span className="ml-1">Generate</span>
+              </button>
+              <Modal
+                initialFocusRef={initialRef}
+                finalFocusRef={finalRef}
+                isOpen={isOpen}
+                onClose={onClose}
+              >
+                <ModalOverlay bg="rgba(135, 140, 168, 0.5)" backdropFilter="blur(5px) " />
+                <ModalContent bg="rgba(135, 140, 168, 0.8)">
+                  <ModalHeader
+                    color={"white"}
+                    display={"flex"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                  >
+                    <Image
+                      src={GenerateGPTimgWhite}
+                      alt="generate-icon"
+                      width={20}
+                    />{" "}
+                    <span className="ml-1 text-sm font-semibold text-white">
+                      AI Generate
                     </span>
-                    <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
-                      <Text color="white" mb="1rem">
-                        {outputFromGPT}
-                      </Text>
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={6}>
+                    <FormControl>
+                      <span className="mb-4 font-semibold text-white">
+                        Input
+                      </span>
+                      <Flex mb="1rem">
+                        <Input
+                          ref={initialRef}
+                          placeholder="example: check_in and tier is gold"
+                          _placeholder={{ color: "rgba(256, 256, 256, 0.6)" }}
+                          color={"white"}
+                          onChange={(e) => {
+                            handleInput(e);
+                          }}
+                        />
+                        <Button
+                          colorScheme="rgba(135, 140, 168, 1)"
+                          variant="outline"
+                          onClick={processGPT}
+                          ml={4}
+                          _hover={{
+                            borderColor: "blue.500",
+                            color: "blue.500",
+                          }}
+                          bgColor={"rgba(135, 140, 168, 1)"}
+                        >
+                          Process
+                        </Button>
+                      </Flex>
+                    </FormControl>
+                    <Box>
+                      <span className="mb-4 font-semibold text-white">
+                        Output
+                      </span>
+                      <Box bgColor="rgba(135, 140, 168, 1)" width={"100%"} h={16} borderRadius={6} overflow={"scroll"}>
+                        <Text color="white" mb="1rem" p={2.5} >
+                          {outputFromGPT}
+                        </Text>
+                      </Box>
                     </Box>
-                  </Box>
-                </ModalBody>
+                  </ModalBody>
 
-                <ModalFooter justifyContent={"center"}>
-                  <Button
-                    colorScheme="#2F3030"
-                    variant="outline"
-                    onClick={handleCreate}
-                    mr={4}
-                    _hover={{ borderColor: "blue.500", color: "blue.500" }}
-                    bgColor={"#2F3030"}
-                  >
-                    Generate
-                  </Button>
-                  <Button
-                    onClick={onClose}
-                    colorScheme="white"
-                    variant="outline"
-                    mr={3}
-                    _hover={{ borderColor: "blue.500", color: "blue.500" }}
-                  >
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+                  <ModalFooter justifyContent={"center"}>
+                    <Button
+                      colorScheme="rgba(135, 140, 168, 1)"
+                      variant="outline"
+                      onClick={handleCreate}
+                      mr={4}
+                      _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                      bgColor={"rgba(135, 140, 168, 1)"}
+                    >
+                      Generate
+                    </Button>
+                    <Button
+                      onClick={onClose}
+                      colorScheme="white"
+                      variant="outline"
+                      mr={3}
+                      _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                    >
+                      Cancel
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </div>
           </div>
-        </div>
-        <div className="flex">
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-main2">Operator</span>
-            <div className="flex ">
-              <div className="flex flex-col border-r border-Act6 pr-2">
-                <Menu
-                  nodeName="andNode"
-                  title="AND"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-                <Menu
-                  nodeName="orNode"
-                  title="OR"
-                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                />
-              </div>
-              <div className="pl-2">
-                <div className="flex">
+          <div className="flex">
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-main2">Operator</span>
+              <div className="flex ">
+                <div className="flex flex-col border-r border-Act6 pr-2">
                   <Menu
-                    nodeName="equalNode"
-                    title="="
+                    nodeName="andNode"
+                    title="AND"
                     handleDoubleClickAddNode={props.handleDoubleClickAddNode}
                   />
                   <Menu
-                    nodeName="moreThanNode"
-                    title=">"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="moreThanAndEqualNode"
-                    title=">="
+                    nodeName="orNode"
+                    title="OR"
                     handleDoubleClickAddNode={props.handleDoubleClickAddNode}
                   />
                 </div>
-                <div className="flex">
-                  <Menu
-                    nodeName="notEqualNode"
-                    title="≠"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="lessThanNode"
-                    title="<"
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
-                  <Menu
-                    nodeName="lessThanAndEqualNode"
-                    title="<="
-                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-                  />
+                <div className="pl-2">
+                  <div className="flex">
+                    <Menu
+                      nodeName="equalNode"
+                      title="="
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                    <Menu
+                      nodeName="moreThanNode"
+                      title=">"
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                    <Menu
+                      nodeName="moreThanAndEqualNode"
+                      title=">="
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                  </div>
+                  <div className="flex">
+                    <Menu
+                      nodeName="notEqualNode"
+                      title="≠"
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                    <Menu
+                      nodeName="lessThanNode"
+                      title="<"
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                    <Menu
+                      nodeName="lessThanAndEqualNode"
+                      title="<="
+                      handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex">
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-main2">Operand</span>
-            <div className="flex">
-              <Menu
-                nodeName="valueNode"
-                title="V"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-              <Menu
-                nodeName="attributeNode"
-                title="@"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
-              <Menu
-                nodeName="paramNode"
-                title="P"
-                handleDoubleClickAddNode={props.handleDoubleClickAddNode}
-              />
+          <div className="flex">
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-main2">Operand</span>
+              <div className="flex">
+                <Menu
+                  nodeName="valueNode"
+                  title="V"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="attributeNode"
+                  title="@"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="paramNode"
+                  title="P"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }

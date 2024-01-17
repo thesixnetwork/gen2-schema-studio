@@ -122,7 +122,6 @@ const WhenFlow = (props: WhenFlowProps) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
-  //   const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
   const [redraw, setRedraw] = useState(false);
 

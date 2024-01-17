@@ -216,16 +216,8 @@ const CreateAttribute: React.FC<{
     };
 
     const cancleCreate = async () => {
-      const isConfirm = await ConfirmModal(
-        "There are some edits that haven't been saved yet. Do you want to Cancle ?",
-        "Cancle"
-      );
-      if (isConfirm) {
-        setOnCreate(false);
-        setOnEditOrCreate(false)
-
-      }
-      return;
+      setOnCreate(false);
+      setOnEditOrCreate(false)
     };
     console.log("isAttributes", isAttributes);
     // console.log("newAttributes",newAttributes)
@@ -264,33 +256,42 @@ const CreateAttribute: React.FC<{
       };
       console.log(requestData);
 
-      const isConfirmed = await ConfirmModal("Are you sure to Save ?", "Save");
-      if (isConfirmed) {
-        try {
-          const req = await axios.post(apiUrl, requestData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-            },
-          });
-          const res = req.data;
-          // console.log(res)
 
-          if (res.statusCode === "V:0001") {
-            setOnCreate(false);
-            setOnEditOrCreate(false);
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        // console.log(res)
 
-            return;
-          } else {
-            return;
-          }
-        } catch (error) {
-          console.log("error ", error);
+        if (res.statusCode === "V:0001") {
+          setOnCreate(false);
+          setOnEditOrCreate(false);
+
+          return;
+        } else {
+          return;
         }
+      } catch (error) {
+        console.log("error ", error);
       }
+
       // setOnCreate(false);
     };
 
+    function checkType(value: string) {
+      const parsedValue = parseFloat(value);
+      if (Number.isInteger(parsedValue)) {
+        // console.log(`${value} is an integer.`);
+        return false;
+      } else {
+        // console.log(`${value} is a float.`);
+        return true;
+      }
+    }
     const handleAttribute = (type: string, value: string) => {
       if (type === "name") {
         setNewAttributes((prevPerson) => ({
@@ -354,26 +355,36 @@ const CreateAttribute: React.FC<{
 
       if (type === "value") {
         let default_mint_value;
+        let data_type;
         if (newAttributes.data_type === "string") {
           default_mint_value = {
             string_attribute_value: {
               value: value,
             },
           };
+          data_type = "string";
         }
-        if (newAttributes.data_type === "number") {
-          default_mint_value = {
-            number_attribute_value: {
-              value: parseFloat(value).toString(),
-            },
-          };
-        }
-        if (newAttributes.data_type === "float") {
-          default_mint_value = {
-            float_attribute_value: {
-              value: parseFloat(value),
-            },
-          };
+        if (
+          newAttributes.data_type === "number" ||
+          newAttributes.data_type === "float"
+        ) {
+          const chectFloat = checkType(value);
+          if (chectFloat) {
+            default_mint_value = {
+              float_attribute_value: {
+                value: parseFloat(value),
+              },
+            };
+            data_type = "float";
+
+          } else {
+            default_mint_value = {
+              number_attribute_value: {
+                value: parseFloat(value).toString(),
+              },
+            };
+            data_type = "number";
+          }
         }
         if (newAttributes.data_type === "boolean") {
           // console.log("value ==>", value);
@@ -382,10 +393,13 @@ const CreateAttribute: React.FC<{
               value: value === "false" ? false : Boolean(value),
             },
           };
+          data_type = "boolean";
         }
+        console.log(default_mint_value)
         setNewAttributes((prevPerson) => ({
           ...prevPerson,
           default_mint_value: default_mint_value!,
+          data_type: data_type!
         }));
       }
     };
@@ -657,7 +671,7 @@ const CreateAttribute: React.FC<{
               )}
 
               {/* number */}
-              {newAttributes.data_type === "number" && (
+              {(newAttributes.data_type === "number" || newAttributes.data_type === "float") && (
                 <>
                   <NumberInput
                     border={"white"}
@@ -670,6 +684,7 @@ const CreateAttribute: React.FC<{
                     // className={` w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={
                       newAttributes.default_mint_value.number_attribute_value
+                        ?.value || newAttributes.default_mint_value.float_attribute_value
                         ?.value
                     }
                     precision={2}

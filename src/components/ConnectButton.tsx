@@ -164,6 +164,7 @@ function ConnectButton(props:Props) {
           address: cosmosAddress,
           balance: balance,
         });
+        localStorage.setItem("time_out", Math.floor(Date.now()/1000 + 1400).toString());
         router.push("/home");
         props.setLoading(false);
       })

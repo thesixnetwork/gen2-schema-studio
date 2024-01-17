@@ -4,6 +4,7 @@ const nextConfig = {
     NEXT_TEST: process.env.NEXT_TEST,
     NEXT_APP_OPENAI_API_KEY: process.env.NEXT_APP_OPENAI_API_KEY,
     NEXT_APP_SECRET_KEY: process.env.NEXT_APP_SECRET_KEY,
+    NEXT_APP_FIVENET_SCAN: process.env.NEXT_APP_FIVENET_SCAN,
   },
   experimental: {
       serverActions: true,

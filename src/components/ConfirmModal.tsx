@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import { useState } from "react";
 import "../app/globals.css";
+import WarningCircle from "../../public/pic/WarningCircle.png";
 interface ConfirmModalProps {
   Texthead: string;
 }
@@ -99,12 +100,17 @@ export async function ConfirmModal(Texthead: string, action: string) {
   if (action === "Cancle") {
     const result = await Swal.fire({
       position: "center",
-      icon: "error",
+      icon: "question",
+      iconColor:"white",
+      
+      // iconHtml:'<i class=" swal2-question   text-white"></i>',
       title: Texthead || "Something went wrong",
       color: "#fff",
       background: "#000",
       showCancelButton: true,
       showConfirmButton: true,
+      confirmButtonText:"Go back",
+      confirmButtonColor:"#00000099",  
     });
 
     if (result.isConfirmed) {

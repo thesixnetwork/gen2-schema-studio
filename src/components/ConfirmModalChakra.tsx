@@ -63,8 +63,8 @@ const ConfirmModalChakra = (props: Props) => {
         onClose={handleClose}
         isCentered
       >
-        <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(5px) "/>
-        <ModalContent bg="rgba(0, 0, 0, 0.6)" padding={4}>
+        <ModalOverlay bg="rgba(135, 140, 168, 0.5)" backdropFilter="blur(5px) "/>
+        <ModalContent bg="rgba(135, 140, 168, 0.8)" padding={4}>
           <ModalHeader
             color={"white"}
             display={"flex"}
@@ -84,7 +84,7 @@ const ConfirmModalChakra = (props: Props) => {
               onClick={handleConfirm}
               mr={4}
               _hover={{ borderColor: "blue.500", color: "blue.500" }}
-              bgColor={"#2F3030"}
+              bgColor={"rgba(135, 140, 168, 1)"}
             >
               {props.confirmButtonTitle}
             </Button>

@@ -54,10 +54,11 @@ export default function HomeCard({}: Props) {
       try {
         const list_draft = await getListDraft();
         console.log(">>.", list_draft);
+        console.log("five", fivenetScan);
         setListdraft(list_draft);
         const test_draft = await getDataTestnet();
         console.log(">>>.", test_draft);
-        setTestDraft(test_draft);
+        setTestDraft(test_draft.data.result);
         setIsLoading(false);
       } catch (error) {
         // Handle errors here
@@ -122,7 +123,9 @@ export default function HomeCard({}: Props) {
                         >
                           <HomeDraftCard
                             schema_revision={item.schema_revision}
-                            CollectionName={item.schema_name}
+                            CollectionName={
+                              item.schema_info[0].schema_info.code
+                            }
                             CollectionImage={
                               item.schema_info &&
                               item.schema_info[0] &&
@@ -142,7 +145,6 @@ export default function HomeCard({}: Props) {
                   testDraft.map((item: ISchemaInfo, index: any) => (
                     <div key={index} className=" ml-3 flex">
                       <a
-                       
                         target="_blank"
                         href={`${fivenetScan}schema/${item.schema_name}`}
                       >
@@ -161,7 +163,6 @@ export default function HomeCard({}: Props) {
                   ))}
               </div>
             )}
-            <button onClick={() => console.log(testDraft)}>log</button>
           </div>
         </div>
       ))}

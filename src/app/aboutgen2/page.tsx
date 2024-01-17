@@ -11,7 +11,7 @@ type Props = {}
 function Page({ }: Props) {
     const router = useRouter();
     return (
-        <div className=" w-full h-full min-h-[75vh]  flex flex-col justify-between items-center pb-4 pt-10">
+        <div className=" w-full h-full min-h-[75vh]  flex flex-col justify-between items-center pb-4 pt-12">
             <div className=' px-[10%] w-full flex items-center justify-between'>
                 <div className='w-48 h-48 bg-2nd4 rounded-lg border border-Act6 flex justify-center items-center'>
                     <h1 className=' text-6xl text-Act6 font-thin'>NFT</h1>
@@ -21,13 +21,13 @@ function Page({ }: Props) {
                     <Image src={layer_pic} alt={''} ></Image>
                 </div>
                 <div className='text-Act6 text-5xl font-thin'>=</div>
-                <div className='  flex flex-col justify-center items-center'>
+                <div className=' w-40 h-40  flex flex-col justify-center items-center'>
                     <div className=' w-40 h-40 bg-white  opacity-60 z-10 absolute  rounded-lg '></div>
                     <div className=' w-64 h-64 absolute z-0'>
                         <Image src={About_Gen2_Bg} alt={''}></Image>
                     </div>
                     <h1 className=' text-6xl text-Act6 font-thin z-10'>NFT</h1>
-                    <div className=' absolute mt-32 w-20 h-6 bg-transparent rounded-lg border border-Act6 flex justify-center items-center z-10'>
+                    <div className='  w-20 h-6  bg-white  opacity-60 rounded-lg border border-Act6 flex justify-center items-center z-10'>
                         <h1 className=' text-lg text-Act6 '>Gen2</h1>
                     </div>
                 </div>

@@ -45,6 +45,7 @@ export default function Flowbar(props: FlowbarProps) {
   const finalRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState("");
+  const [subTitle, setSubTitle] = useState("");
 
   const processGPT = async () => {
     let prompt;
@@ -95,6 +96,7 @@ export default function Flowbar(props: FlowbarProps) {
     onClose();
     if (!outputFromGPT.startsWith("meta")) {
       setErrorModalMessage("Output must start with meta");
+      props.type === "attribute" ? setSubTitle("example: meta.SetNumber('points', 200)") : setSubTitle("example: meta.TransferNumber('points', params['tokenId'].GetString(), 200)");
       setIsModalOpen(true);
     } else {
       props.setMetaData(outputFromGPT);
@@ -114,6 +116,7 @@ export default function Flowbar(props: FlowbarProps) {
           type="error"
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
+          subTitle={subTitle}
         />
       )}
       <div className="w-80  bg-[#DADEF2] p-6 flex flex-col justify-between">
@@ -133,8 +136,11 @@ export default function Flowbar(props: FlowbarProps) {
             onClose={onClose}
             colorScheme="red"
           >
-            <ModalOverlay bg="blackAlpha.800" />
-            <ModalContent bg="rgba(0, 0, 0, 0.6)">
+            <ModalOverlay
+              bg="rgba(135, 140, 168, 0.5)"
+              backdropFilter="blur(5px) "
+            />
+            <ModalContent bg="rgba(135, 140, 168, 0.8)">
               <ModalHeader
                 color={"white"}
                 display={"flex"}
@@ -162,17 +168,22 @@ export default function Flowbar(props: FlowbarProps) {
                           ? "example: set points to 200"
                           : "transfer points to tokenId amount 1"
                       } `}
+                      _placeholder={{ color: "rgba(256, 256, 256, 0.6)" }}
                       color={"white"}
                       onChange={(e) => {
                         handleInput(e);
                       }}
                     />
                     <Button
-                      colorScheme="white"
-                      onClick={processGPT}
-                      variant={"outline"}
-                      ml={4}
-                      _hover={{ borderColor: "blue.500", color: "blue.500" }}
+                       colorScheme="rgba(135, 140, 168, 1)"
+                       variant="outline"
+                       onClick={processGPT}
+                       ml={4}
+                       _hover={{
+                         borderColor: "blue.500",
+                         color: "blue.500",
+                       }}
+                       bgColor={"rgba(135, 140, 168, 1)"}
                     >
                       Process
                     </Button>
@@ -180,8 +191,8 @@ export default function Flowbar(props: FlowbarProps) {
                 </FormControl>
                 <Box>
                   <span className="mb-4 font-semibold text-white">Output</span>
-                  <Box bgColor="#2D2D2F" padding={4} borderRadius={6}>
-                    <Text color="white" mb="1rem">
+                  <Box bgColor="rgba(135, 140, 168, 1)" width={"100%"} h={16} borderRadius={6} overflow={"scroll"}>
+                    <Text  color="white" mb="1rem" p={2.5}>
                       {outputFromGPT}
                     </Text>
                   </Box>
@@ -190,12 +201,12 @@ export default function Flowbar(props: FlowbarProps) {
 
               <ModalFooter justifyContent={"center"}>
                 <Button
-                  colorScheme="#2F3030"
+                  colorScheme="rgba(135, 140, 168, 1)"
                   variant="outline"
                   onClick={handleCreate}
                   mr={4}
                   _hover={{ borderColor: "blue.500", color: "blue.500" }}
-                  bgColor={"#2F3030"}
+                  bgColor={"rgba(135, 140, 168, 1)"}
                 >
                   Generate
                 </Button>

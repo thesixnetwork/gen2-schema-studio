@@ -235,9 +235,9 @@ const CustomCardDeploy: React.FC<Props> = ({
             alignItems="center"
           >
             <Image src="/pic/logo-six1.png" alt="Mainnet" />
-            <Text color="#44498D" fontWeight={700} fontSize="16px" pt={4}>
+            <span className="text-main2 font-bold pt-4">
               Deploy to {text}
-            </Text>
+            </span>
           </Flex>
         </Flex>
       )}
@@ -266,9 +266,9 @@ const CustomCardDeploy: React.FC<Props> = ({
             alignItems="center"
           >
             <Image src="/pic/logo-six1.png" alt="Mainnet" />
-            <Text color="#44498D" fontWeight={700} fontSize="16px" pt={4}>
+            <span className="text-main2 font-bold pt-4">
               Deploy to {text}
-            </Text>
+            </span>
           </Flex>
         </Flex>
       )}

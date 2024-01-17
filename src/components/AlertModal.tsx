@@ -24,6 +24,7 @@ interface Props {
   type: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  subTitle?: string;
 }
 
 const AlertModal = (props: Props) => {
@@ -55,13 +56,15 @@ const AlertModal = (props: Props) => {
   return (
     <>
       <Modal isOpen={isOpen} onClose={handleClose} isCentered>
-        <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(5px) " />
-        <ModalContent bg="rgba(0, 0, 0, 0.6)" padding={4}>
+        <ModalOverlay bg="rgba(135, 140, 168, 0.5)" backdropFilter="blur(5px) " />
+        <ModalContent bg="rgba(135, 140, 168, 0.8)" p={4}>
           <ModalHeader
             color={"white"}
             display={"flex"}
             justifyContent={"center"}
             alignItems={"center"}
+            height={"100%"}
+            p={0}
           >
             {props.type === "success" ? (
               <Image alt="success-img" src={WarningCircle} className="w-24" />
@@ -69,17 +72,18 @@ const AlertModal = (props: Props) => {
               <Image alt="warning-img" src={WarningCircle} className="w-24" />
             )}
           </ModalHeader>
-          <ModalBody pb={6} textAlign={"center"}>
-            <span className="ml-1 font-bold text-xl">{props.title}</span>
+          <ModalBody textAlign={"center"}>
+            <p className=" font-bold text-xl">{props.title}</p>
+            <p className=" text-md">{props.subTitle}</p>
           </ModalBody>
           <ModalFooter justifyContent={"center"}>
             <Button
-              colorScheme="#2F3030"
+              colorScheme="rgba(135, 140, 168, 1)"
               variant="outline"
               onClick={handleCloseButton}
               mr={4}
               _hover={{ borderColor: "blue.500", color: "blue.500" }}
-              bgColor={"#2F3030"}
+              bgColor={"rgba(135, 140, 168, 1)"}
             >
               Close
             </Button>

@@ -3,13 +3,13 @@ import { cookies } from 'next/headers'
 import ENV from '@/utils/ENV'
 import axios from 'axios'
 
-export const getBaseURI = async (contract_address: string) => {
+export const getBaseURI = async (contract_address: string, chain_id: string) => {
     const cookieStore = cookies()
     const token = cookieStore.get('token')
     const apiUrl = `${ENV.API_URL}schema/base_uri_from_contract`; // Replace with your API endpoint
     const params = {
         contract_address: `${contract_address}`,
-        chain_id: "98",
+        chain_id: chain_id,
     };
 
     const headers = {
