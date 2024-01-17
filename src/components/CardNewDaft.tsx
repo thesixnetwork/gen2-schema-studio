@@ -121,7 +121,7 @@ const CaradNewDaft: React.FC<{
     <>
       <Flex className=" w-full flex justify-center items-center ">
         {!onEdit && !onCreate && (
-          <div className=" w-full h-[75vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
+          <div className=" w-full h-[45vh] grid grid-cols-4 gap-4 overflow-scroll p-4">
             <div onClick={() => { setOnCreate(true), setOnEditOrCreate(true) }}>
               <NewCollecitonCard></NewCollecitonCard>
             </div>

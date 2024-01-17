@@ -399,11 +399,13 @@ export default function Page({
 
     //------------------------Post data to base --------------------------------------------//
     const save_state3 = async () => {
+        setIsLoading(true)
         setIsLoadingSaveState3(true)
         const saveState3_status = await saveState3(isDaft.schema_info.origin_data.origin_attributes, schemacode)
         console.log("saveState1_status :", saveState3_status)
         router.push(`/newdraft/4/${schemacode}`)
         setIsLoadingSaveState3(false)
+        setIsLoading(false)
     }
 
     const backPage = () => {
@@ -462,7 +464,7 @@ export default function Page({
 
                     :
                     <div className=" w-full h-full  flex flex-col  items-center">
-                        <div className=" w-full h-full min-h-[60vh] flex flex-col justify-between items-center p-10">
+                        <div className=" w-full h-full min-h-[40vh] flex flex-col justify-between items-center p-10">
                             <InputCardOneLine title={"Name"} require={true} placeholder={"Add attribute name"} validate={validateStateName} errorMassage={errorMessageName} value={name} onChange={handleInputChangeName} loading={false} ></InputCardOneLine>
                             <InputSelectCard title={"Data type"} require={true} value={dataType} onChange={handleInputChangeChaDataType}></InputSelectCard>
                             <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} loading={false} ></InputCardOneLine>

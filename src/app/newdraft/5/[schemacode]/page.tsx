@@ -66,7 +66,7 @@ export default function Page({
   return (
     <>
       {isDaft && !loading && (
-        <Flex className=" h-[75vh]  " flexWrap={"wrap"}>
+        <Flex className=" h-[75vh]   " flexWrap={"wrap"}>
           {/* <Text
             color="#44498D"
             fontFamily="Montserrat"
@@ -84,7 +84,7 @@ export default function Page({
             currentStep={5}
             schemacodeNavigate={schemacode}
             stepDraft={stepDraft} onEditing={false}          ></Stepmenu>
-          <Box className=" w-full h-full p-10">
+          <Box className=" w-full py-10 z-50 ">
             <CradNewDaft
               isDaft={isDaft}
               isState={5}

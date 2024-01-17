@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react"
 import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
-import { uppercaseTest, spaceTest, specialCharsTest ,dotCountTest } from "@/validateService/validate";
+import { uppercaseTest, spaceTest, specialCharsTest, dotCountTest } from "@/validateService/validate";
 import { findSchemaCode } from "@/validateService/findSchemaCode";
 import { createSchemaCode } from "@/postDataService/createSchemaCode";
 import { editSchemaCode } from "@/postDataService/editSchemaCode";
@@ -106,10 +106,10 @@ export default function Page({
             setErrorMessage("Special characters are not allowed");
         } else if (dotCountTest(schemaCode)) {
             setErrorMessage("Schema code should contain at most one dot");
-        }else if (!findSchemaCodeStatus && schemaCode !== "") {
+        } else if (!findSchemaCodeStatus && schemaCode !== "") {
             setErrorMessage("Schema code is Duplicate");
         }
-         else {
+        else {
             setErrorMessage("");
         }
         setIsLoadingFindSchemaCode(false);
@@ -136,7 +136,7 @@ export default function Page({
 
 
     const nextPage = async () => {
-
+        setIsLoading(true)
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
                 setIsOpen(true)
@@ -147,10 +147,10 @@ export default function Page({
         } else if (validate && !isLoadingFindSchemaCode) {
             setIsLoadingNext(true)
             await edit_schemaCode()
-            router.push(`/newdraft/2/${schemacode}`, { scroll: false })
+            await router.push(`/newdraft/2/${schemacode}`, { scroll: false })
             setIsLoadingNext(false)
         }
-
+        setIsLoading(false)
     }
 
     const validateNextPage = () => {
