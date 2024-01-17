@@ -35,13 +35,14 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
     </Tooltip>
   );
 
-  const renderItems = props.then.map((item, index) => (
+  const renderItems = props.then && props.then.map((item, index) => (
     <ListItem key={index} text={item} />
   ));
 
+
   const visibleItems = expanded
     ? renderItems
-    : renderItems.slice(0, displayLines);
+    : renderItems && renderItems.slice(0, displayLines);
 
   const thenStyle = {
     maxHeight: "100px",
@@ -59,7 +60,7 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
   };
 
   return (
-    <div className="text-black w-96 border rounded-xl p-4 relative bg-white flex flex-col h-full overflow-hidden">
+    <div className="text-black w-96 border rounded-xl p-4 relative bg-white flex flex-col h-full overflow-hidden hover:scale-110 duration-300">
       <div
         onClick={() =>
           router.push(`/newdraft/6/${schemacode}/action-form/${props.name}`)

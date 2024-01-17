@@ -25,7 +25,7 @@ function ConnectButton(props:Props) {
   const [balance, setBalance] = useState(0);
   const [cosmosAddress, setCosmosAddress] = useState("");
   const [rpcEndpoint, setRpcEndpoint] = useState<string>(
-    process.env.NEXT_PUBLIC__RPC1_ENDPOINT_SIX_FIVENET ||
+    process.env.NEXT_PUBLIC__RPC2_ENDPOINT_SIX_FIVENET ||
       "default-fallback-value"
   );
   const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE;

@@ -33,6 +33,8 @@ import { GasPrice } from "@cosmjs/stargate/build/fee";
 import BackPageButton from "@/components/BackPageButton";
 import Link from "next/link";
 import BackToHomeButton from "@/components/button/BackToHomeButton";
+import postAction7 from "@/service/postAction7";
+
 export default function Page({
   params: { schemacode },
 }: {
@@ -110,9 +112,13 @@ export default function Page({
             </Link>
             <BackToHomeButton />
           </div>
-          
         </Flex>
       )}
+
+      <button onClick={async () => await postAction7(schemacode, "Testnet")}>
+        log jar
+      </button>
+
       {!isDaft && !loading && (
         <Flex p={4} flexWrap={"wrap"}>
           <Text>NOT FOUND SCHEMA CODE</Text>
