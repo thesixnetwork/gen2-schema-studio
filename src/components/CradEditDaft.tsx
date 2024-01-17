@@ -67,11 +67,13 @@ const CaradEditDaft: React.FC<{
     const { data: session } = useSession();
     const [errorMessage, setErrorMessage] = useState("");
     const [errorMessageI, setErrorMessageI] = useState("");
+    const [errorMessageII, setErrorMessageII] = useState("");
     const [name, setName] = useState(isAttribute.name);
     const [dataType, setDataType] = useState(isAttribute.data_type)
     const [traitType, setTraitType] = useState(isAttribute.display_option.opensea.trait_type)
     const [isError, setIsError] = useState(false);
     const [isErrorI, setIsErrorI] = useState(false);
+    const [isErrorII, setIsErrorII] = useState(false);
     const [isOpen, setIsOpen] = useState(false)
 
 
@@ -246,6 +248,10 @@ const CaradEditDaft: React.FC<{
       }));
     };
 
+    const handleErrorValue = async (value: string) => {
+      const error = await CheckErrorIII(value,setErrorMessageII)
+      setIsErrorII(error)  
+    };
 
     const handleDatatype = (type: string) => {
       if (type === "string") {
@@ -454,8 +460,8 @@ const CaradEditDaft: React.FC<{
 
     console.log("errorMessage", errorMessage);
     const handleSave = async () => {
-      if (errorMessage) {
-        await ConfirmModal(errorMessage, "Error");
+      if (errorMessage || errorMessageI || errorMessageII) {
+        await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
         console.log("Have error validate");
         return;
       }
@@ -809,13 +815,18 @@ const CaradEditDaft: React.FC<{
               {/* string */}
               {checkDatatype === "string" && (
                 <>
-                  <Input
+                <Box>
+                <Input
                     minWidth="390px"
                     placeholder={"Add Value"}
-                    className={`text-Act6 w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                    className={`${isErrorII ? 'border-Act2 text-Act2' : ' text-Act6  border-Act6'} w-full h-12 pl-5 text-xl placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     defaultValue={isDefaultValue}
-                    onChange={(e) => handleAttribute("value", e.target.value)}
+                    onChange={(e) => {handleAttribute("value", e.target.value), handleErrorValue(e.target.value)}}
                   />
+                  {isErrorII && (
+                    <p className='text-Act2 text-sm absolute duration-300'>{errorMessageII}</p>
+                  )}
+                </Box>
                 </>
               )}
             </Flex>
