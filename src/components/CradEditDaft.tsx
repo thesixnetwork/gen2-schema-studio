@@ -26,7 +26,7 @@ import axios from "axios";
 import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
 import CheckErrorI from "@/utils/checkError";
-
+import { CheckErrorIII } from "@/utils/checkError";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import SaveButton from "./button/SaveButton";
 import CancelButton from "./button/CancelButton";
@@ -66,10 +66,12 @@ const CaradEditDaft: React.FC<{
 }) => {
     const { data: session } = useSession();
     const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessageI, setErrorMessageI] = useState("");
     const [name, setName] = useState(isAttribute.name);
     const [dataType, setDataType] = useState(isAttribute.data_type)
     const [traitType, setTraitType] = useState(isAttribute.display_option.opensea.trait_type)
     const [isError, setIsError] = useState(false);
+    const [isErrorI, setIsErrorI] = useState(false);
     const [isOpen, setIsOpen] = useState(false)
 
 
@@ -226,8 +228,10 @@ const CaradEditDaft: React.FC<{
       }
     };
 
-    const handleInputChangeTraitType = (value: string) => {
+    const handleInputChangeTraitType = async (value: string) => {
       setTraitType(value);
+      const error = await CheckErrorIII(value,setErrorMessageI)
+      setIsErrorI(error)
       setNewAttributes((prevPerson) => ({
         ...prevPerson,
         display_option: {
@@ -529,8 +533,8 @@ const CaradEditDaft: React.FC<{
             title={"Trait type"}
             require={true}
             placeholder={"Add trait type here"}
-            validate={true}
-            errorMassage={""}
+            validate={!isErrorI}
+            errorMassage={errorMessageI}
             value={traitType}
             onChange={handleInputChangeTraitType}
             loading={false}
