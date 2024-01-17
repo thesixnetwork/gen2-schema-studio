@@ -38,7 +38,7 @@ const getDataTestnet = async () => {
         }
       });
     //   console.log("log juff", countColl);
-      return response.data.data.result;
+      return response.data;
     }
   } catch (error) {
     console.error("Error:", error);

@@ -507,7 +507,7 @@ const CaradEditDaft: React.FC<{
 
     return (
       <>
-        <div className=" min-h-[65vh] w-full flex flex-col justify-between items-center  ">
+        <div className=" min-h-[60vh] w-full flex flex-col justify-between items-center  ">
           <InputCardOneLine
             title={"Name"}
             require={true}
@@ -834,7 +834,7 @@ const CaradEditDaft: React.FC<{
             </div>
           </Flex>
         </div>
-
+ 
       </>
     );
   };

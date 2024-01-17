@@ -47,7 +47,7 @@ export default function Page({
                 const schemaInfo = await getSchemaInfo(schemacode);
                 console.log(schemaInfo)
                 setIsDaft(schemaInfo)
-                setIsLoading(false)
+               
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
@@ -65,11 +65,15 @@ export default function Page({
                 setOriginBaseURI(isDaft.schema_info.origin_data.origin_base_uri);
                 setOriginContractAddress(isDaft.schema_info.origin_data.origin_contract_address);
                 setStepDraft(isDaft.current_state);
+                setIsLoading(false)
+               
             }
         };
 
         getDraftInfo(); // Call the function on mount
         checkIndex();
+
+        
         return () => {
             // Cleanup or unsubscribe if needed
         };
@@ -94,6 +98,7 @@ export default function Page({
     };
 
     const save_state2 = async () => {
+        setIsLoading(true)
         setIsLoadingSave(true)
         // let origin_attributes_form_contract 
         // const new_origin_attribute = await get_origin_attributes_form_contract(originContractAddress);
@@ -103,6 +108,7 @@ export default function Page({
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
         setIsLoadingSave(false)
+        setIsLoading(false)
     }
 
 
