@@ -75,7 +75,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
     deleteCookie("action-when");
     deleteCookie("action-then");
     deleteCookie("action-then-arr");
-    deleteCookie("isTransformDynamic")
+    deleteCookie("isTransformDynamic");
     deleteCookie("isCreateDyanamicImage");
   }, []);
 
@@ -116,7 +116,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
   }, []);
 
   return (
-    <>
+    <div className="h-[75vh] flex flex-col justify-between">
       {loading && <Loading />}
       <header>
         <Stepmenu
@@ -126,7 +126,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
           stepDraft={stepDraft}
         />
       </header>
-      <section className="mt-12">
+      <section className="my-6 h-[50vh] overflow-scroll">
         <div className="grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center">
           <ActionCreateCard />
           {action !== undefined &&
@@ -143,7 +143,9 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
               </div>
             ))}
         </div>
-        <div className="w-full flex justify-between px-24 my-12">
+      </section>
+      <div className="flex items-end">
+        <div className="w-full flex justify-between px-24">
           <Link href={`/newdraft/5/${schemacode}`}>
             <BackPageButton />
           </Link>
@@ -151,8 +153,8 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
             <NextPageButton />
           </Link>
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 };
 
