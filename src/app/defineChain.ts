@@ -12,7 +12,7 @@ export const sixCustomChain = defineChains({
         coinImageUrl: "https://www.six.network/static/media/img-sec-5.16efec58a21f96b58e9d.png",
       },
     ],
-    rpc: "https://rpc1.fivenet.sixprotocol.net",
+    rpc: "https://rpc2.fivenet.sixprotocol.net:443",
     rest: "https://api1.fivenet.sixprotocol.net",
   },
   sixnet: {
