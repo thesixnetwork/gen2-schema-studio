@@ -26,6 +26,7 @@ import axios from "axios";
 import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
 import { CheckErrorII } from "@/utils/checkError";
+import { CheckErrorIII } from "@/utils/checkError";
 
 import { ConfirmModal } from "@/components/ConfirmModal";
 import InputCardOneLine from "./state1/InputCardOneLine";
@@ -56,10 +57,14 @@ const CreateAttribute: React.FC<{
     // console.log(onEdit)
     const { data: session } = useSession();
     const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessageI, setErrorMessageI] = useState("");
+    const [errorMessageII, setErrorMessageII] = useState("");
     const [name, setName] = useState("");
     const [dataType, setDataType] = useState("string")
     const [traitType, setTraitType] = useState("")
     const [isError, setIsError] = useState(false);
+    const [isErrorI, setIsErrorI] = useState(false);
+    const [isErrorII, setIsErrorII] = useState(false);
     const [haveError, setHaveError] = useState(false);
 
 
@@ -127,6 +132,11 @@ const CreateAttribute: React.FC<{
       }));
     };
 
+    const handleErrorValue = async (value: string) => {
+      const error = await CheckErrorIII(value,setErrorMessageII)
+      setIsErrorII(error)  
+    };
+
     const handleInputChangeChaDataType = (value: string) => {
       setDataType(value);
       let default_mint_value;
@@ -166,8 +176,10 @@ const CreateAttribute: React.FC<{
       }));
     };
 
-    const handleInputChangeTraitType = (value: string) => {
+    const handleInputChangeTraitType = async(value: string) => {
       setTraitType(value);
+      const error = await CheckErrorIII(value,setErrorMessageI)
+      setIsErrorI(error)
       setNewAttributes((prevPerson) => ({
         ...prevPerson,
         display_option: {
@@ -223,8 +235,8 @@ const CreateAttribute: React.FC<{
     // console.log("newAttributes",newAttributes)
 
     const handleSave = async () => {
-      if (errorMessage) {
-        await ConfirmModal(errorMessage, "Error");
+      if (errorMessage || errorMessageI || errorMessageII) {
+        await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
         console.log("Have error validate");
         return;
       }
@@ -427,8 +439,8 @@ const CreateAttribute: React.FC<{
             title={"Trait type"}
             require={true}
             placeholder={"Add trait type here"}
-            validate={true}
-            errorMassage={""}
+            validate={!isErrorI}
+            errorMassage={errorMessageI}
             value={traitType}
             onChange={handleInputChangeTraitType}
             loading={false}
@@ -589,7 +601,7 @@ const CreateAttribute: React.FC<{
             <Box>
               <p className="text-main2 text-2xl font-bold">Value</p>
             </Box>
-            <Flex width="380px">
+            <Flex>
               {/* boolean */}
               {newAttributes.data_type === "boolean" && (
                 <>
@@ -704,15 +716,21 @@ const CreateAttribute: React.FC<{
               {/* {console.log(newAttributes.data_type)} */}
               {newAttributes.data_type === "string" && (
                 <>
+                 <Box>
                   <Input
                     placeholder={"Add Value"}
-                    className={` text-Act6 outline-none w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                    className={`${isErrorII ? 'border-Act2 text-Act2' : ' text-Act6  border-Act6'} w-full h-12 pl-5 text-xl placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                    minWidth="390px"
                     defaultValue={
                       newAttributes.default_mint_value.string_attribute_value
                         ?.value
                     }
-                    onChange={(e) => handleAttribute("value", e.target.value)}
+                    onChange={(e) => {handleAttribute("value", e.target.value), handleErrorValue(e.target.value)}}
                   />
+                  {isErrorII && (
+                    <p className='text-Act2 text-sm absolute duration-300'>{errorMessageII}</p>
+                  )}
+                 </Box>
                 </>
               )}
             </Flex>
