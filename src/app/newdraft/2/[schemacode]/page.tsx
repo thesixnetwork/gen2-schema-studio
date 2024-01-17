@@ -160,7 +160,7 @@ export default function Page({
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
         setIsLoadingSave(false)
-        setIsLoading(false)
+        
     }
 
 

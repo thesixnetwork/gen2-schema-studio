@@ -405,7 +405,7 @@ export default function Page({
         console.log("saveState1_status :", saveState3_status)
         router.push(`/newdraft/4/${schemacode}`)
         setIsLoadingSaveState3(false)
-        setIsLoading(false)
+       
     }
 
     const backPage = () => {
