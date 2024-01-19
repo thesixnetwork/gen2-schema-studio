@@ -46,11 +46,11 @@ export default function Page({
             Chain:[
                 {
                     chain: "FIVENET",
-                    chain_id: "98"
+                    chain_id: "150"
                 },
                 {
                     chain: "SIXNET",
-                    chain_id: "150"
+                    chain_id: "98"
                 },
             ]
         },
@@ -58,11 +58,11 @@ export default function Page({
             Chain:[
                 {
                     chain: "GOERLI",
-                    chain_id: "1"
+                    chain_id: "5"
                 },
                 {
                     chain: "ETHEREUM",
-                    chain_id: "5"
+                    chain_id: "1"
                 },
             ]
         },
@@ -179,7 +179,7 @@ export default function Page({
             try {
                 setIsLoadingGetBaseURI(true)
                 const origin_base_URI = await getBaseURI(originContractAddress, chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
-                // console.log("base_uri", origin_base_URI)
+                console.log("base_uri",chainMapper[chainIndex].Chain[chainTypeIndex].chain_id )
                 if (typeof origin_base_URI !== 'string') {
                     setOriginBaseURI("")
                 } else {
@@ -263,6 +263,7 @@ export default function Page({
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
                 <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x40df0C834CE7549e9234D11525aD1f7E7CF48E88"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
                 <InputToggleCard title={"Chain Type"} require={true} chainIndex={chainTypeIndex} onChangeChainIndex={handleInputChangeChainTypeIndex}></InputToggleCard>
+                <p className="text-red-500">{`chainIndex : ${chainIndex}, chainTypeIndex: ${chainTypeIndex}, ${originChain}`}</p>
                 <InputCardOneLineLarge title={"Origin Base URI"} require={false} placeholder={"https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/"} validate={true} errorMassage={""} value={originBaseURI} onChange={handleInputChangeOriginBaseURI} loading={false}></InputCardOneLineLarge>
                 <div className=' w-[90%]  flex justify-between items-center'>
                     <div onClick={backPage}>
