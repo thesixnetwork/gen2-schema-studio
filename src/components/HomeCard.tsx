@@ -115,11 +115,11 @@ export default function HomeCard({}: Props) {
                           </div>
                         )}
                         <div
-                          onClick={() => {
-                            router.push(`/newdraft/1/${item.schema_revision}`, {
-                              scroll: false,
-                            });
-                          }}
+                        //   onClick={() => {
+                        //     router.push(`/newdraft/1/${item.schema_revision}`, {
+                        //       scroll: false,
+                        //     });
+                        //   }}
                         >
                           <HomeDraftCard
                             schema_revision={item.schema_revision}

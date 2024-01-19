@@ -458,10 +458,28 @@ const CaradEditDaft: React.FC<{
       setOnEditOrCreate(false)
     };
 
-    console.log("errorMessage", errorMessage);
+    // console.log("errorMessage", errorMessage);
+    // console.log("newAttributes", newAttributes);
+
+    // const checkNewAttributes = async() => {
+    //   if(!newAttributes.name){
+    //     setIsError(true)
+    //     setErrorMessage("Not Availible")
+    //   }
+    //   if(!newAttributes.display_option.opensea.trait_type){
+    //     setIsErrorI(true)
+    //     setErrorMessageI("Not Availible")
+    //   }
+    //   if(!newAttributes.default_mint_value.string_attribute_value?.value){
+    //     setIsErrorII(true)
+    //     setErrorMessageII("Not Availible")
+    //   }
+    //   return false ;
+    // }
     const handleSave = async () => {
+
       if (errorMessage || errorMessageI || errorMessageII) {
-        await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
+        // await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
         console.log("Have error validate");
         return;
       }
@@ -489,7 +507,7 @@ const CaradEditDaft: React.FC<{
           current_state: isState.toString(),
         },
       };
-      console.log(requestData);
+      // console.log(requestData);
 
 
       try {
