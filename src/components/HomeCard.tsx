@@ -14,9 +14,11 @@ import Loading from "./Loading";
 import { getListDraft } from "@/service/getListDraft";
 import getDataTestnet from "@/service/getDataTestnet";
 import { ISchemaInfo } from "@/type/Nftmngr";
-import deleate_icon from '../../public/pic/deleate_attribute_card.png';
+import deleate_icon from '../../public/pic/XCircleblue.png';
 import { useSession } from "next-auth/react";
 import ENV from "@/utils/ENV";
+import { DeleteIcon } from "@chakra-ui/icons";
+
 type Props = {};
 
 export default function HomeCard({ }: Props) {
@@ -159,8 +161,13 @@ export default function HomeCard({ }: Props) {
                          
                           className=" relative hover:scale-105 duration-500 cursor-pointer"
                         >
+                          {/* <DeleteIcon
+                           className="z-20 text-Act7  hover:scale-110 duration-300 cursor-pointer absolute bottom-4 right-4"
+                           onClick={() => {handleDelete(item.schema_revision) ; handleDel(index)}}
+                           boxSize={5}
+                          ></DeleteIcon> */}
                           <Image
-                            className="z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2"
+                            className="  z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute bottom-4 right-4"
                             src={deleate_icon}
                             alt={"delete"}
                             onClick={() => {handleDelete(item.schema_revision) ; handleDel(index)}}

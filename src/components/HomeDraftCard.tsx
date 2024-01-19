@@ -9,6 +9,7 @@ import ENV from "@/utils/ENV";
 import { useRouter } from "next/navigation";
 import logoNFTGen2 from "../../public/pic/logo-nftgen2.png";
 import { useSession } from "next-auth/react";
+import e_coin from "../../public/pic/e_coin.png"
 
 type Props = {
   schema_revision: any;
@@ -69,7 +70,7 @@ function HomeDraftCard(props: Props) {
                 alt={"pic"}
               ></Image>
             ) : (
-              <div className=" h-[50%] flex justify-center items-center">
+              <div className=" h-[70%] flex justify-center items-center">
                 {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   ">
               <Image
                 className="z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2"
@@ -82,22 +83,28 @@ function HomeDraftCard(props: Props) {
               </div>
             )
           ) : error ? (
-            <div className=" h-[50%] flex justify-center items-center">
+            <div className=" h-[70%] flex justify-center items-center">
               <p className=" text-main2">Image couldn&apos;t be loaded</p>
             </div>
           ) : (
-            <img
-              className=" object-cover   w-[12.6rem] h-[14rem] mb-3"
-              src={imgUrl}
-              alt={"pic"}
-              onError={() => handleError()}
-            ></img>
+            <div className=" relative    w-[12.6rem] h-[14rem]">
+              <img
+                className=" object-cover   w-[12.6rem] h-[14rem] rounded-lg"
+                src={imgUrl}
+                alt={"pic"}
+                onError={() => handleError()}
+              ></img>
+              <div className=" absolute w-full h-[2.5rem] flex justify-between px-[15%] items-center backdrop-blur-md backdrop-brightness-110 rounded-b-lg left-0 bottom-0 ">
+                <Image className=" w-8 h-8" src={e_coin} alt={""}></Image>
+                <p className=" text-Act1">2,000 Items</p>
+              </div>
+            </div>
           )}
 
-          <div className=" text-main2 w-full h-[4rem] flex flex-col p-2 justify-end relative mt-3 border-t-2 border-t-Act7 ">
+          <div className=" text-main2 w-full h-[4.5rem] flex flex-col p-2 justify-end relative border-t border-t-Act7 ">
             {/* <div className=" w-full h-[0.08rem] bg-Act7 "></div> */}
-            <p className=" font-bold text-sm">{props.CollectionName}</p>
-            <p className=" font-bold text-sm">collection</p>
+            <p className=" font-bold text-base ">{props.CollectionName}</p>
+            <p className=" font-bold text-base ">collection</p>
             <Image
               className=" absolute right-0 top-2 w-10"
               src={props.type === "testnet" ? testnet_icon : draft_icon}
