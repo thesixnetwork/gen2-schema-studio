@@ -23,7 +23,7 @@ import {
 } from "@/helpers/AuthService";
 import _ from "lodash";
 
-import IActions from "@/type/IActions";
+import { IActions } from "@/type/Nftmngr";
 import AlertModal from "@/components/AlertModal";
 import InputNode from "./CustomNode/InputNode";
 
@@ -49,6 +49,11 @@ interface NodeProps {
   type: string;
   position: { x: number; y: number };
   draggable: boolean;
+  showType?: string;
+  dataType?: string;
+  value?: string | number | boolean;
+  dataTypeFromValue?: string;
+  parentNode?: number | string;
   data: {
     id: string;
     showType: string;
@@ -712,7 +717,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           }
         }
       }
-      const node = data.find((item: any) => item.id === id);
+      const node = data.find((item) => item.id === id);
       if (!node) return null;
 
       const result: any = {};
@@ -796,9 +801,9 @@ const WhenFlow = (props: WhenFlowProps) => {
         result.dataType = node.dataType;
         result.value =
           node.dataType === "number"
-            ? parseInt(node.value)
+            ? parseInt(node.value as string)
             : node.dataType === "float"
-            ? parseFloat(node.value)
+            ? parseFloat(node.value as string)
             : node.value === "true"
             ? true
             : node.value === "false"
@@ -832,13 +837,6 @@ const WhenFlow = (props: WhenFlowProps) => {
     console.log("wtf!!", props.metaFunction);
   };
 
-  const handleEdgesChange = (changes: NodeChange[]) => {
-    console.log(changes);
-    changes.forEach((element) => {
-      console.log("here-", element);
-    });
-    // onEdgesChange(changes);
-  };
 
   const handleNodesChange = (changes: NodeChange[]) => {
     changes.forEach((element) => {
@@ -879,7 +877,7 @@ const WhenFlow = (props: WhenFlowProps) => {
 
     if (metaData.startsWith("meta")) {
       if (getCookieData) {
-        const parsedCookieData = Array.from(JSON.parse(getCookieData));
+        const parsedCookieData = Array.from(JSON.parse(getCookieData)) as IActions[];
         // console.log("logger", parsedCookieData);
         const newAction = JSON.stringify(
           updateActionWhenByName(parsedCookieData, props.actionName, metaData)
@@ -1184,7 +1182,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   }, [nodes, setNodes]);
 
   return (
-    <div className="flex justify-between px-8">
+    <div className="flex justify-between px-8 h-full">
       {isOpen && (
         <AlertModal
           title={errorModalMessage}
@@ -1193,19 +1191,18 @@ const WhenFlow = (props: WhenFlowProps) => {
           setIsOpen={setIsOpen}
         />
       )}
-      <div className="flex flex-col w-[64vw] mr-12">
+      <div className="flex flex-col w-[64vw] mr-12 h-full">
         <ActionHeader
           type="when"
           actionName={props.actionName}
           metaFunction={props.metaFunction}
         />
-        <div className="h-[580px] w-full border rounded-3xl bg-white p-2 mt-4">
+        <div className="h-full w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
-              onEdgesChange={handleEdgesChange}
               onNodesChange={handleNodesChange}
               onNodeMouseLeave={handleNodesLeave}
               onConnect={onConnect}

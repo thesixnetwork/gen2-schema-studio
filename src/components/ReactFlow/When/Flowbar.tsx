@@ -54,13 +54,6 @@ export default function Flowbar(props: MetaDataProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState("");
 
-  // const Robot = styled(SmartToyIcon)({
-  //   borderRadius: "16px",
-  //   transition: "color 0.3s, border 0.3s",
-  //   border: "1px solid white",
-  //   cursor: "pointer",
-  // });
-
   const processGPT = async () => {
     const openai = new OpenAI({
       apiKey: process.env.NEXT_APP_OPENAI_API_KEY,

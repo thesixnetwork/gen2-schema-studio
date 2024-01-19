@@ -46,6 +46,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const getImgFormatFromCookie = getCookie("imgFormat") ?? "";
   const [nameRequired, setNameRequired] = useState(false);
   const [whenRequired, setWhenRequired] = useState(false);
+  const [thenRequired, setThenRequired] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState("");
   const [createNewAction, setCreateNewAction] = useState([
@@ -61,7 +62,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   ]);
 
   const handleSave = async () => {
-    if (nameRequired || whenRequired) {
+    if (nameRequired || whenRequired || thenRequired) {
       setIsOpen(true);
       setErrorModalMessage("Please fill in all required fields");
     } else {
@@ -239,6 +240,18 @@ const Page = ({ params }: { params: { param: string } }) => {
     } else {
       setWhenRequired(false);
     }
+
+    if (
+      (params.param === "create-new-action" &&
+        createNewAction[0].then.length === 0) ||
+      (updatedAction &&
+        updatedAction[actionIndex] &&
+        updatedAction[actionIndex].then.length === 0)
+    ) {
+      setThenRequired(true);
+    } else {
+      setThenRequired(false);
+    }
   }, [updatedAction, actionIndex, createNewAction]);
 
   return (
@@ -331,6 +344,11 @@ const Page = ({ params }: { params: { param: string } }) => {
                 params.param === "create-new-action"
                   ? createNewAction || []
                   : updatedAction || []
+              }
+              setAction={
+                params.param === "create-new-action"
+                  ? setCreateNewAction
+                  : setUpdatedAction
               }
               actionIndex={
                 params.param === "create-new-action" ? 0 : actionIndex

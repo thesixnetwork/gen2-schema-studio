@@ -126,8 +126,8 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
           stepDraft={stepDraft}
         />
       </header>
-      <section className="my-6 h-[50vh] overflow-scroll">
-        <div className="p-4 grid grid-cols-1 gap-y-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center">
+      <section className="my-6 h-[50vh] overflow-scroll ">
+        <div className="py-4 px-8  gap-y-8 gap-x-24 flex flex-wrap ">
           <ActionCreateCard />
           {action !== undefined &&
             action.map((item, index) => (

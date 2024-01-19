@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
 import { getCookie } from "@/service/getCookie";
@@ -19,15 +19,15 @@ interface EventProps {
   };
 }
 
-interface Attribute {
+interface AttributeOptionProps{
   name: string;
-  data_type: string;
+  dataType: string;
 }
 
 const DynamicNode = (props: CircleNodeProps) => {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
-
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [inputValue, setInputValue] = useState(props.data.value);
   const [isSelected, setIsSelected] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -166,7 +166,9 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   }, [props.data.value]);
 
-
+  useEffect(() => {
+    if (inputRef.current != null) inputRef.current.focus();
+  },[props.data.showType, inputRef]);
 
   useEffect(() => {
     if (props.data.showType === "valueNode") {
@@ -272,7 +274,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               ? "-- select type --"
               : selectAttributeValue.name}
           </option>
-          {attributeOption.map((item, index) => (
+          {attributeOption.map((item:AttributeOptionProps, index:number) => (
             <option
               key={index}
               value={JSON.stringify({
@@ -409,6 +411,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               type="text"
               name=""
               id=""
+              ref={inputRef}
               className="w-16 rounded-sm pl-1 bg-white text-main2"
               onChange={(e) => {
                 onChange(e);
@@ -448,7 +451,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               ? "-- select type --"
               : selectValue.name}
           </option>
-          {attributeOption.map((item, index) => (
+          {attributeOption.map((item:AttributeOptionProps, index:number) => (
             <option
               key={index}
               value={JSON.stringify({

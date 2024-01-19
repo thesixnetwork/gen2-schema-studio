@@ -13,7 +13,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   );
 
   return (
-        <div>
+        <div className="h-[75vh]">
           <ReactFlowProvider>
             <WhenFlow
               isDraft={false}

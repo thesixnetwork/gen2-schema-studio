@@ -65,23 +65,23 @@ const ActionHeader = (props: ActionHeaderProps) => {
           </div>
         )}
       </div>
-      <div className="p-4 w-full max-h-14 overflow-scroll bg-gray-300 rounded-md text-Act6">
+      <div className="p-4 w-full h-14 overflow-scroll bg-gray-300 rounded-md text-Act6">
         {props.metaFunction === "create-new-then" &&
         props.actionThenType === "create-new-then"
           ? "Please select your then action and add item"
           : (props.actionThenType === "updateAttribute" ||
               props.actionThenType === "transferNumber") &&
-            props.metaFunction === "create-new-then"
+            (props.metaFunction === "create-new-then" || props.metaFunction === "")
           ? "Please add item"
           : props.actionThenType === "transform" &&
             props.transformType === "dynamic" &&
-            !props.metaFunction
+            props.metaFunction === ""
           ? "Please input your dynamic image path"
           : props.actionThenType === "transform" &&
             props.transformType === "static" &&
-            !props.metaFunction
+            props.metaFunction === ""
           ? "Please input your static image path"
-          : props.actionThenType === "transform" && !props.metaFunction
+          : props.actionThenType === "transform" && props.metaFunction === ""
           ? "Please select your transform type"
           : props.metaFunction === "create-new-when"
           ? "Please add item"
