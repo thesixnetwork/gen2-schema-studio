@@ -263,7 +263,7 @@ export default function Page({
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
                 <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x40df0C834CE7549e9234D11525aD1f7E7CF48E88"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
                 <InputToggleCard title={"Chain Type"} require={true} chainIndex={chainTypeIndex} onChangeChainIndex={handleInputChangeChainTypeIndex}></InputToggleCard>
-                <p className="text-red-500">{`chainIndex : ${chainIndex}, chainTypeIndex: ${chainTypeIndex}, ${originChain}`}</p>
+                
                 <InputCardOneLineLarge title={"Origin Base URI"} require={false} placeholder={"https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/"} validate={true} errorMassage={""} value={originBaseURI} onChange={handleInputChangeOriginBaseURI} loading={false}></InputCardOneLineLarge>
                 <div className=' w-[90%]  flex justify-between items-center'>
                     <div onClick={backPage}>
