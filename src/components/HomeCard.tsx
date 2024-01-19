@@ -31,6 +31,7 @@ export default function HomeCard({ }: Props) {
   const [isLoading2, setIsLoading2] = useState(true);
   const [testDraft, setTestDraft] = useState([]);
   const fivenetScan = process.env.NEXT_PUBLIC__SIXSCAN_FIVENET;
+  console.log(listDraft)
   // const getListDraft = async () => {
   //     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
   //     const params = {};
