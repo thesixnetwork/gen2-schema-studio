@@ -14,10 +14,13 @@ import Loading from "./Loading";
 import { getListDraft } from "@/service/getListDraft";
 import getDataTestnet from "@/service/getDataTestnet";
 import { ISchemaInfo } from "@/type/Nftmngr";
-
+import deleate_icon from '../../public/pic/deleate_attribute_card.png';
+import { useSession } from "next-auth/react";
+import ENV from "@/utils/ENV";
 type Props = {};
 
-export default function HomeCard({}: Props) {
+export default function HomeCard({ }: Props) {
+  const { data: session } = useSession();
   const router = useRouter();
   const items = ["Draft", "Live", "Testnet"];
   // const listDraft = await getListDraft();
@@ -76,6 +79,31 @@ export default function HomeCard({}: Props) {
     return;
   }
 
+  const handleDelete = async (schema_revision:string) => {
+    const apiUrl = `${ENV.Client_API_URL}/schema/delete_daft/${schema_revision}`;
+    // console.log(apiUrl)
+    try {
+      const req = await axios.delete(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+        },
+      });
+      const res = req.data;
+      console.log(res);
+
+      if (res.statusCode === "V:0001") {
+       
+        console.log("Deleted")
+        return;
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.log("error ", error);
+    }
+  };
+
   return (
     <div>
       {isLoading && <Loading></Loading>}
@@ -92,9 +120,9 @@ export default function HomeCard({}: Props) {
               <div className=" h-[1px] w-full border-b border-t-transparent border-Act1"></div>
             </div>
           </div>
-          <div className=" w-full h-96 flex items-end">
+          <div className=" w-full h-96 flex items-end ">
             {index === 0 && (
-              <div className="flex items-center h-full w-full overflow-scroll">
+              <div className="flex items-center  h-full w-full overflow-scroll  grid-cols-1 gap-4 p-4 ">
                 {listDraft &&
                   listDraft.map(
                     (
@@ -109,25 +137,34 @@ export default function HomeCard({}: Props) {
                       },
                       index: any
                     ) => (
-                      <div key={index} className=" ml-3 flex">
+                      <div key={index} className="flex grid-cols-1 gap-4">
                         {index === 0 && (
                           <div
-                            className=" mr-3"
+                            className=""
                             onClick={() => {
                               router.push(`/class`, { scroll: false });
                             }}
                           >
                             <HomeNewintregationCard></HomeNewintregationCard>
                           </div>
+
+
                         )}
                         <div
-                        //   onClick={() => {
-                        //     router.push(`/newdraft/1/${item.schema_revision}`, {
-                        //       scroll: false,
-                        //     });
-                        //   }}
-                        onClick={() => handleDel(index)}
+                          //   onClick={() => {
+                          //     router.push(`/newdraft/1/${item.schema_revision}`, {
+                          //       scroll: false,
+                          //     });
+                          //   }}
+                         
+                          className=" relative hover:scale-105 duration-500 cursor-pointer"
                         >
+                          <Image
+                            className="z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2"
+                            src={deleate_icon}
+                            alt={"delete"}
+                            onClick={() => {handleDelete(item.schema_revision) ; handleDel(index)}}
+                          ></Image>
                           <HomeDraftCard
                             schema_revision={item.schema_revision}
                             CollectionName={
@@ -147,10 +184,10 @@ export default function HomeCard({}: Props) {
               </div>
             )}
             {index === 2 && (
-              <div className="flex items-center h-full w-full overflow-scroll">
+              <div className="flex items-center h-full w-full overflow-scroll ">
                 {testDraft &&
                   testDraft.map((item: ISchemaInfo, index: any) => (
-                    <div key={index} className=" ml-3 flex">
+                    <div key={index} className=" ml-3 flex hover:scale-105 duration-500 cursor-pointer">
                       <a
                         target="_blank"
                         href={`${fivenetScan}schema/${item.schema_name}`}
