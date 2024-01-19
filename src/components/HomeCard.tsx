@@ -14,14 +14,14 @@ import Loading from "./Loading";
 import { getListDraft } from "@/service/getListDraft";
 import getDataTestnet from "@/service/getDataTestnet";
 import { ISchemaInfo } from "@/type/Nftmngr";
-import deleate_icon from '../../public/pic/XCircleblue.png';
+import deleate_icon from "../../public/pic/XCircleblue.png";
 import { useSession } from "next-auth/react";
 import ENV from "@/utils/ENV";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 type Props = {};
 
-export default function HomeCard({ }: Props) {
+export default function HomeCard({}: Props) {
   const { data: session } = useSession();
   const router = useRouter();
   const items = ["Draft", "Live", "Testnet"];
@@ -31,7 +31,8 @@ export default function HomeCard({ }: Props) {
   const [isLoading2, setIsLoading2] = useState(true);
   const [testDraft, setTestDraft] = useState([]);
   const fivenetScan = process.env.NEXT_PUBLIC__SIXSCAN_FIVENET;
-  console.log(listDraft)
+  //   console.log(listDraft)
+
   // const getListDraft = async () => {
   //     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
   //     const params = {};
@@ -62,6 +63,7 @@ export default function HomeCard({ }: Props) {
         // console.log(">>.", list_draft);
         // console.log("five", fivenetScan);
         setListdraft(list_draft);
+        // const filteredChain = chainMapper.filter(item => item.chain === "FIVENET");
         const test_draft = await getDataTestnet();
         // console.log(">>>.", test_draft);
         setTestDraft(test_draft.data.result);
@@ -80,9 +82,9 @@ export default function HomeCard({ }: Props) {
     const updatedAttributes = listDraft.filter((_, i) => i !== index);
     setListdraft(updatedAttributes);
     return;
-  }
+  };
 
-  const handleDelete = async (schema_revision:string) => {
+  const handleDelete = async (schema_revision: string) => {
     const apiUrl = `${ENV.Client_API_URL}/schema/delete_daft/${schema_revision}`;
     // console.log(apiUrl)
     try {
@@ -96,8 +98,7 @@ export default function HomeCard({ }: Props) {
       console.log(res);
 
       if (res.statusCode === "V:0001") {
-       
-        console.log("Deleted")
+        console.log("Deleted");
         return;
       } else {
         return;
@@ -134,7 +135,7 @@ export default function HomeCard({ }: Props) {
                         schema_name: any;
                         schema_info: {
                           schema_info: {
-                            origin_data: { origin_base_uri: any };
+                            origin_data: { origin_base_uri: any, origin_chain: string, origin_contract_address: string                            };
                           };
                         }[];
                       },
@@ -150,8 +151,6 @@ export default function HomeCard({ }: Props) {
                           >
                             <HomeNewintregationCard></HomeNewintregationCard>
                           </div>
-
-
                         )}
                         <div
                           //   onClick={() => {
@@ -159,7 +158,7 @@ export default function HomeCard({ }: Props) {
                           //       scroll: false,
                           //     });
                           //   }}
-                         
+
                           className=" relative hover:scale-105 duration-500 cursor-pointer"
                         >
                           {/* <DeleteIcon
@@ -171,7 +170,10 @@ export default function HomeCard({ }: Props) {
                             className="  z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute bottom-4 right-4"
                             src={deleate_icon}
                             alt={"delete"}
-                            onClick={() => {handleDelete(item.schema_revision) ; handleDel(index)}}
+                            onClick={() => {
+                              handleDelete(item.schema_revision);
+                              handleDel(index);
+                            }}
                           ></Image>
                           <HomeDraftCard
                             schema_revision={item.schema_revision}
@@ -184,6 +186,18 @@ export default function HomeCard({ }: Props) {
                               item.schema_info[0].schema_info.origin_data
                                 .origin_base_uri
                             }
+                            OriginChain={
+                                item.schema_info &&
+                                item.schema_info[0] &&
+                                item.schema_info[0].schema_info.origin_data
+                                .origin_chain
+                            }
+                            OriginContractAddress={
+                                item.schema_info &&
+                                item.schema_info[0] &&
+                                item.schema_info[0].schema_info.origin_data
+                                .origin_contract_address
+                            }
                           ></HomeDraftCard>
                         </div>
                       </div>
@@ -195,7 +209,10 @@ export default function HomeCard({ }: Props) {
               <div className="flex items-center h-full w-full overflow-scroll ">
                 {testDraft &&
                   testDraft.map((item: ISchemaInfo, index: any) => (
-                    <div key={index} className=" ml-3 flex hover:scale-105 duration-500 cursor-pointer">
+                    <div
+                      key={index}
+                      className=" ml-3 flex hover:scale-105 duration-500 cursor-pointer"
+                    >
                       <a
                         target="_blank"
                         href={`${fivenetScan}schema/${item.schema_name}`}
