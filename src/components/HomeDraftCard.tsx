@@ -31,7 +31,7 @@ function HomeDraftCard(props: Props) {
 
   const handleDelete = async () => {
     const apiUrl = `${ENV.Client_API_URL}/schema/delete_daft/${props.schema_revision}`;
-    console.log(apiUrl)
+    // console.log(apiUrl)
     try {
       const req = await axios.delete(apiUrl, {
         headers: {

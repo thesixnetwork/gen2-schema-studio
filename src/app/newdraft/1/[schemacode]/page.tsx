@@ -61,7 +61,7 @@ export default function Page({
 
     const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            console.log("isDaft:", isDaft)
+            // console.log("isDaft:", isDaft)
             setSchemaCode(isDaft.schema_info.code);
             setCollectionName(isDaft.schema_info.name);
             setDescription(isDaft.schema_info.description);

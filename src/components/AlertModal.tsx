@@ -41,7 +41,7 @@ const AlertModal = (props: Props) => {
   const handleCloseButton = () => {
     setIsClose(true);
     props.setIsOpen(false);
-    console.log("dddd");
+    // console.log("dddd");
     onClose();
   };
 

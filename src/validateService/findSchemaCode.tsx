@@ -23,7 +23,7 @@ export async function findSchemaCode(schemaCode: string) {
         headers: headers, // Pass headers as an object
     })
         .then((response) => {
-            console.log("response :",response.data.data.status);
+            // console.log("response :",response.data.data.status);
             return response.data.data.status
         })
         .catch((error) => {

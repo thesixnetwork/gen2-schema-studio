@@ -70,6 +70,12 @@ export default function HomeCard({}: Props) {
     fetchData();
   }, []);
 
+  const handleDel = (index: number) => {
+    const updatedAttributes = listDraft.filter((_, i) => i !== index);
+    setListdraft(updatedAttributes);
+    return;
+  }
+
   return (
     <div>
       {isLoading && <Loading></Loading>}
@@ -120,6 +126,7 @@ export default function HomeCard({}: Props) {
                         //       scroll: false,
                         //     });
                         //   }}
+                        onClick={() => handleDel(index)}
                         >
                           <HomeDraftCard
                             schema_revision={item.schema_revision}

@@ -6,7 +6,7 @@ export async function GET(
   ) {
 
 
-  console.log(JSON.stringify(request.url,null,2));
+  // console.log(JSON.stringify(request.url,null,2));
   // console.log(request.);
   // console.log(params.schemacode);
 
