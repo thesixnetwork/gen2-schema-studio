@@ -9,28 +9,51 @@ import ENV from "@/utils/ENV";
 import { useRouter } from "next/navigation";
 import logoNFTGen2 from "../../public/pic/logo-nftgen2.png";
 import { useSession } from "next-auth/react";
-import e_coin from "../../public/pic/e_coin.png"
+import e_coin from "../../public/pic/e_coin.png";
 
+type ChainMapper = {
+  FIVENET: string;
+  SIXNET: string;
+  GOERLI: string;
+  ETHEREUM: string;
+  BAOBAB: string;
+  KLAYTN: string;
+  BNBT: string;
+  BNB: string;
+};
 type Props = {
   schema_revision: any;
   CollectionName: any;
   CollectionImage: any;
+  OriginChain: keyof ChainMapper;
+  OriginContractAddress: string;
   type?: string;
 };
 
 function HomeDraftCard(props: Props) {
   const [imgUrl, setImgUrl] = useState("");
   const [loading, setLoading] = useState(true);
+  const [TotalSupply, setTotalSupply] = useState(0);
   const [error, setError] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-
+  // console.log("TotalSupply",TotalSupply)
+  // console.log("OriginChain",props.OriginChain)
+  // console.log("OriginContractAddress",props.OriginContractAddress)
+  const chainMapper = {
+    FIVENET: "150",
+    SIXNET: "98",
+    GOERLI: "5",
+    ETHEREUM: "1",
+    BAOBAB: "1001",
+    KLAYTN: "8217",
+    BNBT: "97",
+    BNB: "56",
+  };
 
   const handleError = () => {
     setError(true);
   };
-
-
 
   useEffect(() => {
     const getImage = async () => {
@@ -49,19 +72,49 @@ function HomeDraftCard(props: Props) {
         setLoading(false);
       }
     };
+    const getTotalSupply = async () => {
+      const apiUrl = `${ENV.Client_API_URL}schema/total_supply_from_contract`; // Replace with your API endpoint
+      const params = {
+        contract_address: `${props.OriginContractAddress}`,
+        chain_id: chainMapper[props.OriginChain],
+      };
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      };
+      try {
+          const req = await axios.get(apiUrl, {
+            params: params, // Pass parameters as an object
+            headers: headers, // Pass headers as an object
+          });
+          // console.log(req.data.data.total)
+          setTotalSupply(req.data.data.total)
+          return;
+      } catch (err) {
+        // console.log(err);
+        setLoading(false);
+      }
+    };
     getImage();
+    if (props.OriginChain && props.OriginContractAddress) {
+      getTotalSupply();
+    }
   }, []);
 
   //write code in tailwind to graedient this color linear-gradient(90deg, rgba(122,142,215,0.55) 0%, rgba(9,9,121,0.55) 50%, rgba(217,217,217,0.3) 100%)
 
   return (
     <div className=" w-draftCardWidth h-draftCardHeight  rounded-2xl bg-gradient-24 from-Act7 via-bg to-Act7 p-[0.08rem] ">
-      <div className=" relative h-full w-full    " >
-        <div className=" w-full h-full rounded-2xl bg-bg p-3 flex flex-col  items-center justify-between" onClick={() => {
-          router.push(`/newdraft/1/${props.schema_revision}`, {
-            scroll: false,
-          });
-        }}>
+      <div className=" relative h-full w-full    ">
+        <div
+          className=" w-full h-full rounded-2xl bg-bg p-3 flex flex-col  items-center justify-between"
+          onClick={() => {
+            router.push(`/newdraft/1/${props.schema_revision}`, {
+              scroll: false,
+            });
+          }}
+        >
           {props.CollectionImage === "" ? (
             props.type === "testnet" ? (
               <Image
@@ -96,7 +149,7 @@ function HomeDraftCard(props: Props) {
               ></img>
               <div className=" absolute w-full h-[2.5rem] flex justify-between px-[15%] items-center backdrop-blur-md backdrop-brightness-110 rounded-b-lg left-0 bottom-0 ">
                 <Image className=" w-8 h-8" src={e_coin} alt={""}></Image>
-                <p className=" text-Act1">2,000 Items</p>
+                <p className=" text-Act1">{TotalSupply} Items</p>
               </div>
             </div>
           )}

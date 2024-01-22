@@ -109,7 +109,7 @@ const CaradEditDaft: React.FC<{
       const filteredArray = Attribute2.filter(
         (item) => item.name === e.target.value
       );
-      console.log(filteredArray);
+      // console.log(filteredArray);
       // console.log(checkDatatype2);
       const error = await CheckErrorI(
         e.target.value,
@@ -135,7 +135,7 @@ const CaradEditDaft: React.FC<{
       const filteredArray = Attribute2.filter(
         (item) => item.name === value
       );
-      console.log(filteredArray);
+      // console.log(filteredArray);
       // console.log(checkDatatype2);
       const error = await CheckErrorI(
         value,
@@ -415,7 +415,7 @@ const CaradEditDaft: React.FC<{
           };
           data_type = "boolean";
         }
-        console.log(default_mint_value)
+        // console.log(default_mint_value)
         setNewAttributes((prevPerson) => ({
           ...prevPerson,
           default_mint_value: default_mint_value!,
