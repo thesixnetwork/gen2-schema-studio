@@ -50,10 +50,16 @@ export default function Page({
     (async () => {
       try {
         const send = await getSchemaInfo(schemacode);
+        if(send){
         setIsDaft(send);
         setSchemaCode(send.schema_info.code);
         setStepDraft(send.current_state);
         setLoading(false);
+        }
+        // setIsDaft(send);
+        // setSchemaCode(send.schema_info.code);
+        // setStepDraft(send.current_state);
+        // setLoading(false);
         // Process the response or update state as needed
       } catch (error) {
         // Handle errors

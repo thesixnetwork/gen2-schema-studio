@@ -7,19 +7,6 @@ import { ISchemaInfo, ItokenAttributes } from "@/type/Nftmngr";
 import CardEditDaft from "./CradEditDaft";
 import CreateAttribute from "./CreateAttribute";
 import {
-  Box,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  IconButton,
-  Input,
-  Text,
-  Table,
-  Tr,
-  Th,
-  Td,
   Flex,
 } from "@chakra-ui/react";
 
@@ -42,7 +29,6 @@ const CaradNewDaft: React.FC<{
   setOnEditOrCreate: Dispatch<SetStateAction<boolean>>;
 }> = ({ isDaft, isState, setIsDaft, schemacode, setOnEditOrCreate }) => {
   const { data: session } = useSession();
-
   const router = useRouter();
   const [onEdit, setOnEdit] = useState(false);
   const [onCreate, setOnCreate] = useState(false);
@@ -90,7 +76,7 @@ const CaradNewDaft: React.FC<{
       const req = await axios.post(apiUrl, requestData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+          Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
         },
       });
       const res = req.data;
@@ -108,6 +94,15 @@ const CaradNewDaft: React.FC<{
 
   };
 
+  // useEffect(() => {
+  //   if (isState === 4) {
+  //     setIsAttributes(isDaft.schema_info.onchain_data.nft_attributes);
+  //   }
+  //   if (isState === 5) {
+  //     setIsAttributes(isDaft.schema_info.onchain_data.token_attributes);
+  //   }
+  // }, [isState]);
+
   useEffect(() => {
     if (isState === 4) {
       setIsAttributes(isDaft.schema_info.onchain_data.nft_attributes);
@@ -115,7 +110,8 @@ const CaradNewDaft: React.FC<{
     if (isState === 5) {
       setIsAttributes(isDaft.schema_info.onchain_data.token_attributes);
     }
-  }, [isState]);
+  }, [isState, isDaft.schema_info.onchain_data.nft_attributes, isDaft.schema_info.onchain_data.token_attributes]);
+  
 
   return (
     <>

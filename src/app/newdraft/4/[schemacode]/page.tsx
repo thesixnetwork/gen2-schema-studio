@@ -40,7 +40,7 @@ export default function Page({
   // console.log(session)
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
-  const [initialDaft, setInitialDaft] = useState(null)
+  const [initialDaft, setInitialDaft] = useState<ISchemaInfo | null>(null)
   const [loading, setLoading] = useState(true);
   const [onEditOrCreate, setOnEditOrCreate] = useState(false);
   const router = useRouter();
@@ -51,10 +51,21 @@ export default function Page({
     (async () => {
       try {
         const schemaInfo = await getSchemaInfo(schemacode);
-        setIsDaft(schemaInfo);
-        setInitialDaft(schemaInfo);
-        setLoading(false);
+        if(schemaInfo){
+          setIsDaft(schemaInfo);
+          setInitialDaft(schemaInfo);
+          setSchemaCode(schemaInfo.schema_info.code);
+          setStepDraft(schemaInfo.current_state);
+          setLoading(false);
+        }
+        // setIsDaft(schemaInfo);
+        // setInitialDaft(schemaInfo);
+        // setLoading(false);
         // Process the response or update state as needed
+        // if (isDaft) {
+        //   setSchemaCode(schemaInfo.schema_info.code);
+        //   setStepDraft(schemaInfo.current_state);
+        // }
       } catch (error) {
         // Handle errors
         console.error("Error fetching data:", error);
@@ -62,17 +73,16 @@ export default function Page({
     })();
   }, [schemacode]);
 
-  const getDraftInfo = () => {
-    if (isDaft !== null) {
-      // console.log("isDaft:", isDaft, "initialDaft:", initialDaft, "isEqual:", isDaft === initialDaft)
-      setSchemaCode(isDaft.schema_info.code);
-      setStepDraft(isDaft.current_state);
-    }
-  };
+  // const getDraftInfo = () => {
+  //   if (isDaft !== null) {
+  //     setSchemaCode(isDaft.schema_info.code);
+  //     setStepDraft(isDaft.current_state);
+  //   }
+  // };
 
-  useEffect(() => {
-    getDraftInfo();
-  }, [isDaft]);
+  // useEffect(() => {
+  //   getDraftInfo();
+  // }, [isDaft]);
   // const isDaft = await getSchemaInfo(schemacode);
   // console.log(JSON.stringify(isDaft, null, 2));
   return (

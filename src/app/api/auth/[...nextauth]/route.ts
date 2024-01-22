@@ -80,12 +80,10 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {},
-      authorize: async (credentials) => {
-        // Your custom authentication logic here
-        // const user = await verifyPassword(credentials.username, credentials.password);
-        // const user = credentials.accessToken;
+      authorize: async (credentials:Record<never, string>| undefined) => {
         const user = {
-          accessToken: credentials.accessToken,
+          id: "Client",
+          accessToken:credentials.accessToken,
           address: credentials.address,
           balance: credentials.balance,
         };

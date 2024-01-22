@@ -13,11 +13,6 @@ import {
   NumberDecrementStepper,
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
-import { Divider, Center } from "@chakra-ui/react";
-
-import HomeFooter from "@/components/HomeFooter";
-import HomeNavBar from "@/components/HomeNavbar";
-import HomeSidebar from "@/components/HomeSidebar";
 
 import { ItokenAttributes } from "@/type/Nftmngr";
 import { ISchemaInfo } from "@/type/Nftmngr";
@@ -115,7 +110,7 @@ const CreateAttribute: React.FC<{
       const filteredArray = Attribute2.filter(
         (item) => item.name === value
       );
-      console.log(filteredArray);
+      // console.log(filteredArray);
       // console.log(checkDatatype2);
       const error = await CheckErrorII(
         value,
@@ -206,7 +201,7 @@ const CreateAttribute: React.FC<{
       const filteredArray = Attribute2.filter(
         (item) => item.name === e.target.value
       );
-      console.log(filteredArray);
+      // console.log(filteredArray);
       // console.log(checkDatatype2);
       const error = await CheckErrorII(
         e.target.value,
@@ -294,8 +289,9 @@ const CreateAttribute: React.FC<{
           const req = await axios.post(apiUrl, requestData, {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+              Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
             },
+            
           });
           const res = req.data;
           // console.log(res)

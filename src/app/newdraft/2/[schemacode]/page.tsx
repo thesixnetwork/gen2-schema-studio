@@ -108,6 +108,34 @@ export default function Page({
         })();
     }, [schemacode]);
 
+    const checkIndex : () => void = () => {
+        if (originChain === "FIVENET") {
+            setChainTypeIndex(0)
+            setChainIndex(0)
+        } else if (originChain === "GOERLI") {
+            setChainTypeIndex(0)
+            setChainIndex(1)
+        } else if (originChain === "BAOBAB") {
+            setChainTypeIndex(0)
+            setChainIndex(2)
+        } else if (originChain === "BNBT") {
+            setChainTypeIndex(0)
+            setChainIndex(3)
+        } else if (originChain === "SIXNET") {
+            setChainTypeIndex(1)
+            setChainIndex(0)
+        } else if (originChain === "ETHEREUM") {
+            setChainTypeIndex(1)
+            setChainIndex(1)
+        } else if (originChain === "KLAYTN") {
+            setChainTypeIndex(1)
+            setChainIndex(2)
+        } else if (originChain === "BNB") {
+            setChainTypeIndex(1)
+            setChainIndex(3)
+        }
+    }
+
     useEffect(  () => {
         const getDraftInfo =  () => {
             if (isDaft !== "" && isDaft !== null) {
@@ -129,7 +157,7 @@ export default function Page({
         return () => {
             // Cleanup or unsubscribe if needed
         };
-    }, [isDaft]);
+    }, [isDaft,checkIndex()]);
 
 
     const handleInputChangeChaChainIndex = (value: number) => {
@@ -195,33 +223,33 @@ export default function Page({
     }, [originContractAddress,chainTypeIndex,chainIndex])
 
 
-    const checkIndex = () => {
-        if (originChain === "FIVENET") {
-            setChainTypeIndex(0)
-            setChainIndex(0)
-        } else if (originChain === "GOERLI") {
-            setChainTypeIndex(0)
-            setChainIndex(1)
-        } else if (originChain === "BAOBAB") {
-            setChainTypeIndex(0)
-            setChainIndex(2)
-        } else if (originChain === "BNBT") {
-            setChainTypeIndex(0)
-            setChainIndex(3)
-        } else if (originChain === "SIXNET") {
-            setChainTypeIndex(1)
-            setChainIndex(0)
-        } else if (originChain === "ETHEREUM") {
-            setChainTypeIndex(1)
-            setChainIndex(1)
-        } else if (originChain === "KLAYTN") {
-            setChainTypeIndex(1)
-            setChainIndex(2)
-        } else if (originChain === "BNB") {
-            setChainTypeIndex(1)
-            setChainIndex(3)
-        }
-    }
+    // const checkIndex : () => void = () => {
+    //     if (originChain === "FIVENET") {
+    //         setChainTypeIndex(0)
+    //         setChainIndex(0)
+    //     } else if (originChain === "GOERLI") {
+    //         setChainTypeIndex(0)
+    //         setChainIndex(1)
+    //     } else if (originChain === "BAOBAB") {
+    //         setChainTypeIndex(0)
+    //         setChainIndex(2)
+    //     } else if (originChain === "BNBT") {
+    //         setChainTypeIndex(0)
+    //         setChainIndex(3)
+    //     } else if (originChain === "SIXNET") {
+    //         setChainTypeIndex(1)
+    //         setChainIndex(0)
+    //     } else if (originChain === "ETHEREUM") {
+    //         setChainTypeIndex(1)
+    //         setChainIndex(1)
+    //     } else if (originChain === "KLAYTN") {
+    //         setChainTypeIndex(1)
+    //         setChainIndex(2)
+    //     } else if (originChain === "BNB") {
+    //         setChainTypeIndex(1)
+    //         setChainIndex(3)
+    //     }
+    // }
 
     useEffect(() => {
         if (chainTypeIndex === 0) {

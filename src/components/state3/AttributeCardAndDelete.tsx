@@ -7,7 +7,7 @@ type Props = {
   name: string;
   dataType: string;
   traitType: string;
-  value: string;
+  value: string | undefined;
   onDelete: () => void; // Add onDelete as a prop with a function signature
   onSettingBarClick: () => void; // Add onSettingBarClick as a prop with a function signature
 };

@@ -20,7 +20,7 @@ api.interceptors.request.use(
     // console.log("sssssssss",sesstion)
 
     if (sesstion) {
-        config.headers.Authorization = `Bearer ${sesstion.user.accessToken}`;
+        config.headers.Authorization = `Bearer ${sesstion?.user?.accessToken}`;
     }
     return config;
   },

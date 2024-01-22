@@ -75,7 +75,7 @@ export default function Layout({
 
     useEffect(() => {
         RefreshToken()
-    }, [refreshTokenNumber])
+    }, [refreshTokenNumber,RefreshToken])
 
     useEffect(() => {
         pathname.includes("then") || pathname.includes("when") ? setCheckIsThenOrWhen(true) : setCheckIsThenOrWhen(false)

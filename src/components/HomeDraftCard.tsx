@@ -81,7 +81,7 @@ function HomeDraftCard(props: Props) {
 
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
       };
       try {
           const req = await axios.get(apiUrl, {

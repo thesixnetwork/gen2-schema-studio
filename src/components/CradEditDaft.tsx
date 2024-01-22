@@ -514,7 +514,7 @@ const CaradEditDaft: React.FC<{
         const req = await axios.post(apiUrl, requestData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+            Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
           },
         });
         const res = req.data;
