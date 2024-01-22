@@ -54,7 +54,7 @@ export default function Page({
 
     const [chainMapper, setChainMapper] = useState([
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "FIVENET",
                     chain_id: "98"
@@ -66,7 +66,7 @@ export default function Page({
             ]
         },
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "GOERLI",
                     chain_id: "1"
@@ -78,7 +78,7 @@ export default function Page({
             ]
         },
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "BAOBAB",
                     chain_id: "1001"
@@ -90,7 +90,7 @@ export default function Page({
             ]
         },
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "BNBT",
                     chain_id: "97"
@@ -120,6 +120,7 @@ export default function Page({
                 console.error('Error fetching data:', error);
             }
         })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [schemacode]);
 
     const getDraftInfo = () => {
@@ -133,6 +134,7 @@ export default function Page({
     useEffect(() => {
         getDraftInfo()
         // get_origin_attributes_form_contract(contractAddres)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDaft])
 
     const get_origin_attributes_form_contract = async (contract: string) => {
@@ -153,7 +155,7 @@ export default function Page({
     const getAttribute = async () => {
         if (contractAddres !== "" && contractAddres !== null) {
             try {
-                const originAttribute = await getOriginAttributFromContract(contractAddres,chainId)
+                const originAttribute = await getOriginAttributFromContract(contractAddres, chainId)
                 console.log("originAttribute", originAttribute)
 
                 // Assuming originAttribute is an array of attributes
@@ -183,7 +185,7 @@ export default function Page({
             }
         }
 
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contractAddres])
 
 
@@ -368,8 +370,12 @@ export default function Page({
     };
 
     useEffect(() => {
+
         validateName();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [name]);
+
+
 
     // Check if the attribute with the given name already exists
     const isAttributeExists = (newAttributeName: string) => {
@@ -393,6 +399,7 @@ export default function Page({
 
     useEffect(() => {
         validateTraitType();
+        
     }, [traitType]);
 
     // ------------------------Validate Data -----------------------------------------------//
@@ -405,7 +412,7 @@ export default function Page({
         console.log("saveState1_status :", saveState3_status)
         router.push(`/newdraft/4/${schemacode}`)
         setIsLoadingSaveState3(false)
-       
+
     }
 
     const backPage = () => {
@@ -438,7 +445,7 @@ export default function Page({
                             <NewCollecitonCard></NewCollecitonCard>
                         </div>
                         {isDaft !== null && (isDaft.schema_info.origin_data.origin_attributes).map((item, index) => (
-                            <div >
+                            <div key={index} >
                                 {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   " >
                                     <Image
                                         className='z-20 w-7 h-7 hover:scale-110 duration-300 cursor-pointer absolute top-2 right-2'

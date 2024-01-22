@@ -2,7 +2,7 @@
 
 import TapState from "@/components/TapState";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react"
 import InputCardOneLine from "@/components/state1/InputCardOneLine";
 import BackPageButton from "@/components/BackPageButton";
@@ -189,12 +189,17 @@ export default function Page({
         }
     }
 
-    useEffect(() => {
-        if (isDaft) {
-            setOnEdining((isDaft.schema_info.code === schemaCode) && (isDaft.schema_info.name === collectionName) && (isDaft.schema_info.description === description))
-        }
-    }, [schemaCode, collectionName, description])
+    const memoizedIsDaft = useMemo(() => isDaft, [isDaft]);
 
+    useEffect(() => {
+        if (memoizedIsDaft) {
+            setOnEdining(
+                memoizedIsDaft.schema_info.code === schemaCode &&
+                memoizedIsDaft.schema_info.name === collectionName &&
+                memoizedIsDaft.schema_info.description === description
+            );
+        }
+    }, [memoizedIsDaft, schemaCode, collectionName, description]);
 
     return (
         <>

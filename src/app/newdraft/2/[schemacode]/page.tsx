@@ -2,7 +2,7 @@
 
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import { getOriginAttributFromContract } from "@/service/getOriginAttributFromContract";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useSession } from "next-auth/react"
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
@@ -43,7 +43,7 @@ export default function Page({
 
     const [chainMapper, setChainMapper] = useState([
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "FIVENET",
                     chain_id: "150"
@@ -55,7 +55,7 @@ export default function Page({
             ]
         },
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "GOERLI",
                     chain_id: "5"
@@ -67,7 +67,7 @@ export default function Page({
             ]
         },
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "BAOBAB",
                     chain_id: "1001"
@@ -79,7 +79,7 @@ export default function Page({
             ]
         },
         {
-            Chain:[
+            Chain: [
                 {
                     chain: "BNBT",
                     chain_id: "97"
@@ -99,7 +99,7 @@ export default function Page({
                 const schemaInfo = await getSchemaInfo(schemacode);
                 // console.log(schemaInfo)
                 setIsDaft(schemaInfo)
-               
+
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
@@ -108,8 +108,40 @@ export default function Page({
         })();
     }, [schemacode]);
 
-    useEffect(  () => {
-        const getDraftInfo =  () => {
+
+
+    const checkIndex = () => {
+        if (originChain === "FIVENET") {
+            setChainTypeIndex(0)
+            setChainIndex(0)
+        } else if (originChain === "GOERLI") {
+            setChainTypeIndex(0)
+            setChainIndex(1)
+        } else if (originChain === "BAOBAB") {
+            setChainTypeIndex(0)
+            setChainIndex(2)
+        } else if (originChain === "BNBT") {
+            setChainTypeIndex(0)
+            setChainIndex(3)
+        } else if (originChain === "SIXNET") {
+            setChainTypeIndex(1)
+            setChainIndex(0)
+        } else if (originChain === "ETHEREUM") {
+            setChainTypeIndex(1)
+            setChainIndex(1)
+        } else if (originChain === "KLAYTN") {
+            setChainTypeIndex(1)
+            setChainIndex(2)
+        } else if (originChain === "BNB") {
+            setChainTypeIndex(1)
+            setChainIndex(3)
+        }
+    }
+
+
+
+    useEffect(() => {
+        const getDraftInfo = () => {
             if (isDaft !== "" && isDaft !== null) {
                 // console.log("isDaft:", isDaft);
                 setOriginChain(isDaft.schema_info.origin_data.origin_chain)
@@ -118,17 +150,16 @@ export default function Page({
                 setOriginContractAddress(isDaft.schema_info.origin_data.origin_contract_address);
                 setStepDraft(isDaft.current_state);
                 setIsLoading(false)
-               
             }
         };
 
         getDraftInfo(); // Call the function on mount
         checkIndex();
 
-        
         return () => {
             // Cleanup or unsubscribe if needed
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDaft]);
 
 
@@ -160,7 +191,7 @@ export default function Page({
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
         setIsLoadingSave(false)
-        
+
     }
 
 
@@ -179,7 +210,7 @@ export default function Page({
             try {
                 setIsLoadingGetBaseURI(true)
                 const origin_base_URI = await getBaseURI(originContractAddress, chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
-                console.log("base_uri",chainMapper[chainIndex].Chain[chainTypeIndex].chain_id )
+                console.log("base_uri", chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
                 if (typeof origin_base_URI !== 'string') {
                     setOriginBaseURI("")
                 } else {
@@ -192,36 +223,9 @@ export default function Page({
                 setIsLoadingGetBaseURI(false)
             }
         })();
-    }, [originContractAddress,chainTypeIndex,chainIndex])
+    }, [originContractAddress, chainTypeIndex, chainIndex, chainMapper])
 
 
-    const checkIndex = () => {
-        if (originChain === "FIVENET") {
-            setChainTypeIndex(0)
-            setChainIndex(0)
-        } else if (originChain === "GOERLI") {
-            setChainTypeIndex(0)
-            setChainIndex(1)
-        } else if (originChain === "BAOBAB") {
-            setChainTypeIndex(0)
-            setChainIndex(2)
-        } else if (originChain === "BNBT") {
-            setChainTypeIndex(0)
-            setChainIndex(3)
-        } else if (originChain === "SIXNET") {
-            setChainTypeIndex(1)
-            setChainIndex(0)
-        } else if (originChain === "ETHEREUM") {
-            setChainTypeIndex(1)
-            setChainIndex(1)
-        } else if (originChain === "KLAYTN") {
-            setChainTypeIndex(1)
-            setChainIndex(2)
-        } else if (originChain === "BNB") {
-            setChainTypeIndex(1)
-            setChainIndex(3)
-        }
-    }
 
     useEffect(() => {
         if (chainTypeIndex === 0) {
@@ -248,12 +252,18 @@ export default function Page({
 
     }, [chainTypeIndex, chainIndex])
 
+    const memoizedIsDaft = useMemo(() => isDaft, [isDaft]);
+
     useEffect(() => {
-        if (isDaft) {
-            setOnEdining((isDaft.schema_info.origin_data.origin_chain === originChain) && (isDaft.schema_info.origin_data.origin_base_uri === originBaseURI) && (isDaft.schema_info.origin_data.origin_contract_address === originContractAddress))
-            // console.log(isDaft.schema_info.origin_data.origin_chain ,originChain,isDaft.schema_info.origin_data.origin_base_uri,originBaseURI,isDaft.schema_info.origin_data.origin_contract_address,originContractAddress )
+        if (memoizedIsDaft) {
+            setOnEdining(
+                (memoizedIsDaft.schema_info.origin_data.origin_chain === originChain) &&
+                (memoizedIsDaft.schema_info.origin_data.origin_base_uri === originBaseURI) &&
+                (memoizedIsDaft.schema_info.origin_data.origin_contract_address === originContractAddress)
+            );
         }
-    }, [originChain,originBaseURI,originContractAddress])
+    }, [memoizedIsDaft, originChain, originBaseURI, originContractAddress]);
+
 
     return (
         <>
@@ -263,7 +273,7 @@ export default function Page({
                 <InputChainTypeCard title={"Origin Chain"} require={true} chainIndex={chainIndex} onChangeChainIndex={handleInputChangeChaChainIndex} ></InputChainTypeCard>
                 <InputCardOneLineLarge title={"Origin Contract Address"} require={false} placeholder={"0x40df0C834CE7549e9234D11525aD1f7E7CF48E88"} validate={true} errorMassage={""} value={originContractAddress} onChange={handleInputChangeOriginContractAddress} loading={isLoadingGetBaseURI}></InputCardOneLineLarge>
                 <InputToggleCard title={"Chain Type"} require={true} chainIndex={chainTypeIndex} onChangeChainIndex={handleInputChangeChainTypeIndex}></InputToggleCard>
-                
+
                 <InputCardOneLineLarge title={"Origin Base URI"} require={false} placeholder={"https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/"} validate={true} errorMassage={""} value={originBaseURI} onChange={handleInputChangeOriginBaseURI} loading={false}></InputCardOneLineLarge>
                 <div className=' w-[90%]  flex justify-between items-center'>
                     <div onClick={backPage}>
