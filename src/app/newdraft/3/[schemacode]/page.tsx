@@ -134,7 +134,6 @@ export default function Page({
     useEffect(() => {
         getDraftInfo()
         // get_origin_attributes_form_contract(contractAddres)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDaft])
 
     const get_origin_attributes_form_contract = async (contract: string) => {
@@ -185,7 +184,7 @@ export default function Page({
             }
         }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+   
     }, [contractAddres])
 
 
@@ -372,7 +371,7 @@ export default function Page({
     useEffect(() => {
 
         validateName();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [name]);
 
 
