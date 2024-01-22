@@ -1,6 +1,6 @@
 "use server";
 import axios from "axios";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import ENV from "@/utils/ENV";

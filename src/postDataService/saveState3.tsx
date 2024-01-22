@@ -3,11 +3,13 @@ import React from 'react'
 import api from "@/utils/custiomAxios";
 import axios from "axios";
 import { getServerSession } from "next-auth";
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import ENV from '@/utils/ENV';
+import { IOriginAttributes } from "@/type/Nftmngr";
 
 
-export async function saveState3(originAttributes : [], schemaCode: string) {
+
+export async function saveState3(originAttributes : IOriginAttributes[], schemaCode: string) {
     const apiUrl = `${ENV.API_URL}/schema/set_schema_info`;
     const sesstion = await getServerSession(authOptions);
     const requestData = {
@@ -28,7 +30,7 @@ export async function saveState3(originAttributes : [], schemaCode: string) {
         const req = await axios.post(apiUrl, requestData, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sesstion.user.accessToken}`  // Set the content type to JSON
+                'Authorization': `Bearer ${sesstion?.user?.accessToken}`  // Set the content type to JSON
                 // Add any other headers your API requires
             }
         },);

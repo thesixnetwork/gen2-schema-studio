@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 import logoNFTGen2 from "../../public/pic/logo-nftgen2.png";
 import { useSession } from "next-auth/react";
 import e_coin from "../../public/pic/e_coin.png";
+import s_coin from "../../public/pic/chainlogocolor1.png"
+import k_coin from "../../public/pic/chainlogocolor3.png"
+import b_coin from "../../public/pic/chainlogocolor4.png"
 
 type ChainMapper = {
   FIVENET: string;
@@ -84,13 +87,13 @@ function HomeDraftCard(props: Props) {
         Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
       };
       try {
-          const req = await axios.get(apiUrl, {
-            params: params, // Pass parameters as an object
-            headers: headers, // Pass headers as an object
-          });
-          // console.log(req.data.data.total)
-          setTotalSupply(req.data.data.total)
-          return;
+        const req = await axios.get(apiUrl, {
+          params: params, // Pass parameters as an object
+          headers: headers, // Pass headers as an object
+        });
+        // console.log(req.data.data.total)
+        setTotalSupply(req.data.data.total)
+        return;
       } catch (err) {
         // console.log(err);
         setLoading(false);
@@ -148,7 +151,18 @@ function HomeDraftCard(props: Props) {
                 onError={() => handleError()}
               ></img>
               <div className=" absolute w-full h-[2.5rem] flex justify-between px-[15%] items-center backdrop-blur-md backdrop-brightness-110 rounded-b-lg left-0 bottom-0 ">
-                <Image className=" w-8 h-8" src={e_coin} alt={""}></Image>
+                {props.OriginChain === "FIVENET" || props.OriginChain === "SIXNET" &&
+                  <Image className=" w-8 h-8" src={s_coin} alt={""}></Image>
+                }
+                {props.OriginChain === "BNB" || props.OriginChain === "BNBT" &&
+                  <Image className=" w-8 h-8" src={b_coin} alt={""}></Image>
+                }
+                {props.OriginChain === "ETHEREUM" || props.OriginChain === "GOERLI" &&
+                  <Image className=" w-8 h-8" src={e_coin} alt={""}></Image>
+                }
+                {props.OriginChain === "KLAYTN" || props.OriginChain === "BAOBAB" &&
+                  <Image className=" w-8 h-8" src={k_coin} alt={""}></Image>
+                }
                 <p className=" text-Act1">{TotalSupply} Items</p>
               </div>
             </div>

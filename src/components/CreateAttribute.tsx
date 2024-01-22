@@ -1,10 +1,7 @@
 // "use client";
 import {
-  CircularProgress,
   Box,
-  Button,
   Flex,
-  Text,
   Input,
   NumberInput,
   NumberInputField,
@@ -12,18 +9,18 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from "@chakra-ui/react";
-import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 
 import { ItokenAttributes } from "@/type/Nftmngr";
 import { ISchemaInfo } from "@/type/Nftmngr";
-import { postData } from "@/service/postAction";
+// import { postData } from "@/service/postAction";
 import axios from "axios";
 import ENV from "@/utils/ENV";
 import { useSession } from "next-auth/react";
 import { CheckErrorII } from "@/utils/checkError";
 import { CheckErrorIII } from "@/utils/checkError";
 
-import { ConfirmModal } from "@/components/ConfirmModal";
+// import { ConfirmModal } from "@/components/ConfirmModal";
 import InputCardOneLine from "./state1/InputCardOneLine";
 import InputSelectCard from "./state3/InputSelectCard";
 import CancelButton from "./button/CancelButton";
@@ -47,93 +44,301 @@ const CreateAttribute: React.FC<{
   isState,
   // onCreate,
   schemacode,
-  setOnEditOrCreate
+  setOnEditOrCreate,
 }) => {
-    // console.log(onEdit)
-    const { data: session } = useSession();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [errorMessageI, setErrorMessageI] = useState("");
-    const [errorMessageII, setErrorMessageII] = useState("");
-    const [name, setName] = useState("");
-    const [dataType, setDataType] = useState("string")
-    const [traitType, setTraitType] = useState("")
-    const [isError, setIsError] = useState(false);
-    const [isErrorI, setIsErrorI] = useState(false);
-    const [isErrorII, setIsErrorII] = useState(false);
-    const [haveError, setHaveError] = useState(false);
+  // console.log(onEdit)
+  const { data: session } = useSession();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessageI, setErrorMessageI] = useState("");
+  const [errorMessageII, setErrorMessageII] = useState("");
+  const [name, setName] = useState("");
+  const [dataType, setDataType] = useState("string");
+  const [traitType, setTraitType] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isErrorI, setIsErrorI] = useState(false);
+  const [isErrorII, setIsErrorII] = useState(false);
+  const [haveError, setHaveError] = useState(false);
 
+  const [newAttributes, setNewAttributes] = useState<ItokenAttributes>({
+    name: "",
+    data_type: "string",
+    required: true,
+    display_value_field: "",
+    display_option: {
+      bool_true_value: "",
+      bool_false_value: "",
+      opensea: {
+        display_type: "",
+        trait_type: "",
+        max_value: "0",
+      },
+    },
+    default_mint_value: {
+      string_attribute_value: {
+        value: "",
+      },
+    },
+    hidden_overide: false,
+    hidden_to_marketplace: false,
+  });
 
-    const [newAttributes, setNewAttributes] = useState<ItokenAttributes>({
-      name: "",
-      data_type: "string",
-      required: true,
-      display_value_field: "",
+  const [Attribute2, setAttribute2] = useState<ItokenAttributes[]>(
+    isState === 4
+      ? rawData.schema_info.onchain_data.nft_attributes
+      : rawData.schema_info.onchain_data.token_attributes
+  );
+
+  const att4 = rawData.schema_info.onchain_data.nft_attributes;
+  const att5 = rawData.schema_info.onchain_data.token_attributes;
+
+  const [isDefaultValue, setIsDefaultValue] = useState<string | number>(
+    newAttributes.default_mint_value.string_attribute_value?.value ||
+      newAttributes.default_mint_value.number_attribute_value?.value ||
+      newAttributes.default_mint_value.float_attribute_value?.value ||
+      `${newAttributes.default_mint_value.boolean_attribute_value?.value}`
+  );
+
+  // console.log(isAttributes);
+
+  const handleInputChangeName = async (value: string) => {
+    setName(value);
+    const element = document.getElementById(`cr-name`);
+    const filteredArray = Attribute2.filter((item) => item.name === value);
+    // console.log(filteredArray);
+    // console.log(checkDatatype2);
+    const error = await CheckErrorII(value, setErrorMessage, att4, att5);
+
+    setIsError(error);
+
+    setNewAttributes((prevPerson) => ({
+      ...prevPerson,
+      name: value,
+    }));
+  };
+
+  const handleErrorValue = async (value: string) => {
+    const error = await CheckErrorIII(value, setErrorMessageII);
+    setIsErrorII(error);
+  };
+
+  const handleInputChangeChaDataType = (value: string) => {
+    setDataType(value);
+    let default_mint_value;
+    if (value === "string") {
+      default_mint_value = {
+        string_attribute_value: {
+          value: "",
+        },
+      };
+    }
+    if (value === "number") {
+      default_mint_value = {
+        number_attribute_value: {
+          value: "0",
+        },
+      };
+      setErrorMessageII("");
+      setIsErrorII(false);
+    }
+    if (value === "float") {
+      default_mint_value = {
+        float_attribute_value: {
+          value: 0.0,
+        },
+      };
+    }
+    if (value === "boolean") {
+      default_mint_value = {
+        boolean_attribute_value: {
+          value: true,
+        },
+      };
+      setErrorMessageII("");
+      setIsErrorII(false);
+    }
+
+    setNewAttributes((prevPerson) => ({
+      ...prevPerson,
+      data_type: value,
+      default_mint_value: default_mint_value!,
+    }));
+  };
+
+  const handleInputChangeTraitType = async (value: string) => {
+    setTraitType(value);
+    const error = await CheckErrorIII(value, setErrorMessageI);
+    setIsErrorI(error);
+    setNewAttributes((prevPerson) => ({
+      ...prevPerson,
       display_option: {
         bool_true_value: "",
         bool_false_value: "",
         opensea: {
           display_type: "",
-          trait_type: "",
+          trait_type: value,
           max_value: "0",
         },
       },
-      default_mint_value: {
-        string_attribute_value: {
-          value: "",
+    }));
+  };
+
+  // const handleInput = async (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   // type: string
+  // ) => {
+  //   setName(e.target.value)
+  //   // console.log(e)
+  //   // console.log(rawData)
+  //   const element = document.getElementById(`cr-name`);
+  //   // const filteredArray = Attribute2.filter(
+  //   //   (item) => item.name === e.target.value
+  //   // );
+  //   // console.log(filteredArray);
+  //   // console.log(checkDatatype2);
+  //   const error = await CheckErrorII(
+  //     e.target.value,
+  //     setErrorMessage,
+  //     att4,
+  //     att5
+  //   );
+  //   setIsError(error)
+  //   if (element) {
+  //     if (error) {
+  //       element.style.borderColor = "red";
+  //       setHaveError(true);
+  //     } else {
+  //       element.style.borderColor = "#DADEF2";
+  //       setHaveError(false);
+  //     }
+  //   }
+  //   return;
+  // };
+
+  const cancleCreate = async () => {
+    setOnCreate(false);
+    setOnEditOrCreate(false);
+  };
+  // console.log("isAttributes", isAttributes);
+  // console.log("newAttributes",newAttributes)
+
+  const checkNewAttributes = async () => {
+    if (!newAttributes.name) {
+      setIsError(true);
+      setErrorMessage("Not Availible");
+    }
+    if (!newAttributes.display_option.opensea.trait_type) {
+      setIsErrorI(true);
+      setErrorMessageI("Not Availible");
+    }
+    if (newAttributes.data_type === "string") {
+      if (!newAttributes.default_mint_value.string_attribute_value?.value) {
+        setIsErrorII(true);
+        setErrorMessageII("Not Availible");
+      }
+
+      if (
+        newAttributes.default_mint_value.string_attribute_value?.value &&
+        newAttributes.display_option.opensea.trait_type &&
+        newAttributes.name
+      ) {
+        return true;
+      }
+    }
+
+    if (newAttributes.data_type !== "string") {
+      if (
+        newAttributes.display_option.opensea.trait_type &&
+        newAttributes.name
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const handleSave = async () => {
+    const checkAtt = await checkNewAttributes();
+    if (errorMessage || errorMessageI || errorMessageII || !checkAtt) {
+      // await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
+      console.log("Have error validate");
+      return;
+    }
+    await setIsAttributes([...isAttributes, newAttributes]);
+
+    const newAtt = [...isAttributes, newAttributes];
+    // console.log(newAtt)
+    let onchain_data;
+    const apiUrl = `${ENV.Client_API_URL}/schema/set_schema_info`;
+    if (isState === 4) {
+      onchain_data = {
+        nft_attributes: newAtt,
+      };
+    }
+    if (isState === 5) {
+      onchain_data = {
+        token_attributes: newAtt,
+      };
+    }
+    const requestData = {
+      payload: {
+        schema_info: {
+          onchain_data: onchain_data,
         },
+        schema_code: schemacode,
+        status: "Draft",
+        current_state: isState.toString(),
       },
-      hidden_overide: false,
-      hidden_to_marketplace: false,
-    });
+    };
+    // console.log(requestData);
 
-    const [Attribute2, setAttribute2] = useState<ItokenAttributes[]>(
-      isState === 4
-        ? rawData.schema_info.onchain_data.nft_attributes
-        : rawData.schema_info.onchain_data.token_attributes
-    );
+    if (!errorMessage && !errorMessageI && !errorMessageII && checkAtt) {
+      // console.log("Save")
+      try {
+        const req = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              session && session.user && session?.user.accessToken
+            }`, // Set the content type to JSON
+          },
+        });
+        const res = req.data;
+        // console.log(res)
 
-    const att4 = rawData.schema_info.onchain_data.nft_attributes;
-    const att5 = rawData.schema_info.onchain_data.token_attributes;
+        if (res.statusCode === "V:0001") {
+          setOnCreate(false);
+          setOnEditOrCreate(false);
 
-    const [isDefaultValue, setIsDefaultValue] = useState<string | number>(
-      newAttributes.default_mint_value.string_attribute_value?.value ||
-      newAttributes.default_mint_value.number_attribute_value?.value ||
-      newAttributes.default_mint_value.float_attribute_value?.value ||
-      `${newAttributes.default_mint_value.boolean_attribute_value?.value}`
-    );
+          return;
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.log("error ", error);
+      }
+    }
 
-    // console.log(isAttributes);
+    // setOnCreate(false);
+  };
 
-    const handleInputChangeName = async (value: string) => {
-      setName(value);
-      const element = document.getElementById(`cr-name`);
-      const filteredArray = Attribute2.filter(
-        (item) => item.name === value
-      );
-      // console.log(filteredArray);
-      // console.log(checkDatatype2);
-      const error = await CheckErrorII(
-        value,
-        setErrorMessage,
-        att4,
-        att5
-      );
-
-      setIsError(error)
-
+  function checkType(value: string) {
+    const parsedValue = parseFloat(value);
+    if (Number.isInteger(parsedValue)) {
+      // console.log(`${value} is an integer.`);
+      return false;
+    } else {
+      // console.log(`${value} is a float.`);
+      return true;
+    }
+  }
+  const handleAttribute = (type: string, value: string) => {
+    if (type === "name") {
       setNewAttributes((prevPerson) => ({
         ...prevPerson,
         name: value,
       }));
-    };
+    }
 
-    const handleErrorValue = async (value: string) => {
-      const error = await CheckErrorIII(value,setErrorMessageII)
-      setIsErrorII(error)  
-    };
-
-    const handleInputChangeChaDataType = (value: string) => {
-      setDataType(value);
+    if (type === "data_type") {
       let default_mint_value;
       if (value === "string") {
         default_mint_value = {
@@ -169,12 +374,9 @@ const CreateAttribute: React.FC<{
         data_type: value,
         default_mint_value: default_mint_value!,
       }));
-    };
+    }
 
-    const handleInputChangeTraitType = async(value: string) => {
-      setTraitType(value);
-      const error = await CheckErrorIII(value,setErrorMessageI)
-      setIsErrorI(error)
+    if (type === "trait_type") {
       setNewAttributes((prevPerson) => ({
         ...prevPerson,
         display_option: {
@@ -187,284 +389,89 @@ const CreateAttribute: React.FC<{
           },
         },
       }));
-    };
-
-
-    const handleInput = async (
-      e: React.ChangeEvent<HTMLInputElement>,
-      type: string
-    ) => {
-      setName(e.target.value)
-      // console.log(e)
-      // console.log(rawData)
-      const element = document.getElementById(`cr-name`);
-      const filteredArray = Attribute2.filter(
-        (item) => item.name === e.target.value
-      );
-      // console.log(filteredArray);
-      // console.log(checkDatatype2);
-      const error = await CheckErrorII(
-        e.target.value,
-        setErrorMessage,
-        att4,
-        att5
-      );
-      setIsError(error)
-      if (element) {
-        if (error) {
-          element.style.borderColor = "red";
-          setHaveError(true);
-        } else {
-          element.style.borderColor = "#DADEF2";
-          setHaveError(false);
-        }
-      }
-      return;
-    };
-
-    const cancleCreate = async () => {
-      setOnCreate(false);
-      setOnEditOrCreate(false)
-    };
-    // console.log("isAttributes", isAttributes);
-    // console.log("newAttributes",newAttributes)
-
-    const checkNewAttributes = async() => {
-      if(!newAttributes.name){
-        setIsError(true)
-        setErrorMessage("Not Availible")
-      }
-      if(!newAttributes.display_option.opensea.trait_type){
-        setIsErrorI(true)
-        setErrorMessageI("Not Availible")
-      }
-      if(!newAttributes.default_mint_value.string_attribute_value?.value){
-        setIsErrorII(true)
-        setErrorMessageII("Not Availible")
-      }
-
-      if(newAttributes.default_mint_value.string_attribute_value?.value && newAttributes.display_option.opensea.trait_type && newAttributes.name ) {
-        return true;
-      }
-      return false; 
     }
-    const handleSave = async () => {
-      const checkAtt = await checkNewAttributes();
-      if (errorMessage || errorMessageI || errorMessageII || !checkAtt) {
-        // await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
-        console.log("Have error validate");
-        return;
-      }
-      await setIsAttributes([...isAttributes, newAttributes]);
 
-      const newAtt = [...isAttributes, newAttributes];
-      // console.log(newAtt)
-      let onchain_data;
-      const apiUrl = `${ENV.Client_API_URL}/schema/set_schema_info`;
-      if (isState === 4) {
-        onchain_data = {
-          nft_attributes: newAtt,
-        };
-      }
-      if (isState === 5) {
-        onchain_data = {
-          token_attributes: newAtt,
-        };
-      }
-      const requestData = {
-        payload: {
-          schema_info: {
-            onchain_data: onchain_data,
+    if (type === "value") {
+      let default_mint_value;
+      let data_type;
+      if (newAttributes.data_type === "string") {
+        default_mint_value = {
+          string_attribute_value: {
+            value: value,
           },
-          schema_code: schemacode,
-          status: "Draft",
-          current_state: isState.toString(),
-        },
-      };
-      // console.log(requestData);
-
-      if(!errorMessage && !errorMessageI && !errorMessageII && checkAtt){
-        // console.log("Save")
-        try {
-          const req = await axios.post(apiUrl, requestData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
-            },
-            
-          });
-          const res = req.data;
-          // console.log(res)
-  
-          if (res.statusCode === "V:0001") {
-            setOnCreate(false);
-            setOnEditOrCreate(false);
-  
-            return;
-          } else {
-            return;
-          }
-        } catch (error) {
-          console.log("error ", error);
-        }
+        };
+        data_type = "string";
       }
-      
-      // setOnCreate(false);
-    };
-
-    function checkType(value: string) {
-      const parsedValue = parseFloat(value);
-      if (Number.isInteger(parsedValue)) {
-        // console.log(`${value} is an integer.`);
-        return false;
-      } else {
-        // console.log(`${value} is a float.`);
-        return true;
-      }
-    }
-    const handleAttribute = (type: string, value: string) => {
-      if (type === "name") {
-        setNewAttributes((prevPerson) => ({
-          ...prevPerson,
-          name: value,
-        }));
-      }
-
-      if (type === "data_type") {
-        let default_mint_value;
-        if (value === "string") {
-          default_mint_value = {
-            string_attribute_value: {
-              value: "",
-            },
-          };
-        }
-        if (value === "number") {
-          default_mint_value = {
-            number_attribute_value: {
-              value: "0",
-            },
-          };
-        }
-        if (value === "float") {
+      if (
+        newAttributes.data_type === "number" ||
+        newAttributes.data_type === "float"
+      ) {
+        const chectFloat = checkType(value);
+        if (chectFloat) {
           default_mint_value = {
             float_attribute_value: {
-              value: 0.0,
+              value: parseFloat(value),
             },
           };
-        }
-        if (value === "boolean") {
+          data_type = "float";
+        } else {
           default_mint_value = {
-            boolean_attribute_value: {
-              value: true,
+            number_attribute_value: {
+              value: parseFloat(value).toString(),
             },
           };
+          data_type = "number";
         }
-
-        setNewAttributes((prevPerson) => ({
-          ...prevPerson,
-          data_type: value,
-          default_mint_value: default_mint_value!,
-        }));
       }
-
-      if (type === "trait_type") {
-        setNewAttributes((prevPerson) => ({
-          ...prevPerson,
-          display_option: {
-            bool_true_value: "",
-            bool_false_value: "",
-            opensea: {
-              display_type: "",
-              trait_type: value,
-              max_value: "0",
-            },
+      if (newAttributes.data_type === "boolean") {
+        // console.log("value ==>", value);
+        default_mint_value = {
+          boolean_attribute_value: {
+            value: value === "false" ? false : Boolean(value),
           },
-        }));
+        };
+        data_type = "boolean";
       }
+      console.log(default_mint_value);
+      setNewAttributes((prevPerson) => ({
+        ...prevPerson,
+        default_mint_value: default_mint_value!,
+        data_type: data_type!,
+      }));
+    }
+  };
 
-      if (type === "value") {
-        let default_mint_value;
-        let data_type;
-        if (newAttributes.data_type === "string") {
-          default_mint_value = {
-            string_attribute_value: {
-              value: value,
-            },
-          };
-          data_type = "string";
-        }
-        if (
-          newAttributes.data_type === "number" ||
-          newAttributes.data_type === "float"
-        ) {
-          const chectFloat = checkType(value);
-          if (chectFloat) {
-            default_mint_value = {
-              float_attribute_value: {
-                value: parseFloat(value),
-              },
-            };
-            data_type = "float";
+  return (
+    <>
+      <div className=" min-h-[60vh] w-full flex flex-col justify-between items-center  ">
+        <InputCardOneLine
+          title={"Name"}
+          require={true}
+          loading={false}
+          placeholder={"Add attribute name"}
+          validate={!isError}
+          errorMassage={errorMessage}
+          value={name}
+          onChange={handleInputChangeName}
+        ></InputCardOneLine>
+        <InputSelectCard
+          title={"Data type"}
+          require={true}
+          value={dataType}
+          onChange={handleInputChangeChaDataType}
+        ></InputSelectCard>
+        <InputCardOneLine
+          title={"Trait type"}
+          require={true}
+          placeholder={"Add trait type here"}
+          validate={!isErrorI}
+          errorMassage={errorMessageI}
+          value={traitType}
+          onChange={handleInputChangeTraitType}
+          loading={false}
+        ></InputCardOneLine>
 
-          } else {
-            default_mint_value = {
-              number_attribute_value: {
-                value: parseFloat(value).toString(),
-              },
-            };
-            data_type = "number";
-          }
-        }
-        if (newAttributes.data_type === "boolean") {
-          // console.log("value ==>", value);
-          default_mint_value = {
-            boolean_attribute_value: {
-              value: value === "false" ? false : Boolean(value),
-            },
-          };
-          data_type = "boolean";
-        }
-        console.log(default_mint_value)
-        setNewAttributes((prevPerson) => ({
-          ...prevPerson,
-          default_mint_value: default_mint_value!,
-          data_type: data_type!
-        }));
-      }
-    };
-
-    return (
-      <>
-        <div className=" min-h-[60vh] w-full flex flex-col justify-between items-center  " >
-          <InputCardOneLine
-            title={"Name"}
-            require={true}
-            loading={false}
-            placeholder={"Add attribute name"}
-            validate={!isError}
-            errorMassage={errorMessage}
-            value={name}
-            onChange={handleInputChangeName}
-          ></InputCardOneLine>
-          <InputSelectCard
-            title={"Data type"}
-            require={true}
-            value={dataType}
-            onChange={handleInputChangeChaDataType}
-          ></InputSelectCard>
-          <InputCardOneLine
-            title={"Trait type"}
-            require={true}
-            placeholder={"Add trait type here"}
-            validate={!isErrorI}
-            errorMassage={errorMessageI}
-            value={traitType}
-            onChange={handleInputChangeTraitType}
-            loading={false}
-          ></InputCardOneLine>
-
-          {/* <Flex
+        {/* <Flex
             // flexWrap="wrap"
             // width="60%"
             // border="1px solid #DADEF2"
@@ -503,7 +510,7 @@ const CreateAttribute: React.FC<{
               ></div>
             </Flex>
           </Flex> */}
-          {/* <Flex
+        {/* <Flex
             className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             // p={8}
             marginTop="15px"
@@ -588,7 +595,7 @@ const CreateAttribute: React.FC<{
             ></div>
           </Flex> */}
 
-          {/* <Flex
+        {/* <Flex
             className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
             marginTop="15px"
           >
@@ -608,27 +615,47 @@ const CreateAttribute: React.FC<{
               className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
             ></div>
           </Flex> */}
-          <Flex
-            // flexWrap="wrap"
-            // width="60%"
-            // border="1px solid #DADEF2"
-            // borderRadius="12px"
-            // p={8}
-            className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
-          >
-            <Box>
-              <p className="text-main2 text-2xl font-bold">Value</p>
-            </Box>
-            <Flex>
-              {/* boolean */}
-              {newAttributes.data_type === "boolean" && (
-                <>
-                  <div className=' w-96 h-10 flex  items-center    '>
-                    <div onClick={() => handleAttribute("value", "true")} className={`w-[50%] h-full border border-Act6 rounded-l-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${newAttributes.default_mint_value.boolean_attribute_value?.value === true ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>Yes</div>
-
-                    <div onClick={() => handleAttribute("value", "false")} className={`w-[50%] h-full border border-Act6 rounded-r-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${newAttributes.default_mint_value.boolean_attribute_value?.value === false ? "text-white bg-Act6" : " text-Act6 bg-white "}`}>No</div>
+        <Flex
+          // flexWrap="wrap"
+          // width="60%"
+          // border="1px solid #DADEF2"
+          // borderRadius="12px"
+          // p={8}
+          className="w-[50rem] h-28 flex justify-between items-center px-20 border border-2nd4 rounded-2xl bg-white relative"
+        >
+          <Box>
+            <p className="text-main2 text-2xl font-bold">Value</p>
+          </Box>
+          <Flex>
+            {/* boolean */}
+            {newAttributes.data_type === "boolean" && (
+              <>
+                <div className=" w-96 h-10 flex  items-center    ">
+                  <div
+                    onClick={() => handleAttribute("value", "true")}
+                    className={`w-[50%] h-full border border-Act6 rounded-l-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${
+                      newAttributes.default_mint_value.boolean_attribute_value
+                        ?.value === true
+                        ? "text-white bg-Act6"
+                        : " text-Act6 bg-white "
+                    }`}
+                  >
+                    Yes
                   </div>
-                  {/* <Flex
+
+                  <div
+                    onClick={() => handleAttribute("value", "false")}
+                    className={`w-[50%] h-full border border-Act6 rounded-r-md hover:bg-Act7 hover:text-white hover:border-Act7 cursor-pointer flex justify-center items-center text-xl duration-300 ${
+                      newAttributes.default_mint_value.boolean_attribute_value
+                        ?.value === false
+                        ? "text-white bg-Act6"
+                        : " text-Act6 bg-white "
+                    }`}
+                  >
+                    No
+                  </div>
+                </div>
+                {/* <Flex
                     borderRadius="4px 0px 0px 4px"
                     border="1px solid #3980F3"
                     height="48px"
@@ -697,82 +724,101 @@ const CreateAttribute: React.FC<{
                       No
                     </Text>
                   </Flex> */}
-                </>
-              )}
+              </>
+            )}
 
-              {/* number */}
-              {(newAttributes.data_type === "number" || newAttributes.data_type === "float") && (
-                <>
-                  <NumberInput
-                    border={"white"}
-                    focusBorderColor='white'
-                    variant='unstyled'
-                    size="md"
-                    color="black"
-                    width="10rem"
-                    className=" text-Act7 "
-                    // className={` w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
-                    defaultValue={
-                      newAttributes.default_mint_value.number_attribute_value
-                        ?.value || newAttributes.default_mint_value.float_attribute_value
-                        ?.value
-                    }
-                    precision={2}
-                    step={0.1}
-                    onChange={(e) => handleAttribute("value", e.toLowerCase())}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper >
-                      <NumberIncrementStepper className="  text-Act7" />
-                      <NumberDecrementStepper className=" text-Act7" />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </>
-              )}
+            {/* number */}
+            {(newAttributes.data_type === "number" ||
+              newAttributes.data_type === "float") && (
+              <>
+                <NumberInput
+                  border={"white"}
+                  focusBorderColor="white"
+                  variant="unstyled"
+                  size="md"
+                  color="black"
+                  width="10rem"
+                  className=" text-Act7 "
+                  // className={` w-full h-12 pl-5 text-xl border-Act6 placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                  defaultValue={
+                    newAttributes.default_mint_value.number_attribute_value
+                      ?.value ||
+                    newAttributes.default_mint_value.float_attribute_value
+                      ?.value
+                  }
+                  precision={2}
+                  step={0.1}
+                  onChange={(e) => handleAttribute("value", e.toLowerCase())}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper className="  text-Act7" />
+                    <NumberDecrementStepper className=" text-Act7" />
+                  </NumberInputStepper>
+                </NumberInput>
+              </>
+            )}
 
-              {/* string */}
-              {/* {console.log(newAttributes.data_type)} */}
-              {newAttributes.data_type === "string" && (
-                <>
-                 <Box>
+            {/* string */}
+            {/* {console.log(newAttributes.data_type)} */}
+            {newAttributes.data_type === "string" && (
+              <>
+                <Box>
                   <Input
                     placeholder={"Add Value"}
-                    className={`${isErrorII ? 'border-Act2 text-Act2' : ' text-Act6  border-Act6'} w-full h-12 pl-5 text-xl placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
+                    className={`${
+                      isErrorII
+                        ? "border-Act2 text-Act2"
+                        : " text-Act6  border-Act6"
+                    } w-full h-12 pl-5 text-xl placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
                     minWidth="385px"
                     defaultValue={
                       newAttributes.default_mint_value.string_attribute_value
                         ?.value
                     }
-                    onChange={(e) => {handleAttribute("value", e.target.value), handleErrorValue(e.target.value)}}
+                    onChange={(e) => {
+                      handleAttribute("value", e.target.value),
+                        handleErrorValue(e.target.value);
+                    }}
                   />
                   {isErrorII && (
-                    <p className='text-Act2 text-sm absolute duration-300'>{errorMessageII}</p>
+                    <p className="text-Act2 text-sm absolute duration-300">
+                      {errorMessageII}
+                    </p>
                   )}
-                 </Box>
-                </>
-              )}
-            </Flex>
-            <div
-              className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
-            ></div>
+                </Box>
+              </>
+            )}
           </Flex>
+          <div
+            className={`w-5 h-5 rounded-full border border-main2 absolute right-2 top-2 bg-main2`}
+          ></div>
+        </Flex>
 
-          <Flex
-            width="100%"
-            marginTop="15px"
-            justifyContent="flex-end"
-            alignItems="center"
+        <Flex
+          width="100%"
+          marginTop="15px"
+          justifyContent="flex-end"
+          alignItems="center"
+        >
+          <div
+            onClick={() => {
+              cancleCreate();
+            }}
           >
-            <div onClick={() => { cancleCreate() }}>
-              <CancelButton></CancelButton>
-            </div>
-            <div onClick={() => { handleSave() }}>
-              <SaveButton></SaveButton>
-            </div>
-          </Flex>
-        </div>
-      </>
-    );
-  };
+            <CancelButton></CancelButton>
+          </div>
+          <div
+            onClick={() => {
+              handleSave();
+            }}
+          >
+            <SaveButton></SaveButton>
+          </div>
+        </Flex>
+      </div>
+    </>
+  );
+};
 
 export default CreateAttribute;
