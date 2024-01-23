@@ -1,20 +1,7 @@
 "use client";
-import TapState from "@/components/TapState";
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Divider,
-  Text,
-  Flex,
-  FormControl,
-  FormLabel,
-  useToast,
-} from "@chakra-ui/react";
+
 import ActionCreateCard from "@/components/ActionCreateCard";
 import ActionInfoCard from "@/components/ActionInfoCard";
-import ActionInput from "@/components/ActionInput";
-import ActionInputThenWhen from "@/components/ActionInputThenWhen";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
@@ -26,7 +13,7 @@ import { setCookie } from "@/service/setCookie";
 import { ItokenAttributes } from "@/type/Nftmngr";
 import { INftAttributes } from "@/type/Nftmngr";
 import Stepmenu from "@/components/Stepmenu";
-import ConfirmModalChakra from "@/components/ConfirmModalChakra";
+import deleteCookie from "@/service/deleteCookie";
 
 const Page = ({ params }: { params: { schemacode: string } }) => {
   const [action, setAction] = useState<Array<any>>([]);
@@ -62,11 +49,6 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
   };
 
   useEffect(() => {
-    const deleteCookie = (cookieName: string) => {
-      document.cookie =
-        cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    };
-
     deleteCookie("isCreateNewAction");
     deleteCookie("action");
     deleteCookie("isEditAction");
@@ -113,7 +95,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
 
   useEffect(() => {
     setCookie("schemaCode", schemacode);
-  }, []);
+  }, [schemacode]);
 
   return (
     <div className="h-[75vh] flex flex-col justify-between">

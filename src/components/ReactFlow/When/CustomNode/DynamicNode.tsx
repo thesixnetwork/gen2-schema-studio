@@ -20,7 +20,7 @@ interface EventProps {
   };
 }
 
-interface AttributeOptionProps{
+interface AttributeOptionProps {
   name: string;
   dataType: string;
 }
@@ -31,7 +31,9 @@ const DynamicNode = (props: CircleNodeProps) => {
   const store = useStoreApi();
   const [hovered, setHovered] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
-  const [inputValue, setInputValue] = useState(props.data.value);
+  const [inputValue, setInputValue] = useState<
+    string | number | readonly string[] | undefined
+  >(props.data.value as string | number | readonly string[] | undefined);
   const [valueNodeType, setValueNodeType] = useState(props.data.dataType);
   const [selectedValueNode, setSelectedValueNode] = useState(
     props.data.value === true ? "yes" : "no"
@@ -177,7 +179,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       );
     } else if (props.data.showType === "paramNode") {
       console.log("|||:", props.data.value, props.data.dataType);
-      setInputValue(props.data.value);
+      setInputValue(props.data.value as string | number | undefined);
       setSelectValue({
         name: props.data.value,
         dataType: props.data.dataType,
@@ -190,7 +192,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       if (props.data.dataType === "boolean") {
         setSelectedValueNode(props.data.value === true ? "yes" : "no");
       } else {
-        setInputValue(props.data.value);
+        setInputValue(props.data.value as string | number | undefined);
       }
     } else if (props.data.showType === "attributeNode") {
       setSelectValue({
@@ -200,11 +202,9 @@ const DynamicNode = (props: CircleNodeProps) => {
     }
   }, [props.data.value, props.data.showType, props.data.dataType]);
 
- 
-
   useEffect(() => {
     if (inputRef.current != null) inputRef.current.focus();
-  },[props.data.showType, inputRef]);
+  }, [props.data.showType, inputRef]);
 
   return props.data.showType === "valueNode" ? (
     <div
@@ -327,14 +327,14 @@ const DynamicNode = (props: CircleNodeProps) => {
           form=""
           className="rounded-sm text-main2 bg-white border border-Act6"
           onChange={handleSelect}
-          value={selectValue.name}
+          value={selectValue.name !== undefined ? String(selectValue.name) : ""}
         >
-          <option value={selectValue.name} disabled selected hidden>
+          <option value={selectValue.name !== undefined ? String(selectValue.name) : ""} disabled selected hidden>
             {selectValue.name === "" || selectValue.name === undefined
               ? "-- select --"
               : selectValue.name}
           </option>
-          {attributeOption.map((item:AttributeOptionProps, index:number) => (
+          {attributeOption.map((item: AttributeOptionProps, index: number) => (
             <option
               key={index}
               value={JSON.stringify({

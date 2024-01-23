@@ -9,7 +9,7 @@ export const getDaft = async (schemaCode: string) => {
   try {
     const res = await axios.get(`${ENV.API_URL}/schema/get_schema_info/${schemaCode}`);
     const daft = res.data;
-    console.log(daft)
+    // console.log(daft)
     if (!daft) {
       return ;
     }

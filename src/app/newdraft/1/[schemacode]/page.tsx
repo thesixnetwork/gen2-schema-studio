@@ -61,7 +61,7 @@ export default function Page({
 
     const getDraftInfo = useCallback(() => {
         if (isDaft !== null) {
-            console.log("isDaft:", isDaft)
+            // console.log("isDaft:", isDaft)
             setSchemaCode(isDaft.schema_info.code);
             setCollectionName(isDaft.schema_info.name);
             setDescription(isDaft.schema_info.description);
@@ -121,6 +121,7 @@ export default function Page({
 
 
     const create_SchemaCode = async () => {
+        setIsLoading(true)
         setIsLoadingNext(true)
         const createSchemaCodeStatus = await createSchemaCode(schemaCode, collectionName, description)
         router.push(`/newdraft/2/${schemaCode}_v1`, { scroll: false })
@@ -136,28 +137,36 @@ export default function Page({
 
 
     const nextPage = async () => {
-        setIsLoading(true)
+
         if (schemacode === "newintegration") {
             if (schemaCode !== "" && validate) {
-                setIsOpen(true)
+                if (schemaCode.includes(".")) {
+                    setIsOpen(true)
+                } else {
+                    setValidate(false)
+                    setErrorMessage("Schema code should include one dot example six.whalgate ")
+                }
             } else {
                 validateNextPage()
             }
 
         } else if (validate && !isLoadingFindSchemaCode) {
+            setIsLoading(true)
             setIsLoadingNext(true)
             await edit_schemaCode()
             await router.push(`/newdraft/2/${schemacode}`, { scroll: false })
             setIsLoadingNext(false)
         }
-        setIsLoading(false)
     }
 
     const validateNextPage = () => {
         if (schemaCode === "") {
             setValidate(false)
             setErrorMessage("Not Availible")
-        } else {
+        } else if (!validate) {
+
+        }
+        else {
             setValidate(true)
             setErrorMessage("")
         }

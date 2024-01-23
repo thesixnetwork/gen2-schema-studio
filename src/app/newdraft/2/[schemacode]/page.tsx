@@ -97,7 +97,7 @@ export default function Page({
         (async () => {
             try {
                 const schemaInfo = await getSchemaInfo(schemacode);
-                console.log(schemaInfo)
+                // console.log(schemaInfo)
                 setIsDaft(schemaInfo)
                
                 // Process the response or update state as needed
@@ -111,7 +111,7 @@ export default function Page({
     useEffect(  () => {
         const getDraftInfo =  () => {
             if (isDaft !== "" && isDaft !== null) {
-                console.log("isDaft:", isDaft);
+                // console.log("isDaft:", isDaft);
                 setOriginChain(isDaft.schema_info.origin_data.origin_chain)
                 setSchemaCode(isDaft.schema_info.code);
                 setOriginBaseURI(isDaft.schema_info.origin_data.origin_base_uri);
@@ -142,7 +142,7 @@ export default function Page({
 
     const handleInputChangeChainTypeIndex = (value: number) => {
         setChainTypeIndex(value);
-        console.log(chainTypeIndex)
+        // console.log(chainTypeIndex)
     };
 
     const handleInputChangeOriginBaseURI = (value: string) => {
@@ -154,13 +154,13 @@ export default function Page({
         setIsLoadingSave(true)
         // let origin_attributes_form_contract 
         // const new_origin_attribute = await get_origin_attributes_form_contract(originContractAddress);
-        console.log("originContractAddress",originContractAddress)
-        console.log("originBaseURI",originBaseURI)
+        // console.log("originContractAddress",originContractAddress)
+        // console.log("originBaseURI",originBaseURI)
         const saveState2_status = await saveState2(originContractAddress, originBaseURI, schemacode, chainMapper[chainIndex].Chain[chainTypeIndex].chain)
         console.log("saveState1_status :", saveState2_status)
         router.push(`/newdraft/3/${schemacode}`, { scroll: false })
         setIsLoadingSave(false)
-        setIsLoading(false)
+        
     }
 
 
@@ -179,7 +179,7 @@ export default function Page({
             try {
                 setIsLoadingGetBaseURI(true)
                 const origin_base_URI = await getBaseURI(originContractAddress, chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
-                console.log("base_uri", origin_base_URI)
+                // console.log("base_uri", origin_base_URI)
                 if (typeof origin_base_URI !== 'string') {
                     setOriginBaseURI("")
                 } else {
@@ -251,7 +251,7 @@ export default function Page({
     useEffect(() => {
         if (isDaft) {
             setOnEdining((isDaft.schema_info.origin_data.origin_chain === originChain) && (isDaft.schema_info.origin_data.origin_base_uri === originBaseURI) && (isDaft.schema_info.origin_data.origin_contract_address === originContractAddress))
-            console.log(isDaft.schema_info.origin_data.origin_chain ,originChain,isDaft.schema_info.origin_data.origin_base_uri,originBaseURI,isDaft.schema_info.origin_data.origin_contract_address,originContractAddress )
+            // console.log(isDaft.schema_info.origin_data.origin_chain ,originChain,isDaft.schema_info.origin_data.origin_base_uri,originBaseURI,isDaft.schema_info.origin_data.origin_contract_address,originContractAddress )
         }
     }, [originChain,originBaseURI,originContractAddress])
 

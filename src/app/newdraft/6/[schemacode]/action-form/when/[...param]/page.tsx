@@ -2,8 +2,6 @@
 import { useState } from "react";
 import WhenFlow from "@/components/ReactFlow/When/WhenFlow";
 import { ReactFlowProvider } from "reactflow";
-import ActionHeader from "@/components/ActionHeader";
-import Flowbar from "@/components/ReactFlow/When/Flowbar";
 
 const Page = ({ params }: { params: { param: string } }) => {
   const schemaCode = params.param[0];

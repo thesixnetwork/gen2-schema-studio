@@ -1,15 +1,10 @@
-// import NormalButton from "../component/NormalButton";
 import { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
-// import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
-import { Button, Select } from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Select } from "@chakra-ui/react";
 import ActionHeader from "@/components/ActionHeader";
 import Loading from "./Loading";
-import { getDynamicImage } from "@/service/getDynamicImage";
 import AlertModal from "./AlertModal";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +13,8 @@ import CancelButton from "./button/CancelButton";
 import { IActions } from "@/type/Nftmngr";
 import { getCookie } from "@/service/getCookie";
 import { setCookie } from "@/service/setCookie";
+import getImgUrlAction6 from "@/service/getImgUrlAction6";
+import Image from "next/image";
 interface ActionThenTransformDynamicProps {
   metaFunction: string;
   actionName: string;
@@ -41,7 +38,6 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
   const [imgAfterTransformError, setImgAfterTransformError] = useState(false);
   const [metaData, setMetaData] = useState("");
   const getCookieData = localStorage.getItem("action");
-  const getActionThen = getCookie("action-then");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
@@ -179,56 +175,26 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
     }
   };
 
-  const findImageUrl = async () => {
-    setLoading(true)
-    const apiUrl = `${process.env.NEXT_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_image_url/${props.schemaRevision}`;
-    const params = {};
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    };
-    await axios
-      .get(apiUrl, {
-        params: params,
-        headers: headers,
-      })
-      .then((response) => {
-        setImgSource(response.data.data.image_url.path);
-        setImgFormat("." + response.data.data.image_url.format);
-        if (response.data.data.image_url.postfix !== null) {
-          setPostfix(response.data.data.image_url.postfix);
-        }
-        // setIsNext(true);
-        console.log(":: res ::", response);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setCookie("isCreateDyanamicImage", "true");
-        setLoading(false)
-      });
-    let tempObj;
-    if (schemacode) {
-      tempObj = await getDynamicImage(schemacode);
-    }
-
-    if (tempObj) {
-      setImgSource(tempObj.path);
-      setImgFormat("." + tempObj.format);
-      if (tempObj.postfix !== null) {
-        setPostfix(tempObj.postfix);
-      }
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    console.log("logger", props.schemaRevision);
-    props.schemaRevision !== "create-new-action" &&
-      props.isDraft &&
-      findImageUrl();
-    //   &&
-    //   setIsNext(true);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getImgUrlAction6(props.schemaRevision);
+        console.log(response)
+        setImgSource(response.data.image_url.path);
+        setImgFormat("."+response.data.image_url.format);
+        setPrefix(response.data.image_url.prefix);
+        setPostfix(response.data.image_url.postfix);
+        setLoading(false);
+      }catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
 
   useEffect(() => {
     setImgAfterTransformError(false);
@@ -240,6 +206,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
 
   return (
     <>
+    <button onClick={()=>console.log(imgSource)}>logger</button>
       {isOpen && (
         <AlertModal
           title={errorModalMessage}
@@ -351,7 +318,14 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                         ) : (
                           imgSource !== "" && (
                             <div className="h-full rounded-lg border-2 overflow-hidden">
-                              <img
+                              <Image
+                              width={100}
+                              height={100}
+                                loader={() =>
+                                  `${checkBackslash(
+                                    imgSource
+                                  )}${tokenId}${prefix}${imgFormat}`
+                                }
                                 src={`${checkBackslash(
                                   imgSource
                                 )}${tokenId}${prefix}${imgFormat}`}
@@ -398,7 +372,14 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
                         ) : (
                           imgSource !== "" && (
                             <div className="h-full rounded-lg border-2 overflow-hidden">
-                              <img
+                              <Image
+                              width={100}
+                              height={100}
+                                loader={() =>
+                                  `${checkBackslash(
+                                    imgSource
+                                  )}${tokenId}${postfix}${imgFormat}`
+                                }
                                 src={`${checkBackslash(
                                   imgSource
                                 )}${tokenId}${postfix}${imgFormat}`}

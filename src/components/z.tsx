@@ -24,7 +24,7 @@ export default function HomeCard({}: Props) {
   const [listDraft, setListdraft] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoading2, setIsLoading2] = useState(true);
-  console.log(session);
+  // console.log(session);
   const getListDraft = async () => {
     const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
     const params = {};

@@ -9,11 +9,8 @@ import postUpdateAction6 from "@/service/postUpdateAction6";
 import postCreateAction6 from "@/service/postCreateAction6";
 import postImageUrlAction6 from "@/service/postImageUrlAction6";
 import { setCookie } from "@/service/setCookie";
-import { cookies } from "next/headers";
 import { getCookie } from "@/service/getCookie";
 import Loading from "@/components/Loading";
-import BackPageButton from "@/components/BackPageButton";
-import NextPageButton from "@/components/NextPageButton";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
 import { useRouter } from "next/navigation";
@@ -152,7 +149,7 @@ const Page = ({ params }: { params: { param: string } }) => {
       setLoading(false);
     }
     // setLoading(false);
-  }, [getActionFromCookie, action]);
+  }, [getActionFromCookie, action, params.param]);
 
   useEffect(() => {
     setLoading(true);
@@ -252,7 +249,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     } else {
       setThenRequired(false);
     }
-  }, [updatedAction, actionIndex, createNewAction]);
+  }, [updatedAction, actionIndex, createNewAction, params.param]);
 
   return (
     <>

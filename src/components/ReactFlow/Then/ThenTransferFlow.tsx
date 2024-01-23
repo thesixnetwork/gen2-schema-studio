@@ -27,10 +27,6 @@ import InputNode from "./CustomNode/InputNode";
 import Link from "next/link";
 import { IActions } from "@/type/Nftmngr";
 import AlertModal from "@/components/AlertModal";
-
-// import SyntaxHighlighter from "react-syntax-highlighter";
-
-// import { useParams } from "react-router-dom";
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
@@ -126,7 +122,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const reactFlowWrapper = useRef(null);
+  const reactFlowWrapper = useRef<any | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   // const nodeTypes = useMemo(() => {
   //   return {

@@ -64,7 +64,7 @@ export default function Page({
 
   const getDraftInfo = () => {
     if (isDaft !== null) {
-      console.log("isDaft:", isDaft, "initialDaft:", initialDaft, "isEqual:", isDaft === initialDaft)
+      // console.log("isDaft:", isDaft, "initialDaft:", initialDaft, "isEqual:", isDaft === initialDaft)
       setSchemaCode(isDaft.schema_info.code);
       setStepDraft(isDaft.current_state);
     }

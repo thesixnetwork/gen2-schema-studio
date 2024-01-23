@@ -11,6 +11,7 @@ import { getCookie } from "@/service/getCookie";
 import { setCookie } from "@/service/setCookie";
 import Link from "next/link";
 import CancelButton from "@/components/button/CancelButton";
+import deleteCookie from "@/service/deleteCookie";
 
 const Page = ({ params }: { params: { param: string } }) => {
   // const [metaFunction, setMetaFunction] = useState("");
@@ -41,9 +42,18 @@ const Page = ({ params }: { params: { param: string } }) => {
     } else if (metaFunction.startsWith("create-new-then")) {
       setActionThenType("create-new-then");
     }
-  }, []);
+
+    return () => {
+      deleteCookie("isTransformImage");
+    }
+  }, [metaFunction]);
 
   const handleActionThenTypeChange = (newActionThenType: string) => {
+    if (newActionThenType === "transform") {
+      setCookie("isTransformImage", "true");
+    }else{
+      setCookie("isTransformImage", "false");
+    }
     setActionThenType(newActionThenType);
     setIsActionThenTypeChange(true)
   };
@@ -62,7 +72,9 @@ const Page = ({ params }: { params: { param: string } }) => {
       setIsActionThenTypeChange(false)
     }
   }, [actionThenType, isActionThenTypeChange]);
-  
+
+
+
   return (
     <section className={`text-black ${actionThenType === "transform"  && transformType === "dynamic" ? "h-full" : "h-[75vh]"}`}>
       {actionThenType === "create-new-then" && (

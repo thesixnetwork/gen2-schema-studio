@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       width: {
-        'draftCardWidth': '16rem',
+        'draftCardWidth': '14rem',
       },
       height: {
         'draftCardHeight': '21rem',

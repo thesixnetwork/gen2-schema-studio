@@ -20,10 +20,7 @@ import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
 import { IActions } from "@/type/Nftmngr";
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
-import {
-  getAccessTokenFromLocalStorage,
-  saveSCHEMA_CODE,
-} from "@/helpers/AuthService";
+import { saveSCHEMA_CODE } from "@/helpers/AuthService";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Link from "next/link";
@@ -47,8 +44,8 @@ interface ThenAttributeFlowProps {
 }
 
 interface NodeProps {
-  width: number | null | undefined;
-  height: number | null | undefined;
+  width?: number | null | undefined;
+  height?: number | null | undefined;
   id: string;
   type: string;
   position: {
@@ -114,7 +111,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const reactFlowWrapper = useRef(null);
+  const reactFlowWrapper = useRef<any | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   // const nodeTypes = useMemo(() => {
   //   return {
@@ -135,9 +132,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const { setCenter, project } = useReactFlow();
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
-  const [actionThenArr, setActionThenArr] = useState([]);
-  const [actionThenIndex, setActionThenIndex] = useState(null);
-  const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
   const getCookieData = localStorage.getItem("action");
   const getActionThenIndexCookie = getCookie("actionThenIndex");
@@ -145,7 +139,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   const getActionThanArrCookie = getCookie("action-then-arr");
   const getIsCreateNewThenFromCookie = getCookie("isCreateNewThen");
   const schemacode = getCookie("schemaCode");
-  const isEditInCreateNewAction = getCookie("isEditInCreateNewAction");
   const [isOpen, setIsOpen] = useState(false);
   const [errorModalMessage, setModalErrorMessage] = useState("");
   const nodeWidthAndHeight = {
@@ -431,7 +424,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         }
         return updatedNode;
       };
-      const updatedNodes: NodeProps[] = [];
+      const updatedNodes: any[] = [];
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         const { id, position } = node;
@@ -466,6 +459,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
               position: onAddNodePosition,
               type: "customInputNode",
               data: {
+                value: "",
                 showType: "addNode",
                 label: onAddNodePosition,
                 id: onAddNodeId,
@@ -492,7 +486,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
               updatedNodes.push(onAddNode as NodeProps);
             }
           }
-          updatedNodes.push(updateNode(node, type));
+          updatedNodes.push(updateNode(node as NodeProps, type));
           setNodes(sortNode(updatedNodes));
         }
       }
@@ -585,7 +579,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   useEffect(() => {
     setSelectedAttribute(nodes[0].data.dataType);
-  }, [nodes[0].data.dataType]);
+  }, [nodes]);
 
   useEffect(() => {
     if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
@@ -618,7 +612,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       setNodes([...nodes, nodeOnAdd]);
       setEdges([...edges, ...edgesOnAdd]);
     }
-  }, [nodes[0].data.value]);
+  }, [createFirstNode, edges, nodes, setEdges, setNodes]);
 
   useEffect(() => {
     saveSCHEMA_CODE(props.schemaRevision);
@@ -993,7 +987,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
                 },
               ];
               const childrenCount = edges.filter(
-                (edge) => edge.source === updatedNode.id
+                (edge) => edge.source === updatedNode?.id
               ).length;
               if (childrenCount < 2) {
                 setEdges([...edges, ...edgesOnAdd]);
@@ -1001,32 +995,19 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
               }
             }
 
-            if (
-              updatedNode.id === "1" &&
-              (type == "valueNode" ||
-                type == "attributeNode" ||
-                type == "paramNode")
-            ) {
-              Swal.fire(
-                "First node can't be value node, attribute node, or param node"
-              );
-            } else {
-              updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+            updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-              const existingNodeId = new Set(
-                updatedNodes.map((item) => item.id)
-              );
+            const existingNodeId = new Set(updatedNodes.map((item) => item.id));
 
-              nodes.forEach((item) => {
-                if (!existingNodeId.has(item.id)) {
-                  updatedNodes.push(item);
-                  existingNodeId.add(item.id);
-                }
-              });
+            nodes.forEach((item) => {
+              if (!existingNodeId.has(item.id)) {
+                updatedNodes.push(item);
+                existingNodeId.add(item.id);
+              }
+            });
 
-              updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-              setNodes(updatedNodes);
-            }
+            updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+            setNodes(updatedNodes);
           }
         }
       }
@@ -1065,24 +1046,24 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           handleTransformTypeChange={props.handleTransformTypeChange}
         />
         <div className="h-full w-full border rounded-3xl bg-white p-2 mt-4">
-        <div ref={reactFlowWrapper} className="h-full">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={handleNodesChange}
-            onConnect={onConnect}
-            onInit={onInit}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            nodeOrigin={nodeOrigin}
-            nodeDragThreshold={1}
-            onNodeMouseLeave={handleNodesLeave}
-            fitView
-          >
-            <Controls position="top-left" />
-            <MiniMap position="top-right"></MiniMap>
-          </ReactFlow>
+          <div ref={reactFlowWrapper} className="h-full">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onNodesChange={handleNodesChange}
+              onConnect={onConnect}
+              onInit={onInit}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              nodeOrigin={nodeOrigin}
+              nodeDragThreshold={1}
+              onNodeMouseLeave={handleNodesLeave}
+              fitView
+            >
+              <Controls position="top-left" />
+              <MiniMap position="top-right"></MiniMap>
+            </ReactFlow>
           </div>
         </div>
         <div className="flex justify-end gap-x-8 mt-4">

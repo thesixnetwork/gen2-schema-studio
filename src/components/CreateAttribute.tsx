@@ -231,12 +231,32 @@ const CreateAttribute: React.FC<{
       setOnCreate(false);
       setOnEditOrCreate(false)
     };
-    console.log("isAttributes", isAttributes);
+    // console.log("isAttributes", isAttributes);
     // console.log("newAttributes",newAttributes)
 
+    const checkNewAttributes = async() => {
+      if(!newAttributes.name){
+        setIsError(true)
+        setErrorMessage("Not Availible")
+      }
+      if(!newAttributes.display_option.opensea.trait_type){
+        setIsErrorI(true)
+        setErrorMessageI("Not Availible")
+      }
+      if(!newAttributes.default_mint_value.string_attribute_value?.value){
+        setIsErrorII(true)
+        setErrorMessageII("Not Availible")
+      }
+
+      if(newAttributes.default_mint_value.string_attribute_value?.value && newAttributes.display_option.opensea.trait_type && newAttributes.name ) {
+        return true;
+      }
+      return false; 
+    }
     const handleSave = async () => {
-      if (errorMessage || errorMessageI || errorMessageII) {
-        await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
+      const checkAtt = await checkNewAttributes();
+      if (errorMessage || errorMessageI || errorMessageII || !checkAtt) {
+        // await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
         console.log("Have error validate");
         return;
       }
@@ -266,31 +286,33 @@ const CreateAttribute: React.FC<{
           current_state: isState.toString(),
         },
       };
-      console.log(requestData);
+      // console.log(requestData);
 
-
-      try {
-        const req = await axios.post(apiUrl, requestData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
-          },
-        });
-        const res = req.data;
-        // console.log(res)
-
-        if (res.statusCode === "V:0001") {
-          setOnCreate(false);
-          setOnEditOrCreate(false);
-
-          return;
-        } else {
-          return;
+      if(!errorMessage && !errorMessageI && !errorMessageII && checkAtt){
+        // console.log("Save")
+        try {
+          const req = await axios.post(apiUrl, requestData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.user.accessToken}`, // Set the content type to JSON
+            },
+          });
+          const res = req.data;
+          // console.log(res)
+  
+          if (res.statusCode === "V:0001") {
+            setOnCreate(false);
+            setOnEditOrCreate(false);
+  
+            return;
+          } else {
+            return;
+          }
+        } catch (error) {
+          console.log("error ", error);
         }
-      } catch (error) {
-        console.log("error ", error);
       }
-
+      
       // setOnCreate(false);
     };
 
@@ -720,7 +742,7 @@ const CreateAttribute: React.FC<{
                   <Input
                     placeholder={"Add Value"}
                     className={`${isErrorII ? 'border-Act2 text-Act2' : ' text-Act6  border-Act6'} w-full h-12 pl-5 text-xl placeholder-Act6 placeholder-opacity-30 rounded-md border border-dashed duration-300 relative`}
-                    minWidth="390px"
+                    minWidth="385px"
                     defaultValue={
                       newAttributes.default_mint_value.string_attribute_value
                         ?.value

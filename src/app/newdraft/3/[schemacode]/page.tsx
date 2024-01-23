@@ -405,7 +405,7 @@ export default function Page({
         console.log("saveState1_status :", saveState3_status)
         router.push(`/newdraft/4/${schemacode}`)
         setIsLoadingSaveState3(false)
-        setIsLoading(false)
+       
     }
 
     const backPage = () => {
@@ -467,7 +467,7 @@ export default function Page({
                         <div className=" w-full h-full min-h-[40vh] flex flex-col justify-between items-center p-10">
                             <InputCardOneLine title={"Name"} require={true} placeholder={"Add attribute name"} validate={validateStateName} errorMassage={errorMessageName} value={name} onChange={handleInputChangeName} loading={false} ></InputCardOneLine>
                             <InputSelectCard title={"Data type"} require={true} value={dataType} onChange={handleInputChangeChaDataType}></InputSelectCard>
-                            <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} loading={false} ></InputCardOneLine>
+                            <InputCardOneLine title={"Trait type"} require={true} placeholder={"Add trait type here"} validate={validateStateTraitType} errorMassage={errorMessageTraitType} value={traitType} onChange={handleInputChangeTraitType} loading={false}></InputCardOneLine>
                         </div>
                         <div className=" w-full flex justify-end items-center">
                             <div onClick={() => { canCel() }}>
