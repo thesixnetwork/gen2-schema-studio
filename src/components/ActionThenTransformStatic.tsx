@@ -1,8 +1,4 @@
 import { useEffect, useState } from "react";
-// import EastIcon from "@mui/icons-material/East";
-// import { useNavigate, useParams } from "react-router-dom";
-import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
-import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@chakra-ui/react";
@@ -45,7 +41,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   const [originalMetaFunction, setOriginalMetaFunction] = useState(
     props.metaFunction
   );
-  const getCookieData = localStorage.getItem('action')
+  const getCookieData = localStorage.getItem("action");
   const getActionThen = getCookie("action-then");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
   const getActionThanArrCookie = getCookie("action-then-arr");
@@ -119,13 +115,13 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
           const updatedThen = [...action.then, newThen];
           return { ...action, then: updatedThen };
         }
-        return action; 
+        return action;
       });
 
       tempArr = updatedArray;
     };
 
-    if(metaData.startsWith("meta")){
+    if (metaData.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
         updateActionThenByName(
@@ -135,44 +131,47 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
           metaData
         );
       }
-  
+
       if (isCreateNewActionCookie) {
         const tempArrCookie = getActionThanArrCookie
           ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
           : [];
-  
+
         const metaDataToAdd =
           typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-  
-          let updatedTempArrCookie
-          if(getActionThenIndexCookie){
-            
-             updatedTempArrCookie = tempArrCookie.map((item:string, index:number) =>
-            index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+
+        let updatedTempArrCookie;
+        if (getActionThenIndexCookie) {
+          updatedTempArrCookie = tempArrCookie.map(
+            (item: string, index: number) =>
+              index === parseInt(getActionThenIndexCookie)
+                ? metaDataToAdd
+                : item
           );
+        }
+
+        if (getIsCreateNewThenFromCookie === "true") {
+          if (!tempArrCookie.includes(originalMetaFunction)) {
+            updatedTempArrCookie = tempArrCookie;
+            updatedTempArrCookie.push(metaDataToAdd);
           }
-  
-          if (getIsCreateNewThenFromCookie === "true") {
-            if (!tempArrCookie.includes(originalMetaFunction)) {
-                updatedTempArrCookie = tempArrCookie
-              updatedTempArrCookie.push(metaDataToAdd);
-            }
-          }
-  
+        }
+
         setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
-  
+
       localStorage.setItem("action", JSON.stringify(tempArr));
       setCookie("action-then", metaData);
       setCookie("isEditAction", "true");
-      router.push(isCreateNewActionCookie === "true"
-      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
-    }else{
-      setErrorModalMessage("Please create your then")
-      setIsOpen(true)
+      router.push(
+        isCreateNewActionCookie === "true"
+          ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+          : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+      );
+    } else {
+      setErrorModalMessage("Please create your then");
+      setIsOpen(true);
     }
-
   };
 
   useEffect(() => {
@@ -214,7 +213,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
     const index = actionThenArr.indexOf(metaFunction);
     setActionThenIndex(index);
     console.log("actionThenArr: ", actionThenArr);
-  }, [actionData]);
+  }, [actionData, actionThenArr, metaFunction, props.actionName]);
 
   useEffect(() => {
     setImgSourceError(false);
@@ -224,7 +223,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   }, [imgSource]);
   return (
     <>
-    {isOpen && (
+      {isOpen && (
         <AlertModal
           title={errorModalMessage}
           type="error"
@@ -291,7 +290,10 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
                             </p>
                           </div>
                         ) : (
-                          <img
+                          <Image
+                            width={100}
+                            height={100}
+                            loader={() => imgSource}
                             src={imgSource}
                             alt="preview-image"
                             className="w-full h-full"

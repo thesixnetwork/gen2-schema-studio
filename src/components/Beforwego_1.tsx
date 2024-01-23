@@ -20,8 +20,10 @@ function Beforwego_1(props: MyComponentProps) {
                 <WhiteBox
                     Title={'This is information'}
                     DeTail={'This is the content of the information'}
-                    Height={136} Width={230} TitleSize={20} DetailSize={15}>
-                </WhiteBox>
+                    Height={136} Width={230} TitleSize={20} DetailSize={15}
+                />
+
+                {/* </WhiteBox> */}
 
                 <div >
                     <Image src={logo1} className='mt-[-10px] '></Image>

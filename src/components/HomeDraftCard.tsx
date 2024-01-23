@@ -13,8 +13,10 @@ import e_coin from "../../public/pic/e_coin.png";
 import s_coin from "../../public/pic/chainlogocolor1.png"
 import k_coin from "../../public/pic/chainlogocolor3.png"
 import b_coin from "../../public/pic/chainlogocolor4.png"
+import { DefaultSession } from "@/type/DefaultSession";
 
-type ChainMapper = {
+
+type ChainMappers = {
   FIVENET: string;
   SIXNET: string;
   GOERLI: string;
@@ -28,8 +30,8 @@ type Props = {
   schema_revision: any;
   CollectionName: any;
   CollectionImage: any;
-  OriginChain: keyof ChainMapper;
-  OriginContractAddress: string;
+  OriginChain?: keyof ChainMappers;
+  OriginContractAddress?: string;
   type?: string;
 };
 
@@ -39,7 +41,8 @@ function HomeDraftCard(props: Props) {
   const [TotalSupply, setTotalSupply] = useState(0);
   const [error, setError] = useState(false);
   const router = useRouter();
-  const { data: session } = useSession();
+  const sessions = useSession();
+  const session:DefaultSession| null = sessions.data
   // console.log("TotalSupply",TotalSupply)
   // console.log("OriginChain",props.OriginChain)
   // console.log("OriginContractAddress",props.OriginContractAddress)
@@ -79,12 +82,12 @@ function HomeDraftCard(props: Props) {
       const apiUrl = `${ENV.Client_API_URL}schema/total_supply_from_contract`; // Replace with your API endpoint
       const params = {
         contract_address: `${props.OriginContractAddress}`,
-        chain_id: chainMapper[props.OriginChain],
+        chain_id: chainMapper[props.OriginChain!],
       };
 
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
+        Authorization: `Bearer ${session?.user?.accessToken}`, // Set the content type to JSON
       };
       try {
         const req = await axios.get(apiUrl, {

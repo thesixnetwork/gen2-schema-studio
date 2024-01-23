@@ -6,7 +6,7 @@ type Props = {
     name: string;
     dataType: string;
     traitType: string;
-    value: string;
+    value?: string;
 };
 
 function AttributeCard(props: Props) {

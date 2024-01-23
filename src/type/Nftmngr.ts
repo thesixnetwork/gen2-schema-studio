@@ -5,6 +5,13 @@ export interface ISchemaInfo {
     status: string,
     current_state: number
   }
+
+  export interface ISchemaInfoI {
+    schema_name: string
+    schema_revision: string
+    userID: string
+    schema_info: ISchemaInfo
+  }
   export interface IOriginAttributes {
     "name": string,
     "data_type": string,

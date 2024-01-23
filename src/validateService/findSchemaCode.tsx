@@ -4,11 +4,13 @@ import axios from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import ENV from '@/utils/ENV';
+import { DefaultSession } from "@/type/DefaultSession";
+
 
 
 export async function findSchemaCode(schemaCode: string) {
     const apiUrl = `${ENV.API_URL}/schema/validate_schema_code`;
-    const sesstion = await getServerSession(authOptions);
+    const sesstion:DefaultSession | null = await getServerSession(authOptions);
     const params = {
         schema_code: `${schemaCode}`,
     };

@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import ENV from "@/utils/ENV";
 import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import { DefaultSession } from "@/type/DefaultSession";
+
 
 const api = axios.create({
   baseURL: ENV.API_URL,
@@ -16,7 +18,7 @@ api.interceptors.request.use(
   async (config) => {
     // Check if the token is available and not expired
     // If not, refresh the token
-    const sesstion = await getServerSession(authOptions);
+    const sesstion:DefaultSession | null = await getServerSession(authOptions);
     // console.log("sssssssss",sesstion)
 
     if (sesstion) {
@@ -51,10 +53,10 @@ api.interceptors.response.use(
 // Function to refresh the access token
 const refreshAccessToken = async () => {
 
-  const sesstion = await getServerSession(authOptions);
+  const sesstion: DefaultSession | null = await getServerSession(authOptions);
   const apiUrl = `/auth/refreshToken`;
   const requestData = {
-    "refresh_token": sesstion.user.accessToken,
+    "refresh_token": sesstion?.user?.accessToken,
     };
     const req = await api.post(apiUrl, requestData)
     // console.log(req.data.data.access_token)

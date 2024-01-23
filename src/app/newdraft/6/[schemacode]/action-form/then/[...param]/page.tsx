@@ -11,6 +11,7 @@ import { getCookie } from "@/service/getCookie";
 import { setCookie } from "@/service/setCookie";
 import Link from "next/link";
 import CancelButton from "@/components/button/CancelButton";
+import deleteCookie from "@/service/deleteCookie";
 
 const Page = ({ params }: { params: { param: string } }) => {
   // const [metaFunction, setMetaFunction] = useState("");
@@ -20,6 +21,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const actionName = params.param[1];
   const dataFromCookie = getCookie("action-then");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
+  const [isActionThenTypeChange, setIsActionThenTypeChange ] = useState(false);
   const [metaFunction, setMetaFunction] = useState(
     params.param[2]?.startsWith("meta.SetImage")
       ? decodeURIComponent(dataFromCookie ?? "")
@@ -40,10 +42,20 @@ const Page = ({ params }: { params: { param: string } }) => {
     } else if (metaFunction.startsWith("create-new-then")) {
       setActionThenType("create-new-then");
     }
-  }, []);
+
+    return () => {
+      deleteCookie("isTransformImage");
+    }
+  }, [metaFunction]);
 
   const handleActionThenTypeChange = (newActionThenType: string) => {
+    if (newActionThenType === "transform") {
+      setCookie("isTransformImage", "true");
+    }else{
+      setCookie("isTransformImage", "false");
+    }
     setActionThenType(newActionThenType);
+    setIsActionThenTypeChange(true)
   };
 
   const handleTransformTypeChange = (transformType: string) => {
@@ -53,8 +65,18 @@ const Page = ({ params }: { params: { param: string } }) => {
   // useEffect(()=>{
   //   setMetaFunction("")
   // },[actionThenType])
+
+  useEffect(() => {
+    if(isActionThenTypeChange){
+      setMetaFunction("")
+      setIsActionThenTypeChange(false)
+    }
+  }, [actionThenType, isActionThenTypeChange]);
+
+
+
   return (
-    <section className="text-black">
+    <section className={`text-black ${actionThenType === "transform"  && transformType === "dynamic" ? "h-full" : "h-[75vh]"}`}>
       {actionThenType === "create-new-then" && (
         <div className="px-8">
           <ActionHeader
@@ -68,36 +90,38 @@ const Page = ({ params }: { params: { param: string } }) => {
           />
         </div>
       )}
-      {actionThenType === "updateAttribute" && (
-        <ReactFlowProvider>
-          <ThenAttributeFlow
-            isDraft={false}
-            metaFunction={metaFunction}
-            schemaRevision={schemaRevision}
-            actionName={actionName}
-            transformType={transformType}
-            actionThenType={actionThenType}
-            handleActionThenTypeChange={handleActionThenTypeChange}
-            handleTransformTypeChange={handleTransformTypeChange}
-            setMetaFunction={setMetaFunction}
-          />
-        </ReactFlowProvider>
-      )}
-      {actionThenType === "transferNumber" && (
-        <ReactFlowProvider>
-          <ThenTransferFlow
-            isDraft={false}
-            metaFunction={metaFunction}
-            schemaRevision={schemaRevision}
-            actionName={actionName}
-            transformType={transformType}
-            actionThenType={actionThenType}
-            handleActionThenTypeChange={handleActionThenTypeChange}
-            handleTransformTypeChange={handleTransformTypeChange}
-            setMetaFunction={setMetaFunction}
-          />
-        </ReactFlowProvider>
-      )}
+      {actionThenType !== "" &&
+        actionThenType !== "create-new-then" &&
+        actionThenType !== "transform" && (
+          <ReactFlowProvider>
+            {actionThenType === "updateAttribute" && (
+              <ThenAttributeFlow
+                isDraft={false}
+                metaFunction={metaFunction}
+                schemaRevision={schemaRevision}
+                actionName={actionName}
+                transformType={transformType}
+                actionThenType={actionThenType}
+                handleActionThenTypeChange={handleActionThenTypeChange}
+                handleTransformTypeChange={handleTransformTypeChange}
+                setMetaFunction={setMetaFunction}
+              />
+            )}
+            {actionThenType === "transferNumber" && (
+              <ThenTransferFlow
+                isDraft={false}
+                metaFunction={metaFunction}
+                schemaRevision={schemaRevision}
+                actionName={actionName}
+                transformType={transformType}
+                actionThenType={actionThenType}
+                handleActionThenTypeChange={handleActionThenTypeChange}
+                handleTransformTypeChange={handleTransformTypeChange}
+                setMetaFunction={setMetaFunction}
+              />
+            )}
+          </ReactFlowProvider>
+        )}
       {actionThenType === "transform" && (
         <ActionThenTransformStatic
           isDraft={false}
@@ -122,7 +146,8 @@ const Page = ({ params }: { params: { param: string } }) => {
           metaFunction={metaFunction}
         />
       )}
-      {((actionThenType === "" || actionThenType === "create-new-then") ||
+      {(actionThenType === "" ||
+        actionThenType === "create-new-then" ||
         (actionThenType === "transform" && transformType === "")) && (
         <Link
           onClick={() => setCookie("isEditAction", "true")}

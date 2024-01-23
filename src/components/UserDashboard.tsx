@@ -8,18 +8,21 @@ import kepl_icon from "../../public/pic/Keplr_Icon.png";
 import copy_icon from "../../public/pic/Copy_icon.png";
 import six_icon from "../../public/pic/SIX_Token_Icon .png";
 import createDown_icon from "../../public/pic/CaretDown_icon.png";
-import { getBalanceCoin, getCosmosAddress } from "@/helpers/AuthService";
+// import { getBalanceCoin, getCosmosAddress } from "@/helpers/AuthService";
 import Disconnect from "./Disconnect";
 import { useSession } from "next-auth/react";
 import ConfirmModalChakra from "./ConfirmModalChakra";
 import { Tooltip } from "@chakra-ui/react";
+import { DefaultSession } from "@/type/DefaultSession";
+
 
 type Props = {};
 
 function UserDashboard({}: Props) {
   // const [cosmosAddress,setCosmosAddress] = useState(getCosmosAddress())
   // const [balance,setBalance]= useState(getBalanceCoin())
-  const { data: session } = useSession();
+  const sessions = useSession();
+  const session:DefaultSession| null = sessions.data
   const fiveNet = process.env.NEXT_APP_FIVENET_SCAN;
 
   const copyToClipboard = (value: string) => {
@@ -40,7 +43,7 @@ function UserDashboard({}: Props) {
           <Tooltip label={"Copy to Clipboard"} hasArrow>
             <div
               className="hover:scale-110 cursor-pointer duration-500"
-              onClick={() => copyToClipboard(session?.user?.address)}
+              onClick={() => copyToClipboard(session?.user?.address!)}
             >
               <Image src={copy_icon} alt={""} width={25} height={25}></Image>
             </div>

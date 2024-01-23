@@ -5,7 +5,7 @@ import Live_Icon from "../../public/pic/Live_Icon.png";
 import Testnet_Icon from "../../public/pic/Testnet_Icon.png";
 import HomeNewintregationCard from "./HomeNewintregationCard";
 // import { getListDraft } from '../app/home/actions'
-import { getAccessTokenFromLocalStorage } from "@/helpers/AuthService";
+// import { getAccessTokenFromLocalStorage } from "@/helpers/AuthService";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import HomeDraftCard from "./HomeDraftCard";
@@ -13,15 +13,25 @@ import { useRouter } from "next/navigation";
 import Loading from "./Loading";
 import { getListDraft } from "@/service/getListDraft";
 import getDataTestnet from "@/service/getDataTestnet";
-import { ISchemaInfo } from "@/type/Nftmngr";
+import { ISchemaInfoI } from "@/type/Nftmngr";
 import deleate_icon from "../../public/pic/XCircleblue.png";
 import { useSession } from "next-auth/react";
 import ENV from "@/utils/ENV";
-import { DeleteIcon } from "@chakra-ui/icons";
+// import { DeleteIcon } from "@chakra-ui/icons";
 import { DefaultSession } from "@/type/DefaultSession";
 
 type Props = {};
 
+type ChainMappers = {
+    FIVENET: string;
+    SIXNET: string;
+    GOERLI: string;
+    ETHEREUM: string;
+    BAOBAB: string;
+    KLAYTN: string;
+    BNBT: string;
+    BNB: string;
+  };
 export default function HomeCard({}: Props) {
     const sessions = useSession();
     const session:DefaultSession| null = sessions.data
@@ -137,6 +147,7 @@ export default function HomeCard({}: Props) {
                         schema_name: any;
                         schema_info: {
                           schema_info: {
+                            code: string,
                             origin_data: { origin_base_uri: any, origin_chain: string, origin_contract_address: string                            };
                           };
                         }[];
@@ -192,7 +203,7 @@ export default function HomeCard({}: Props) {
                                 item.schema_info &&
                                 item.schema_info[0] &&
                                 item.schema_info[0].schema_info.origin_data
-                                .origin_chain
+                                .origin_chain as keyof ChainMappers
                             }
                             OriginContractAddress={
                                 item.schema_info &&
@@ -210,7 +221,7 @@ export default function HomeCard({}: Props) {
             {index === 2 && (
               <div className="flex items-center h-full w-full overflow-scroll ">
                 {testDraft &&
-                  testDraft.map((item: ISchemaInfo, index: any) => (
+                  testDraft.map((item: ISchemaInfoI, index: any) => (
                     <div
                       key={index}
                       className=" ml-3 flex hover:scale-105 duration-500 cursor-pointer"

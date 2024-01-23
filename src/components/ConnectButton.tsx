@@ -4,12 +4,12 @@ import React from "react";
 import { Dispatch,SetStateAction,useEffect, useState } from "react";
 import { StargateClient } from "@cosmjs/stargate";
 import axios from "axios";
-import {
-  saveCosmosAddress,
-  getCosmosAddress,
-  saveBalanceCoin,
-  saveTokensToLocalStorage,
-} from "../helpers/AuthService";
+// import {
+//   saveCosmosAddress,
+//   getCosmosAddress,
+//   saveBalanceCoin,
+//   saveTokensToLocalStorage,
+// } from "../helpers/AuthService";
 import { useRouter } from "next/navigation";
 import Loading from "./Loading";
 
@@ -50,7 +50,7 @@ function ConnectButton(props:Props) {
       const keplrAccounts = await offlineSigner.getAccounts();
       // Set state value as first address.
       await getKeplrBalance2(keplrAccounts[0].address);
-      saveCosmosAddress(keplrAccounts[0].address);
+      // saveCosmosAddress(keplrAccounts[0].address);
       setCosmosAddress(keplrAccounts[0].address);
       // await UpdateSession({address:keplrAccounts[0].address})
       console.log("Keplr connect :", keplrAccounts[0].address);
@@ -68,7 +68,7 @@ function ConnectButton(props:Props) {
       console.log(client);
       const balanceAsCoin = await client.getBalance(cosmosAddress, token);
       const balance = (parseInt(balanceAsCoin.amount) * 1) / exponent;
-      saveBalanceCoin(balance.toFixed(2));
+      // saveBalanceCoin(balance.toFixed(2));
       console.log(balance.toFixed(2));
     } else {
       console.error("Cosmos address is null.");
@@ -153,10 +153,10 @@ function ConnectButton(props:Props) {
         },
       })
       .then(async (response) => {
-        saveTokensToLocalStorage(
-          response.data.data.access_token,
-          response.data.data.refresh_token
-        );
+        // saveTokensToLocalStorage(
+        //   response.data.data.access_token,
+        //   response.data.data.refresh_token
+        // );
         setCookie("token", `Bearer ${response.data.data.access_token}`);
         await signIn("credentials", {
           redirect: false, // Do not redirect, handle redirection manually after signing in

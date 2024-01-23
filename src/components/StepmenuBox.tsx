@@ -8,7 +8,7 @@ type Props = {
   stepName: string;
   currentStep: number;
   schemaCode: string;
-  onEditing: boolean;
+  onEditing?: boolean;
 };
 
 function StepmenuBox(props: Props) {

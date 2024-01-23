@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Tooltip } from "@chakra-ui/react";
 import Image from "next/image";
 import delete_icon from "../../public/pic/deleate_attribute_card.png";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/navigation";
 import ConfirmModalChakra from "./ConfirmModalChakra";
 
@@ -121,7 +121,7 @@ const ActionInfoCard = (props: ActionInfoCardProps) => {
             <h6 className="text-main2 font-light">Then</h6>
             {props.then === undefined ||
             props.then === null ||
-            props.then.length === 0 ? (
+            props.then.length < 1 ? (
               <p className="text-gray-400 font-semibold">Empty</p>
             ) : (
               <div style={thenStyle}>

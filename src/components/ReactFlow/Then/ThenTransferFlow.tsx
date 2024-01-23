@@ -27,19 +27,15 @@ import InputNode from "./CustomNode/InputNode";
 import Link from "next/link";
 import { IActions } from "@/type/Nftmngr";
 import AlertModal from "@/components/AlertModal";
-
-// import SyntaxHighlighter from "react-syntax-highlighter";
-
-// import { useParams } from "react-router-dom";
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
-import {
-  getAccessTokenFromLocalStorage,
-  getActionName,
-  getSCHEMA_CODE,
-  saveSCHEMA_CODE,
-} from "@/helpers/AuthService";
+// import {
+//   getAccessTokenFromLocalStorage,
+//   getActionName,
+//   getSCHEMA_CODE,
+//   saveSCHEMA_CODE,
+// } from "@/helpers/AuthService";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ActionHeader from "@/components/ActionHeader";
@@ -56,6 +52,39 @@ interface ThenTransferFlowProps {
   setMetaFunction: React.Dispatch<React.SetStateAction<string>>;
   handleActionThenTypeChange: (newActionThenType: string) => void;
   handleTransformTypeChange: (newActionThenType: string) => void;
+}
+
+interface NodeProps {
+  width?: number;
+  height?: number;
+  id: string;
+  type: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  draggable: boolean;
+  data: {
+    showType: string;
+    id: string;
+    parentNode: string | number | null;
+    label: {
+      x: number;
+      y: number;
+    };
+    value: string | number | boolean;
+    dataType: string;
+    isFetch?: boolean;
+    isSet?: boolean;
+    width?: number;
+    height?: number;
+  };
+
+  selected?: boolean;
+  positionAbsolute?: {
+    x: number;
+    y: number;
+  };
 }
 
 const initialNodes: Node[] = [
@@ -87,14 +116,13 @@ const nodeTypes = {
   customInputNode: InputNode,
 };
 
-
 const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const getCookieData = localStorage.getItem("action");
   const router = useRouter();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const reactFlowWrapper = useRef(null);
+  const reactFlowWrapper = useRef<any | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   // const nodeTypes = useMemo(() => {
   //   return {
@@ -108,7 +136,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   const { setCenter, project } = useReactFlow();
   // const navigate = useNavigate();
   const [isDraft, setIsDraft] = useState(false);
-  const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
@@ -178,7 +205,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           position.y <= startY + halfHeight
         );
       };
-      const updateNode = (node: object, type: string) => {
+      const updateNode = (node: NodeProps, type: string) => {
         let updatedNode;
         if (type === "increaseNode") {
           updatedNode = {
@@ -304,8 +331,8 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
               updatedNodes.push(onAddNode);
             }
           }
-          updatedNodes.push(updateNode(node, type));
-          setNodes(sortNode(updatedNodes));
+          updatedNodes.push(updateNode(node as NodeProps, type));
+          setNodes(sortNode(updatedNodes as NodeProps[]));
         }
       }
     }
@@ -469,13 +496,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     setCenter(x, y, { zoom, duration: 1000 });
   };
 
-  const handleEdgesChange = (changes: NodeChange[]) => {
-    console.log(changes);
-    changes.forEach((element) => {
-      console.log("here", element);
-    });
-  };
-
   const handleNodesChange = (changes: NodeChange[]) => {
     changes.forEach((element) => {
       if (element.type === "remove") {
@@ -515,8 +535,8 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   };
 
   const getDataFromNode = () => {
-    const transformData = (nodes) => {
-      let result = {};
+    const transformData = (nodes: NodeProps[]) => {
+      let result: any = {};
 
       for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].data.showType === "valueNode") {
@@ -596,14 +616,16 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       return result;
     };
 
-    const object = Factory.createObject(transformData(nodes)).toString();
+    const object = Factory.createObject(
+      transformData(nodes as NodeProps[])
+    ).toString();
     console.log(">", object);
     setMetaData(object);
     props.setMetaFunction(object);
     return object;
   };
 
-  const sortNode = (nodes) => {
+  const sortNode = (nodes: NodeProps[]) => {
     const nodeSort = nodes.sort((a, b) => {
       const idA = parseInt(a.id);
       const idB = parseInt(b.id);
@@ -656,7 +678,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
       tempArr = updatedArray;
     };
-    if (metaData.startsWith("meta")){
+    if (metaData.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
         updateActionThenByName(
@@ -666,50 +688,54 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           metaData
         );
       }
-  
+
       if (isCreateNewActionCookie) {
         const tempArrCookie = getActionThanArrCookie
           ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
           : [];
-  
+
         const metaDataToAdd =
           typeof metaData === "string" ? metaData : JSON.stringify(metaData);
-  
+
         let updatedTempArrCookie;
         if (getActionThenIndexCookie) {
           updatedTempArrCookie = tempArrCookie.map(
             (item: string, index: number) =>
-              index === parseInt(getActionThenIndexCookie) ? metaDataToAdd : item
+              index === parseInt(getActionThenIndexCookie)
+                ? metaDataToAdd
+                : item
           );
         }
-  
+
         if (getIsCreateNewThenFromCookie === "true") {
           if (!tempArrCookie.includes(originalMetaFunction)) {
             updatedTempArrCookie = tempArrCookie;
             updatedTempArrCookie.push(metaDataToAdd);
           }
         }
-  
+
         setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
       localStorage.setItem("action", JSON.stringify(tempArr));
       setCookie("action-then", metaData);
       setCookie("isEditAction", "true");
-      router.push(isCreateNewActionCookie === "true"
-      ? `/newdraft/6/${schemacode}/action-form/create-new-action`
-      : `/newdraft/6/${schemacode}/action-form/${props.actionName}`)
-    }else{
-      setModalErrorMessage("Please create your then")
-      setIsOpen(true)
+      router.push(
+        isCreateNewActionCookie === "true"
+          ? `/newdraft/6/${schemacode}/action-form/create-new-action`
+          : `/newdraft/6/${schemacode}/action-form/${props.actionName}`
+      );
+    } else {
+      setModalErrorMessage("Please create your then");
+      setIsOpen(true);
     }
   };
 
-  const convertObjectToNode = (outputObj) => {
+  const convertObjectToNode = (outputObj: any) => {
     setIsDraft(true);
     console.log("-->out", outputObj);
-    const tempNodeArray = [];
-    const tempEdgeArray = [];
-    const processNode = (node, parentNode = null, parentPositionY = 0) => {
+    const tempNodeArray: NodeProps[] = [];
+    const tempEdgeArray: any[] = [];
+    const processNode = (node: any, parentNode = null, parentPositionY = 0) => {
       const nodeId = tempNodeArray.length + 1;
 
       const newNode = {
@@ -728,7 +754,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         positionAbsolute: { x: 0, y: parentPositionY },
       };
 
-      tempNodeArray.push(newNode);
+      tempNodeArray.push(newNode as NodeProps);
 
       if (node.attributeName) {
         newNode.data.showType = "selectAttributeNode";
@@ -767,7 +793,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
               dataType: node.value1.attributeName.dataType,
             },
           };
-          tempNodeArray.push(toNode, paramNode);
+          tempNodeArray.push(toNode as NodeProps, paramNode as NodeProps);
         } else {
           const attributeNode = {
             id: (nodeId + 3).toString(),
@@ -783,7 +809,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
               dataType: node.value1.attributeName.dataType,
             },
           };
-          tempNodeArray.push(toNode, attributeNode);
+          tempNodeArray.push(toNode as NodeProps, attributeNode as NodeProps);
         }
 
         const edge = {
@@ -875,11 +901,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
         tempEdgeArray.push(edge, edge2);
       }
-      // Sort nodes.id in ascending order
-      tempNodeArray.sort((a, b) => {
-        return a.id - b.id;
-      });
-
       return nodeId;
     };
 
@@ -891,10 +912,9 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   };
 
   const handleDoubleClickAddNode = useCallback(
-    (type) => {
+    (type: string) => {
       const updatedNodes = [];
 
-      console.log("type===", type);
       const addNodes = nodes.filter((node) => node.data.showType === "addNode");
       addNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
@@ -972,7 +992,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   }, [nodes, setNodes]);
 
   useEffect(() => {
-    saveSCHEMA_CODE(props.schemaRevision);
+    // saveSCHEMA_CODE(props.schemaRevision);
     const firstMetaData = props.metaFunction;
     console.log("firstMetaData", firstMetaData);
     if (firstMetaData.startsWith("meta.TransferNumber")) {
@@ -991,43 +1011,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   }, [nodes[0].data.value]);
 
   useEffect(() => {
-    const convertFromBase64 = (str) => {
-      console.log("str: ", str);
-      return atob(str);
-    };
-    if (actionData !== undefined) {
-      const getDataByName = (data, name) => {
-        return data.find((item) => item.name === name);
-      };
-      if (props.isDraft && isBase64(props.metaFunction)) {
-        setSelectedAttribute("none");
-        const result = getDataByName(actionData, props.actionName);
-        setActionThenArr(result.then);
-        const index = actionThenArr.indexOf(
-          convertFromBase64(props.metaFunction)
-        );
-        console.log("--: ", index);
-        setActionThenIndex(index);
-      } else {
-        setSelectedAttribute("none");
-        const result = getDataByName(actionData, props.actionName);
-        console.log("result: ", result);
-        setActionThenArr(result.then);
-        const index = actionThenArr.indexOf(props.metaFunction);
-        console.log("--: ", index);
-        setActionThenIndex(index);
-      }
-
-      if (props.metaFunction === "create-new-action") {
-        setIsCreateNewAction(true);
-        setSelectedAttribute("");
-      }
-
-      console.log("actionThenArr: ", actionThenArr);
-    }
-  }, [actionData]);
-
-  useEffect(() => {
     if (isGenerateGPT) {
       console.log(`"${metaData.toString()}"`);
       convertObjectToNode(parser_then.parse(metaData.toString()));
@@ -1037,7 +1020,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   }, [isGenerateGPT]);
 
   return (
-    <div className="flex justify-between px-8 ">
+    <div className="flex justify-between px-8 h-full" id ="then2">
       {isOpen && (
         <AlertModal
           title={errorModalMessage}
@@ -1046,7 +1029,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           setIsOpen={setIsOpen}
         />
       )}
-      <div className="flex flex-col w-[64vw] mr-12">
+      <div className="flex flex-col w-[64vw] mr-12 h-full">
         <ActionHeader
           type="then"
           actionName={props.actionName}
@@ -1056,13 +1039,12 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           handleActionThenTypeChange={props.handleActionThenTypeChange}
           handleTransformTypeChange={props.handleTransformTypeChange}
         />
-        <div className="h-[580px]  w-full border rounded-3xl bg-white p-2 mt-4">
+        <div className="h-full  w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
-              onEdgesChange={handleEdgesChange}
               onNodesChange={handleNodesChange}
               onConnect={onConnect}
               onInit={onInit}

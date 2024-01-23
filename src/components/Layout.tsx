@@ -10,7 +10,7 @@ import axios from 'axios'
 import HomeFooter from "@/components/HomeFooter";
 import HomeNavBar from "@/components/HomeNavbar";
 import HomeSidebar from "@/components/HomeSidebar";
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from "@/helpers/AuthService";
+// import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from "@/helpers/AuthService";
 import CloseDetailButton from "./CloseDetailButton";
 import Loading from "./Loading";
 
@@ -47,35 +47,35 @@ export default function Layout({
 
     //--------------------------------------Authen Refresh Token----------------------------------------//
     const [refreshTokenNumber, setRefreshTokenNumber] = useState(0)
-    const RefreshToken = () => {
-        setTimeout(() => {
-            const apiUrl = `${process.env.API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`
-            const requestData = {
-                "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
-            };
-            axios.post(apiUrl, requestData, {
-                headers: {
-                    'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-                },
-            })
-                .then(response => {
-                    // console.log('API Response from refresh :', response.data);
-                    saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
-                    const accessToken = getAccessTokenFromLocalStorage();
-                    const refreshToken = getRefreshTokenFromLocalStorage();
-                    // console.log("New Access: ", accessToken)
-                    // console.log("New Refresh: ", refreshToken)
-                    setRefreshTokenNumber(refreshTokenNumber + 1)
-                })
-                .catch(error => {
-                    console.error('API Error:', error);
-                });
-        }, 600000);
-    }
+    // const RefreshToken = () => {
+    //     setTimeout(() => {
+    //         const apiUrl = `${process.env.API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`
+    //         const requestData = {
+    //             "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
+    //         };
+    //         axios.post(apiUrl, requestData, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+    //             },
+    //         })
+    //             .then(response => {
+    //                 // console.log('API Response from refresh :', response.data);
+    //                 saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
+    //                 const accessToken = getAccessTokenFromLocalStorage();
+    //                 const refreshToken = getRefreshTokenFromLocalStorage();
+    //                 // console.log("New Access: ", accessToken)
+    //                 // console.log("New Refresh: ", refreshToken)
+    //                 setRefreshTokenNumber(refreshTokenNumber + 1)
+    //             })
+    //             .catch(error => {
+    //                 console.error('API Error:', error);
+    //             });
+    //     }, 600000);
+    // }
 
-    useEffect(() => {
-        RefreshToken()
-    }, [refreshTokenNumber,RefreshToken])
+    // useEffect(() => {
+    //     RefreshToken()
+    // }, [refreshTokenNumber,RefreshToken])
 
     useEffect(() => {
         pathname.includes("then") || pathname.includes("when") ? setCheckIsThenOrWhen(true) : setCheckIsThenOrWhen(false)
@@ -102,7 +102,7 @@ export default function Layout({
                             <Box className=" duration-500   " bgColor=""  width={isSideBarShow ? "78%" : "100%"} height={"80%"}>
                                 <main>{children}</main>
                             </Box>
-                            <Flex className=" duration-500  pt-[8vh] " width={isSideBarShow ? "22%" : "0%"} height={"20%"}  position="relative ">
+                            <Flex className=" duration-500  pt-[8vh] " width={isSideBarShow ? "22%" : "0%"} height={"20%"}  position="relative">
                                 <div onClick={closeSidebar} className={`pt-[8vh] absolute top-[-2%] left-0`} >
                                     <CloseDetailButton isSideBarShow={isSideBarShow}></CloseDetailButton>
                                 </div>

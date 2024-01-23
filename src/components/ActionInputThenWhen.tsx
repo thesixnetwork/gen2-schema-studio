@@ -14,7 +14,7 @@ interface ActionInputThenWhenProps {
   isCreateNewAction: boolean;
   isError: boolean;
   isNameEmpty: boolean;
-  setAction?: any;
+  setAction: any;
 }
 
 const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
@@ -50,14 +50,12 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
   };
 
   const handleDeleteThen = (index: number) => {
-    // Update local state
     const updatedThen = [...props.action[props.actionIndex]?.then];
+    const updatedActionCopy = [...props.action];
     updatedThen.splice(index, 1);
     setAction(updatedThen);
-
-    // Update the state in the parent component
-    props.action[props.actionIndex]?.then.splice(index, 1);
-    console.log("deleted", props.action[props.actionIndex]?.then);
+    updatedActionCopy[props.actionIndex].then = updatedThen;
+    props.setAction(updatedActionCopy);
   };
 
   const handleCreateNewAction = () => {
@@ -93,9 +91,7 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
   return (
     <div className="border justify-between w-[40vw] relative rounded-2xl bg-white">
       <div
-        className={`${
-          props.actionType === "when" ? "bg-main2 " : "bg-none"
-        } w-5 h-5 rounded-full border border-main2 absolute right-2 top-2`}
+        className={`bg-main2  w-5 h-5 rounded-full border border-main2 absolute right-2 top-2`}
       ></div>
       <div className="flex flex-col justify-between px-20 py-8 gap-y-5">
         <h2 className="text-main2 text-2xl font-bold">
@@ -164,7 +160,7 @@ const ActionInputThenWhen = (props: ActionInputThenWhenProps) => {
                 >
                   <span className="text-Act6 text-xl w-[95%]">{item}</span>
                   <div
-                    className="z-100 rounded-full flex h-4 w-4 items-center justify-center border border-main2 text-main2 hover:scale-110 duration-300"
+                    className="z-100 rounded-full flex h-4 w-4 items-center justify-center border bg-main border-main2 text-main2 hover:scale-110 duration-300"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowModal(true);

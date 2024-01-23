@@ -9,11 +9,8 @@ import postUpdateAction6 from "@/service/postUpdateAction6";
 import postCreateAction6 from "@/service/postCreateAction6";
 import postImageUrlAction6 from "@/service/postImageUrlAction6";
 import { setCookie } from "@/service/setCookie";
-import { cookies } from "next/headers";
 import { getCookie } from "@/service/getCookie";
 import Loading from "@/components/Loading";
-import BackPageButton from "@/components/BackPageButton";
-import NextPageButton from "@/components/NextPageButton";
 import SaveButton from "@/components/button/SaveButton";
 import CancelButton from "@/components/button/CancelButton";
 import { useRouter } from "next/navigation";
@@ -46,6 +43,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const getImgFormatFromCookie = getCookie("imgFormat") ?? "";
   const [nameRequired, setNameRequired] = useState(false);
   const [whenRequired, setWhenRequired] = useState(false);
+  const [thenRequired, setThenRequired] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState("");
   const [createNewAction, setCreateNewAction] = useState([
@@ -61,7 +59,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   ]);
 
   const handleSave = async () => {
-    if (nameRequired || whenRequired) {
+    if (nameRequired || whenRequired || thenRequired) {
       setIsOpen(true);
       setErrorModalMessage("Please fill in all required fields");
     } else {
@@ -151,7 +149,7 @@ const Page = ({ params }: { params: { param: string } }) => {
       setLoading(false);
     }
     // setLoading(false);
-  }, [getActionFromCookie, action]);
+  }, [getActionFromCookie, action, params.param]);
 
   useEffect(() => {
     setLoading(true);
@@ -239,7 +237,19 @@ const Page = ({ params }: { params: { param: string } }) => {
     } else {
       setWhenRequired(false);
     }
-  }, [updatedAction, actionIndex, createNewAction]);
+
+    if (
+      (params.param === "create-new-action" &&
+        createNewAction[0].then.length === 0) ||
+      (updatedAction &&
+        updatedAction[actionIndex] &&
+        updatedAction[actionIndex].then.length === 0)
+    ) {
+      setThenRequired(true);
+    } else {
+      setThenRequired(false);
+    }
+  }, [updatedAction, actionIndex, createNewAction, params.param]);
 
   return (
     <>
@@ -331,6 +341,11 @@ const Page = ({ params }: { params: { param: string } }) => {
                 params.param === "create-new-action"
                   ? createNewAction || []
                   : updatedAction || []
+              }
+              setAction={
+                params.param === "create-new-action"
+                  ? setCreateNewAction
+                  : setUpdatedAction
               }
               actionIndex={
                 params.param === "create-new-action" ? 0 : actionIndex

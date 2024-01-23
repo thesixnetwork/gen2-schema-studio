@@ -1,5 +1,5 @@
 import { CircularProgress } from '@chakra-ui/react';
-import React from 'react';
+import React, { ChangeEventHandler, ReactElement, ReactEventHandler } from 'react';
 
 type Props = {
   title: string;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 function InputCard(props: Props) {
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
 
     // Allow only English letters, numbers, and symbols available on a standard English keyboard
