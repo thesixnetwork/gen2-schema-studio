@@ -98,11 +98,11 @@
     },
     {
       "title": "When",
-      "description": ""
+      "description": "Conditions or triggers that initiate the action."
     },
     {
       "title": "Then",
-      "description": ""
+      "description": "The expected outcome or result after the action has been performed."
     }
   ],
   "/newdraft/6-": [

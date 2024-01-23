@@ -26,7 +26,7 @@ function Beforwego_1(props: MyComponentProps) {
                 {/* </WhiteBox> */}
 
                 <div >
-                    <Image src={logo1} className='mt-[-10px] '></Image>
+                    <Image src={logo1} className='mt-[-10px] ' alt="info-box-img"></Image>
                     <p className=' ml-28'>This is info box</p>
                 </div>
             </div>
@@ -36,7 +36,7 @@ function Beforwego_1(props: MyComponentProps) {
                     <NextPageButton></NextPageButton>
                 </div>
                 <div className=' flex justify-between items-center'>
-                    <Image src={logo1} className=' ml-14 -rotate-[75deg] '></Image>
+                    <Image src={logo1} className=' ml-14 -rotate-[75deg] ' alt="button-img"></Image>
                     <p className=' ml-20 w-40 '>This is button</p>
                 </div>
             </div>
@@ -48,12 +48,12 @@ function Beforwego_1(props: MyComponentProps) {
                 <div className='mt-[20%] ml-[-200px] absolute z-50'></div>
 
                 <div className='absolute mt-[120px] ml-[500px]'>
-                    <Image src={logo1} className='mt-[80px] mr-[150px] -rotate-45'></Image>
+                    <Image src={logo1} className='mt-[80px] mr-[150px] -rotate-45' alt="input-img"></Image>
                     <p className='ml-[150px] w-40 mt-[-50px] absolute'>This is input</p>
                 </div>
 
                 <div className='absolute mt-[-400px]'>
-                    <Image src={logo1} className='mt-[155px] ml-[540px] rotate-[140deg] z-[-10]'></Image>
+                    <Image src={logo1} className='mt-[155px] ml-[540px] rotate-[140deg] z-[-10]' alt="img"></Image>
                     <div className='ml-[400px] mt-[-170px] absolute grid grid-cols-2 gap-x-0  justify-center items-center'>
                         <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full '></div>
                         <p className='ml-[-20px]'>Required</p>

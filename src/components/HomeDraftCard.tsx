@@ -10,11 +10,10 @@ import { useRouter } from "next/navigation";
 import logoNFTGen2 from "../../public/pic/logo-nftgen2.png";
 import { useSession } from "next-auth/react";
 import e_coin from "../../public/pic/e_coin.png";
-import s_coin from "../../public/pic/chainlogocolor1.png"
-import k_coin from "../../public/pic/chainlogocolor3.png"
-import b_coin from "../../public/pic/chainlogocolor4.png"
+import s_coin from "../../public/pic/chainlogocolor1.png";
+import k_coin from "../../public/pic/chainlogocolor3.png";
+import b_coin from "../../public/pic/chainlogocolor4.png";
 import { DefaultSession } from "@/type/DefaultSession";
-
 
 type ChainMappers = {
   FIVENET: string;
@@ -42,7 +41,7 @@ function HomeDraftCard(props: Props) {
   const [error, setError] = useState(false);
   const router = useRouter();
   const sessions = useSession();
-  const session:DefaultSession| null = sessions.data
+  const session: DefaultSession | null = sessions.data;
   // console.log("TotalSupply",TotalSupply)
   // console.log("OriginChain",props.OriginChain)
   // console.log("OriginContractAddress",props.OriginContractAddress)
@@ -95,7 +94,7 @@ function HomeDraftCard(props: Props) {
           headers: headers, // Pass headers as an object
         });
         // console.log(req.data.data.total)
-        setTotalSupply(req.data.data.total)
+        setTotalSupply(req.data.data.total);
         return;
       } catch (err) {
         // console.log(err);
@@ -123,11 +122,13 @@ function HomeDraftCard(props: Props) {
         >
           {props.CollectionImage === "" ? (
             props.type === "testnet" ? (
-              <Image
-                className=" w-40 h-40 mb-1"
-                src={logoNFTGen2}
-                alt={"pic"}
-              ></Image>
+              <div className="h-full flex items-center justify-center">
+                <Image
+                  className=" w-40 h-40"
+                  src={logoNFTGen2}
+                  alt={"pic"}
+                ></Image>
+              </div>
             ) : (
               <div className=" h-[70%] flex justify-center items-center">
                 {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   ">
@@ -154,18 +155,22 @@ function HomeDraftCard(props: Props) {
                 onError={() => handleError()}
               ></img>
               <div className=" absolute w-full h-[2.5rem] flex justify-between px-[15%] items-center backdrop-blur-md backdrop-brightness-110 rounded-b-lg left-0 bottom-0 ">
-                {props.OriginChain === "FIVENET" || props.OriginChain === "SIXNET" &&
-                  <Image className=" w-8 h-8" src={s_coin} alt={""}></Image>
-                }
-                {props.OriginChain === "BNB" || props.OriginChain === "BNBT" &&
-                  <Image className=" w-8 h-8" src={b_coin} alt={""}></Image>
-                }
-                {props.OriginChain === "ETHEREUM" || props.OriginChain === "GOERLI" &&
-                  <Image className=" w-8 h-8" src={e_coin} alt={""}></Image>
-                }
-                {props.OriginChain === "KLAYTN" || props.OriginChain === "BAOBAB" &&
-                  <Image className=" w-8 h-8" src={k_coin} alt={""}></Image>
-                }
+                {props.OriginChain === "FIVENET" ||
+                  (props.OriginChain === "SIXNET" && (
+                    <Image className=" w-8 h-8" src={s_coin} alt={""}></Image>
+                  ))}
+                {props.OriginChain === "BNB" ||
+                  (props.OriginChain === "BNBT" && (
+                    <Image className=" w-8 h-8" src={b_coin} alt={""}></Image>
+                  ))}
+                {props.OriginChain === "ETHEREUM" ||
+                  (props.OriginChain === "GOERLI" && (
+                    <Image className=" w-8 h-8" src={e_coin} alt={""}></Image>
+                  ))}
+                {props.OriginChain === "KLAYTN" ||
+                  (props.OriginChain === "BAOBAB" && (
+                    <Image className=" w-8 h-8" src={k_coin} alt={""}></Image>
+                  ))}
                 <p className=" text-Act1">{TotalSupply} Items</p>
               </div>
             </div>
