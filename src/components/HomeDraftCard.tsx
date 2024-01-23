@@ -122,11 +122,13 @@ function HomeDraftCard(props: Props) {
         >
           {props.CollectionImage === "" ? (
             props.type === "testnet" ? (
-              <Image
-                className=" w-40 h-40 mb-1"
-                src={logoNFTGen2}
-                alt={"pic"}
-              ></Image>
+              <div className="h-full flex items-center justify-center">
+                <Image
+                  className=" w-40 h-40"
+                  src={logoNFTGen2}
+                  alt={"pic"}
+                ></Image>
+              </div>
             ) : (
               <div className=" h-[70%] flex justify-center items-center">
                 {/* <div className=" relative w-draftCardWidth hover:scale-105 duration-300 cursor-pointer   ">
