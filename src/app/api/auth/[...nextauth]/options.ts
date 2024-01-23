@@ -8,6 +8,27 @@ interface MyCredentials {
   // Add any other properties if needed
 }
 
+type ISODateString = string;
+interface DefaultSession {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    accessToken?: string | null;
+    image?: string | null;
+  };
+  expires: ISODateString;
+}
+
+interface User {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    accessToken?: string | null;
+    address?: string | null;
+    balance?: string | null;
+  };
+}
+
 export const authOptions: AuthOptions = {
   pages: {
     signIn: "/",
@@ -15,7 +36,12 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      session.user = token.user!;
+      const defaultUser: User = {
+        user: token.user!,
+      };
+      
+      // session.user = token.user!;
+      session.user = defaultUser.user;;
       return session;
     },
     async jwt({ token, user }) {

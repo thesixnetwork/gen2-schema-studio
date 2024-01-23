@@ -2,13 +2,15 @@
 import React from 'react'
 import axios from "axios";
 import { getServerSession } from "next-auth";
+import { DefaultSession } from "@/type/DefaultSession";
+// import Session from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import ENV from '@/utils/ENV';
 
-
 export async function createSchemaCode(schemaCode: string,collectionName:string,description:string,) {
     const apiUrl = `${ENV.API_URL}/schema/create_schema_info`;
-    const sesstion = await getServerSession(authOptions);
+    // const sesstion: DefaultSession | null = await getServerSession(authOptions);
+    const sesstion:DefaultSession | null = await getServerSession(authOptions);
     const requestData = {
         "schema_name": `${schemaCode}`,
         "status": "Draft",
@@ -20,7 +22,7 @@ export async function createSchemaCode(schemaCode: string,collectionName:string,
         const req = await axios.post(apiUrl,requestData,{
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization':`Bearer ${sesstion.user.accessToken}`  // Set the content type to JSON
+                'Authorization':`Bearer ${sesstion?.user?.accessToken}`  // Set the content type to JSON
                 // Add any other headers your API requires
             }},);
         console.log(req.data.data)

@@ -1,6 +1,4 @@
 "use client";
-import { useAccount, useConnect, useSuggestChainAndConnect } from "graz";
-import { sixCustomChain } from "@/app/defineChain";
 import react, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import React from "react";
 import { ISchemaInfo, ItokenAttributes } from "@/type/Nftmngr";
@@ -10,15 +8,14 @@ import {
   Flex,
 } from "@chakra-ui/react";
 
-import { CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
 import NewCollecitonCard from "./state3/NewCollectionCard";
-import AttributeCard from "./state3/AttributeCard";
 import AttributeCardAndDelete from "./state3/AttributeCardAndDelete";
-import { ConfirmModal } from "@/components/ConfirmModal";
 import ENV from "@/utils/ENV";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { DefaultSession } from "@/type/DefaultSession";
+
 
 
 const CaradNewDaft: React.FC<{
@@ -28,7 +25,9 @@ const CaradNewDaft: React.FC<{
   schemacode: string;
   setOnEditOrCreate: Dispatch<SetStateAction<boolean>>;
 }> = ({ isDaft, isState, setIsDaft, schemacode, setOnEditOrCreate }) => {
-  const { data: session } = useSession();
+  const sessions = useSession();
+  // const session = useSession();
+  const session:DefaultSession| null = sessions.data
   const router = useRouter();
   const [onEdit, setOnEdit] = useState(false);
   const [onCreate, setOnCreate] = useState(false);
@@ -76,7 +75,7 @@ const CaradNewDaft: React.FC<{
       const req = await axios.post(apiUrl, requestData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session && session.user  && session?.user.accessToken}`, // Set the content type to JSON
+          Authorization: `Bearer ${session?.user?.accessToken}`, // Set the content type to JSON
         },
       });
       const res = req.data;

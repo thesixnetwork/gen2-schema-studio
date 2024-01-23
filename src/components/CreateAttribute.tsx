@@ -25,6 +25,8 @@ import InputCardOneLine from "./state1/InputCardOneLine";
 import InputSelectCard from "./state3/InputSelectCard";
 import CancelButton from "./button/CancelButton";
 import SaveButton from "./button/SaveButton";
+import { DefaultSession } from "@/type/DefaultSession";
+
 
 // import { Button, ButtonGroup } from '@chakra-ui/react'
 
@@ -47,7 +49,9 @@ const CreateAttribute: React.FC<{
   setOnEditOrCreate,
 }) => {
   // console.log(onEdit)
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+  const sessions = useSession();
+  const session:DefaultSession| null = sessions.data
   const [errorMessage, setErrorMessage] = useState("");
   const [errorMessageI, setErrorMessageI] = useState("");
   const [errorMessageII, setErrorMessageII] = useState("");
@@ -296,9 +300,7 @@ const CreateAttribute: React.FC<{
         const req = await axios.post(apiUrl, requestData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              session && session.user && session?.user.accessToken
-            }`, // Set the content type to JSON
+            Authorization: `Bearer ${session?.user?.accessToken}`, // Set the content type to JSON
           },
         });
         const res = req.data;

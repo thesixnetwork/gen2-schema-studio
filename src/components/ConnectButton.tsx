@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import Loading from "./Loading";
 
 import { setCookie } from "@/service/setCookie";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 interface Props {
     setLoading: Dispatch<SetStateAction<boolean>>;
 }
@@ -32,7 +32,7 @@ function ConnectButton(props:Props) {
   const [exponent, setExponent] = useState(1e6);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { update: UpdateSession, data: session } = useSession();
+  // const { update: UpdateSession, data: session } = useSession();
   // console.log(session)
 
   // Extend the Window interface with the 'keplr' property
@@ -61,7 +61,7 @@ function ConnectButton(props:Props) {
 
   //Get balance
   const getKeplrBalance = async () => {
-    const cosmosAddress = getCosmosAddress();
+    // const cosmosAddress = getCosmosAddress();
     if (cosmosAddress !== null) {
       console.log(cosmosAddress);
       const client = await StargateClient.connect(rpcEndpoint);
@@ -120,7 +120,7 @@ function ConnectButton(props:Props) {
   //             address: '123456',
   //           };
   //         // session.user = "33"
-  //         const updatedSession = await useSession().update(session);
+
 
   //         console.log('Session updated with address:', updatedSession);
 

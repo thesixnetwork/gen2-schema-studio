@@ -6,12 +6,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import ENV from '@/utils/ENV';
 import { IOriginAttributes } from "@/type/Nftmngr";
+import { DefaultSession } from "@/type/DefaultSession";
 
 
 
 export async function saveState3(originAttributes : IOriginAttributes[], schemaCode: string) {
     const apiUrl = `${ENV.API_URL}/schema/set_schema_info`;
-    const sesstion = await getServerSession(authOptions);
+    const sesstion: DefaultSession | null = await getServerSession(authOptions);
     const requestData = {
         "payload": {
             "schema_info": {
@@ -34,7 +35,7 @@ export async function saveState3(originAttributes : IOriginAttributes[], schemaC
                 // Add any other headers your API requires
             }
         },);
-        console.log(req.data.data)
+        // console.log(req.data.data)
         // const schema_info:ISchemaInfo = req.data.data.schema_info
         return req.data
     } catch (error) {
