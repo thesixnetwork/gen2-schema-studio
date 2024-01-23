@@ -115,7 +115,7 @@ function HomeDraftCard(props: Props) {
         <div
           className=" w-full h-full rounded-2xl bg-bg p-3 flex flex-col  items-center justify-between"
           onClick={() => {
-            router.push(`/newdraft/1/${props.schema_revision}`, {
+            props.type !== "testnet" && router.push(`/newdraft/1/${props.schema_revision}`, {
               scroll: false,
             });
           }}

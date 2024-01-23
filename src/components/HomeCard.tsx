@@ -228,7 +228,7 @@ export default function HomeCard({}: Props) {
                     >
                       <a
                         target="_blank"
-                        href={`${fivenetScan}schema/${item.schema_name}`}
+                        href={`${fivenetScan}schema/${item.schema_info.schema_info.code}`}
                       >
                         <HomeDraftCard
                           schema_revision={item.schema_revision}

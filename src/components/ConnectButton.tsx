@@ -60,23 +60,23 @@ function ConnectButton(props:Props) {
   };
 
   //Get balance
-  const getKeplrBalance = async () => {
-    // const cosmosAddress = getCosmosAddress();
-    if (cosmosAddress) {
-      console.log(cosmosAddress);
-      const client = await StargateClient.connect(rpcEndpoint);
-      console.log(client);
-      const balanceAsCoin = await client.getBalance(cosmosAddress, token);
-      const balance = (parseInt(balanceAsCoin.amount) * 1) / exponent;
-      // saveBalanceCoin(balance.toFixed(2));
-      console.log(balance.toFixed(2));
-      return;
-    } else {
-      console.error("Cosmos address is null.");
-      // Handle the case where cosmosAddress is null, maybe show an error message or take appropriate action.
-      return;
-    }
-  };
+  // const getKeplrBalance = async () => {
+  //   // const cosmosAddress = getCosmosAddress();
+  //   if (cosmosAddress) {
+  //     // console.log(cosmosAddress);
+  //     const client = await StargateClient.connect(rpcEndpoint);
+  //     // console.log(client);
+  //     const balanceAsCoin = await client.getBalance(cosmosAddress, token);
+  //     const balance = (parseInt(balanceAsCoin.amount) * 1) / exponent;
+  //     // saveBalanceCoin(balance.toFixed(2));
+  //     console.log(balance.toFixed(2));
+  //     return;
+  //   } else {
+  //     console.error("Cosmos address is null.");
+  //     // Handle the case where cosmosAddress is null, maybe show an error message or take appropriate action.
+  //     return;
+  //   }
+  // };
   const getKeplrBalance2 = async (address: string) => {
     if (address) {
       const client = await StargateClient.connect(rpcEndpoint);
@@ -166,7 +166,7 @@ function ConnectButton(props:Props) {
   };
 
   useEffect(() => {
-    getKeplrBalance();
+    
     getSignature();
     loginApi();
   }, [cosmosAddress]);
