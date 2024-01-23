@@ -62,7 +62,7 @@ function ConnectButton(props:Props) {
   //Get balance
   const getKeplrBalance = async () => {
     // const cosmosAddress = getCosmosAddress();
-    if (cosmosAddress !== null) {
+    if (cosmosAddress) {
       console.log(cosmosAddress);
       const client = await StargateClient.connect(rpcEndpoint);
       console.log(client);
@@ -70,9 +70,11 @@ function ConnectButton(props:Props) {
       const balance = (parseInt(balanceAsCoin.amount) * 1) / exponent;
       // saveBalanceCoin(balance.toFixed(2));
       console.log(balance.toFixed(2));
+      return;
     } else {
       console.error("Cosmos address is null.");
       // Handle the case where cosmosAddress is null, maybe show an error message or take appropriate action.
+      return;
     }
   };
   const getKeplrBalance2 = async (address: string) => {
@@ -106,26 +108,14 @@ function ConnectButton(props:Props) {
           signedMessage
         );
         console.log("verified= ", verified);
+        return;
       } catch (error) {
-        console.error("Error:", error);
+        // console.error("Error:", error);
+        return;
       }
     }
+    return;
   };
-
-  // const handdleAccount = async () => {
-  //     if (cosmosAddress && session) {
-  //         await UpdateSession({address:cosmosAddress})
-  //         session.user = {
-  //             ...session.user,
-  //             address: '123456',
-  //           };
-  //         // session.user = "33"
-
-
-  //         console.log('Session updated with address:', updatedSession);
-
-  //     }
-  // };
 
   const loginApi = async () => {
     const offlineSigner = window.getOfflineSigner(chainId);

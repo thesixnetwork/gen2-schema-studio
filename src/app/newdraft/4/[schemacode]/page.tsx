@@ -1,30 +1,19 @@
 "use client";
 
-import TapState from "@/components/TapState";
+// import TapState from "@/components/TapState";
 import {
   Box,
-  Button,
-  ButtonGroup,
-  Card,
-  Divider,
   Text,
   Flex,
-  FormControl,
-  FormLabel,
-  useToast,
 } from "@chakra-ui/react";
 
 import { getSchemaInfo } from "@/service/getSchemaInfo";
 import CradNewDaft from "@/components/CardNewDaft";
 import { ISchemaInfo } from "@/type/Nftmngr";
-import { useEffect, useState, useRef } from "react";
-import { useSession } from "next-auth/react";
-import CustomButton from "@/components/CustomButton";
+import { useEffect, useState } from "react";
+// import { useSession } from "next-auth/react";
 
-// import { testFunc  } from './action'
-// import { cookies } from 'next/headers'
-import { Suspense } from "react";
-import { Skeleton, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
+
 import BackPageButton from "@/components/BackPageButton";
 import NextPageButton from "@/components/NextPageButton";
 import { useRouter } from "next/navigation";
@@ -36,7 +25,6 @@ export default function Page({
 }: {
   params: { schemacode: string };
 }) {
-  const { data: session } = useSession();
   // console.log(session)
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
@@ -66,9 +54,11 @@ export default function Page({
         //   setSchemaCode(schemaInfo.schema_info.code);
         //   setStepDraft(schemaInfo.current_state);
         // }
+        return;
       } catch (error) {
         // Handle errors
         console.error("Error fetching data:", error);
+        return;
       }
     })();
   }, [schemacode]);

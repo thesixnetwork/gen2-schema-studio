@@ -124,7 +124,10 @@ export default function Page({
   }, [schemaCode]);
 
   useEffect(() => {
-    validateSchemaCode();
+    if(schemaCode){
+        validateSchemaCode();
+    }
+    // validateSchemaCode();
   }, [schemaCode, validateSchemaCode]);
 
   const create_SchemaCode = async () => {

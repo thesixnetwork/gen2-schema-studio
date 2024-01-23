@@ -100,11 +100,12 @@ export default function Page({
                 const schemaInfo = await getSchemaInfo(schemacode);
                 // console.log(schemaInfo)
                 setIsDaft(schemaInfo)
-
+                return;
                 // Process the response or update state as needed
             } catch (error) {
                 // Handle errors
                 console.error('Error fetching data:', error);
+                return;
             }
         })();
     }, [schemacode]);
@@ -211,17 +212,19 @@ export default function Page({
             try {
                 setIsLoadingGetBaseURI(true)
                 const origin_base_URI = await getBaseURI(originContractAddress, chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
-                console.log("base_uri", chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
+                // console.log("base_uri", chainMapper[chainIndex].Chain[chainTypeIndex].chain_id)
                 if (typeof origin_base_URI !== 'string') {
                     setOriginBaseURI("")
                 } else {
                     setOriginBaseURI(origin_base_URI)
                 }
                 setIsLoadingGetBaseURI(false)
+                return;
             } catch (error) {
                 // Handle errors
                 console.error('Error fetching data:', error);
                 setIsLoadingGetBaseURI(false)
+                return;
             }
         })();
     }, [originContractAddress, chainTypeIndex, chainIndex, chainMapper])

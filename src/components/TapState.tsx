@@ -71,7 +71,7 @@ const TapState: FC<{ isCurren: number, schemaCode: string }> = ({ isCurren, sche
         isState.map((item, index) => (
           <Flex key={index} width="100%">
             <Flex width="100%">
-              <Link href={`/newdaft/${index + 1}/${schemaCode}`}>
+              <Link href={`/newdraft/${index + 1}/${schemaCode}`}>
                 <Flex
                   border="1px solid"
                   borderColor="#79A0EF"

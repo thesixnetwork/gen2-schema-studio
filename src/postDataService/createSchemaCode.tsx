@@ -25,7 +25,7 @@ export async function createSchemaCode(schemaCode: string,collectionName:string,
                 'Authorization':`Bearer ${sesstion?.user?.accessToken}`  // Set the content type to JSON
                 // Add any other headers your API requires
             }},);
-        console.log(req.data.data)
+        // console.log(req.data.data)
         // const schema_info:ISchemaInfo = req.data.data.schema_info
         return req.data
     } catch (error) {

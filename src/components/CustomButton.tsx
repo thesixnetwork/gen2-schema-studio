@@ -25,7 +25,7 @@ const CustomButton: React.FC<Props> = ({ text, schemaCode, isCurren }) => {
   return (
     <>
       {text === "Back" && (
-        <Link href={`/newdaft/${isCurren - 1}/${schemaCode}`}>
+        <Link href={`/newdraft/${isCurren - 1}/${schemaCode}`}>
           <Flex
             width="170px"
             height="48px"
@@ -53,7 +53,7 @@ const CustomButton: React.FC<Props> = ({ text, schemaCode, isCurren }) => {
         </Link>
       )}
       {text === "Next" && (
-        <Link href={`/newdaft/${isCurren + 1}/${schemaCode}`}>
+        <Link href={`/newdraft/${isCurren + 1}/${schemaCode}`}>
           <Flex
             width="170px"
             height="48px"

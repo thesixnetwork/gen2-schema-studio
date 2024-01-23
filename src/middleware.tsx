@@ -19,4 +19,4 @@ export default withAuth(function middleware(request: NextRequestWithAuth) {
 
   // return NextResponse.next();
 });
-export const config = { matcher: ["/home", "/newdaft/:path*"] };
+export const config = { matcher: ["/home", "/newdraft/:path*"] };

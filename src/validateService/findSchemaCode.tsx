@@ -20,19 +20,27 @@ export async function findSchemaCode(schemaCode: string) {
     }
 
     // Make a GET request with parameters
-    const res =  await axios.get(apiUrl, {
-        params: params, // Pass parameters as an object
-        headers: headers, // Pass headers as an object
-    })
-        .then((response) => {
-            // console.log("response :",response.data.data.status);
-            return response.data.data.status
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            return null
-        });
-
-    return res
+    // const res =  await axios.get(apiUrl, {
+    //     params: params, // Pass parameters as an object
+    //     headers: headers, // Pass headers as an object
+    // })
+    //     .then((response) => {
+    //         // console.log("response :",response.data.data);
+    //         return response.data.data.status
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error:', error);
+    //         return null
+    //     });
+    try{
+        const res =  await axios.get(apiUrl, {
+                params: params, // Pass parameters as an object
+                headers: headers, // Pass headers as an object
+            })
+        return res.data.data.status
+    }catch(error){
+        console.error('Error:', error);
+        return null
+    }
        
 }
