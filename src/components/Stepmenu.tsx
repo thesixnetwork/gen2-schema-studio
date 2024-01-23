@@ -5,7 +5,7 @@ type Props = {
   currentStep: number;
   schemacodeNavigate: string;
   stepDraft: number;
-  onEditing: boolean;
+  onEditing?: boolean;
 };
 
 function Stepmenu(props: Props) {

@@ -1,13 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
-import axios from "axios";
-import {
-  getAccessTokenFromLocalStorage,
-  getSCHEMA_CODE,
-} from "@/helpers/AuthService";
-import { set } from "lodash";
-import { getSchemaInfo } from "../../../../service/getSchemaInfo";
 import { getCookie } from "@/service/getCookie";
 
 interface CircleNodeProps {
@@ -27,12 +20,20 @@ interface EventProps {
   };
 }
 
+interface AttributeOptionProps {
+  name: string;
+  dataType: string;
+}
+
 const DynamicNode = (props: CircleNodeProps) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
   const [hovered, setHovered] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
-  const [inputValue, setInputValue] = useState(props.data.value);
+  const [inputValue, setInputValue] = useState<
+    string | number | readonly string[] | undefined
+  >(props.data.value as string | number | readonly string[] | undefined);
   const [valueNodeType, setValueNodeType] = useState(props.data.dataType);
   const [selectedValueNode, setSelectedValueNode] = useState(
     props.data.value === true ? "yes" : "no"
@@ -111,7 +112,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
-  const handleClickValueNode = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClickValueNode = (e: any) => {
     const itemId = (e.target as HTMLDivElement).id;
     setSelectedValueNode(itemId);
     const { nodeInternals } = store.getState();
@@ -127,14 +128,14 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
-  function getElementWidth(element) {
+  const getElementWidth = (element: any) => {
     if (!element) {
       console.error("Element is null or undefined");
       return null;
     }
 
     return element.offsetWidth;
-  }
+  };
 
   useEffect(() => {
     console.log("!valuenodetype: ", valueNodeType);
@@ -178,7 +179,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       );
     } else if (props.data.showType === "paramNode") {
       console.log("|||:", props.data.value, props.data.dataType);
-      setInputValue(props.data.value);
+      setInputValue(props.data.value as string | number | undefined);
       setSelectValue({
         name: props.data.value,
         dataType: props.data.dataType,
@@ -191,7 +192,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       if (props.data.dataType === "boolean") {
         setSelectedValueNode(props.data.value === true ? "yes" : "no");
       } else {
-        setInputValue(props.data.value);
+        setInputValue(props.data.value as string | number | undefined);
       }
     } else if (props.data.showType === "attributeNode") {
       setSelectValue({
@@ -200,6 +201,10 @@ const DynamicNode = (props: CircleNodeProps) => {
       });
     }
   }, [props.data.value, props.data.showType, props.data.dataType]);
+
+  useEffect(() => {
+    if (inputRef.current != null) inputRef.current.focus();
+  }, [props.data.showType, inputRef]);
 
   return props.data.showType === "valueNode" ? (
     <div
@@ -277,6 +282,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               V:&nbsp;{" "}
             </p>
             <input
+              ref={inputRef}
               type="text"
               name=""
               id=""
@@ -321,14 +327,14 @@ const DynamicNode = (props: CircleNodeProps) => {
           form=""
           className="rounded-sm text-main2 bg-white border border-Act6"
           onChange={handleSelect}
-          value={selectValue.name}
+          value={selectValue.name !== undefined ? String(selectValue.name) : ""}
         >
-          <option value={selectValue.name} disabled selected hidden>
+          <option value={selectValue.name !== undefined ? String(selectValue.name) : ""} disabled selected hidden>
             {selectValue.name === "" || selectValue.name === undefined
               ? "-- select --"
               : selectValue.name}
           </option>
-          {attributeOption.map((item, index) => (
+          {attributeOption.map((item: AttributeOptionProps, index: number) => (
             <option
               key={index}
               value={JSON.stringify({

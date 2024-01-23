@@ -5,3 +5,7 @@
 body{
   color: #ffffff;
 }
+
+input::-webkit-calendar-picker-indicator {
+  display: none;
+}

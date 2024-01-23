@@ -1,19 +1,11 @@
 "use client";
 
-import TapState from "@/components/TapState";
 import {
-  Box,
-  Button,
-  ButtonGroup,
-  Divider,
   Text,
   Flex,
-  FormControl,
-  FormLabel,
-  useToast,
 } from "@chakra-ui/react";
 import { getSchemaInfo } from "@/service/getSchemaInfo";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ISchemaInfo } from "@/type/Nftmngr";
 import CustomButton from "@/components/CustomButton";
 import CustomCardDeploy from "@/components/CustomCardDeploy";
@@ -53,6 +45,13 @@ export default function Page({
   const [rpcEndpoint, setRpcEndpoint] = useState(ENV.RPC_FIVENET2);
   const [stepDraft, setStepDraft] = useState(6);
 
+  const getAccount = useCallback(async () => {
+    const offlineSigner = await window.getOfflineSigner(chainId);
+    const keplrAccounts = await offlineSigner.getAccounts();
+    setOfflineSigner(offlineSigner);
+    setIsAccount(keplrAccounts);
+  }, [chainId]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -69,14 +68,7 @@ export default function Page({
         console.error("Error fetching data:", error);
       }
     })();
-  }, [schemacode]);
-
-  const getAccount = async () => {
-    const offlineSigner = await window.getOfflineSigner(chainId);
-    const keplrAccounts = await offlineSigner.getAccounts();
-    setOfflineSigner(offlineSigner);
-    setIsAccount(keplrAccounts);
-  };
+  }, [getAccount, schemacode]);
 
   return (
     <>
@@ -104,7 +96,14 @@ export default function Page({
               schemacode={schemacode}
               onClick={() => {}}
             />
-            <CustomCardDeploy text={"Mainnet"} onClick={() => {}} />
+            <CustomCardDeploy
+              text={"Mainnet"}
+              isAccount={isAccount}
+              offlineSigner={offlineSigner}
+              isDaft={isDaft}
+              schemacode={schemacode}
+              onClick={() => {}}
+            />
           </Flex>
           <div className="w-full flex flex-end justify-end gap-x-8 mt-24">
             <Link href={`/newdraft/6/${schemacode}`}>

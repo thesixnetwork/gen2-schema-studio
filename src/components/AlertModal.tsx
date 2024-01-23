@@ -47,11 +47,11 @@ const AlertModal = (props: Props) => {
 
   useEffect(() => {
     props.isOpen && onOpen();
-  }, [props.isOpen]);
+  }, [onOpen, props.isOpen]);
 
   useEffect(() => {
     !props.isOpen && onClose();
-  }, [isClose]);
+  }, [isClose, onClose, props.isOpen]);
 
   return (
     <>

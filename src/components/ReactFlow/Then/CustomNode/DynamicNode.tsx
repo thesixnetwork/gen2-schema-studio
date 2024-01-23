@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
 import { getCookie } from "@/service/getCookie";
@@ -19,16 +19,18 @@ interface EventProps {
   };
 }
 
-interface Attribute {
+interface AttributeOptionProps {
   name: string;
-  data_type: string;
+  dataType: string;
 }
 
 const DynamicNode = (props: CircleNodeProps) => {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
-
-  const [inputValue, setInputValue] = useState(props.data.value);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [inputValue, setInputValue] = useState<
+    string | number | readonly string[] | undefined
+  >(props.data.value as string | number | readonly string[] | undefined);
   const [isSelected, setIsSelected] = useState(false);
   const [hovered, setHovered] = useState(false);
   const attributeOption = JSON.parse(
@@ -47,7 +49,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     dataType: props.data.dataType,
   });
 
-
   console.log(":: valueNodeType :: ", valueNodeType);
   const handleDragEnter = () => {
     setHovered(true);
@@ -60,8 +61,6 @@ const DynamicNode = (props: CircleNodeProps) => {
   const handleDrop = () => {
     setHovered(false);
   };
-
-
 
   const onChange = (e: EventProps) => {
     const { nodeInternals } = store.getState();
@@ -166,20 +165,23 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   }, [props.data.value]);
 
-
+  useEffect(() => {
+    if (inputRef.current != null) inputRef.current.focus();
+  }, [props.data.showType, inputRef]);
 
   useEffect(() => {
     if (props.data.showType === "valueNode") {
-      setInputValue(props.data.value);
-    } else if (props.data.showType === "attributeNode") {
+      setInputValue(props.data.value as string | number | undefined);
+    } else if (
+      props.data.showType === "attributeNode" ||
+      props.data.showType === "paramNode"
+    ) {
+      const nameValue: string | number | boolean =
+        typeof props.data.value === "undefined" ? "" : props.data.value;
+
+      setInputValue(nameValue as string | number | undefined);
       setSelectValue({
-        name: props.data.value,
-        dataType: props.data.dataType,
-      });
-    } else if (props.data.showType === "paramNode") {
-      setInputValue(props.data.value);
-      setSelectValue({
-        name: props.data.value,
+        name: nameValue,
         dataType: props.data.dataType,
       });
     }
@@ -190,11 +192,14 @@ const DynamicNode = (props: CircleNodeProps) => {
       if (props.data.dataType === "boolean") {
         setSelectedValueNode(props.data.value === true ? "yes" : "no");
       } else {
-        setInputValue(props.data.value);
+        setInputValue(props.data.value as string | number | undefined);
       }
     } else if (props.data.showType === "attributeNode") {
+      const nameValue: string | number | boolean =
+        typeof props.data.value === "undefined" ? "" : props.data.value;
+
       setSelectValue({
-        name: props.data.value,
+        name: nameValue,
         dataType: props.data.dataType,
       });
     }
@@ -243,9 +248,7 @@ const DynamicNode = (props: CircleNodeProps) => {
   return props.data.showType === "selectAttributeNode" ? (
     <div
       className={`w-full py-2 px-6 rounded-md flex items-center justify-center border bg-[#DADEF2]
-                ${
-                  hovered ? "border-indigo-600 opacity-80 " : "border-Act6"
-                }`}
+                ${hovered ? "border-indigo-600 opacity-80 " : "border-Act6"}`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -266,13 +269,18 @@ const DynamicNode = (props: CircleNodeProps) => {
           className="rounded-sm text-main2 bg-white w-full"
           onChange={handleSelectAttribute}
         >
-          <option value={String(selectAttributeValue.name)} disabled selected hidden>
+          <option
+            value={String(selectAttributeValue.name)}
+            disabled
+            selected
+            hidden
+          >
             {selectAttributeValue.name === "" ||
             selectAttributeValue.name === undefined
               ? "-- select type --"
               : selectAttributeValue.name}
           </option>
-          {attributeOption.map((item, index) => (
+          {attributeOption.map((item: AttributeOptionProps, index: number) => (
             <option
               key={index}
               value={JSON.stringify({
@@ -354,7 +362,11 @@ const DynamicNode = (props: CircleNodeProps) => {
       <div className="flex items-center justify-center">
         {valueNodeType === "boolean" ? (
           <>
-            <p className={`font-bold ${hovered ? "text-indigo-600" : "text-Act6"}`}>
+            <p
+              className={`font-bold ${
+                hovered ? "text-indigo-600" : "text-Act6"
+              }`}
+            >
               {" "}
               V:&nbsp;{" "}
             </p>
@@ -382,9 +394,7 @@ const DynamicNode = (props: CircleNodeProps) => {
                 onClick={(e) => handleClickValueNode(e)}
                 id="no"
                 className={`cursor-pointer rounded-r-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-centerborder border-Act6 text-Act6 ${
-                  selectedValueNode === "no"
-                  ? "bg-Act6 text-white"
-                  : "bg-white"
+                  selectedValueNode === "no" ? "bg-Act6 text-white" : "bg-white"
                 }`}
               >
                 <span
@@ -401,7 +411,11 @@ const DynamicNode = (props: CircleNodeProps) => {
           </>
         ) : (
           <>
-            <p className={`font-bold ${hovered ? "text-indigo-600" : "text-Act6"}`}>
+            <p
+              className={`font-bold ${
+                hovered ? "text-indigo-600" : "text-Act6"
+              }`}
+            >
               {" "}
               V:&nbsp;{" "}
             </p>
@@ -409,6 +423,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               type="text"
               name=""
               id=""
+              ref={inputRef}
               className="w-16 rounded-sm pl-1 bg-white text-main2"
               onChange={(e) => {
                 onChange(e);
@@ -423,16 +438,16 @@ const DynamicNode = (props: CircleNodeProps) => {
     <div
       className={`w-full p-2 rounded-md flex items-center justify-center border bg-[#DADEF2]
 
-                ${
-                  hovered ? "border-indigo-600 opacity-80" : "border-Act6"
-                }`}
+                ${hovered ? "border-indigo-600 opacity-80" : "border-Act6"}`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
-        <p className={`font-bold ${hovered ? "text-indigo-600 " : "text-Act6"}`}>
+        <p
+          className={`font-bold ${hovered ? "text-indigo-600 " : "text-Act6"}`}
+        >
           @:&nbsp;
         </p>
         <select
@@ -441,14 +456,14 @@ const DynamicNode = (props: CircleNodeProps) => {
           form=""
           className="rounded-sm text-main2 bg-white w-24"
           onChange={handleSelect}
-          value={selectValue.name}
+          value={selectValue.name !== undefined ? String(selectValue.name) : ""}
         >
-          <option value={selectValue.name} disabled selected hidden>
+          <option value={selectValue.name !== undefined ? String(selectValue.name) : ""} disabled selected hidden>
             {selectValue.name === "" || selectValue.name === undefined
               ? "-- select type --"
               : selectValue.name}
           </option>
-          {attributeOption.map((item, index) => (
+          {attributeOption.map((item: AttributeOptionProps, index: number) => (
             <option
               key={index}
               value={JSON.stringify({
@@ -474,7 +489,11 @@ const DynamicNode = (props: CircleNodeProps) => {
         onDrop={handleDrop}
       >
         <div className="flex h-full w-32 items-center justify-between flex-col">
-          <p className={`font-bold ${hovered ? "text-indigo-600 " : "text-Act6"} `}>
+          <p
+            className={`font-bold ${
+              hovered ? "text-indigo-600 " : "text-Act6"
+            } `}
+          >
             Param:
           </p>
           <select

@@ -105,6 +105,28 @@
       "description": ""
     }
   ],
+  "/newdraft/6-": [
+    {
+      "title": "Static Image Path",
+      "description": "Static image path will transform every token to specific image and every transformed metadata will have the same image"
+    },
+    {
+      "title": "Dynamic Image Path",
+      "description": "Dynamic image path will transform each token to its unique image. Base on its token_id"
+    },
+    {
+      "title": "",
+      "description": "Path of image might need postfix format to locate it"
+    },
+    {
+      "title": "",
+      "description": "Original path: https://path/1.png"
+    },
+    {
+      "title": "",
+      "description": "Transformed path: https://path/1-transformed.png"
+    }
+  ],
   "/newdraft/7": [
     {
       "title": "Testnet",
