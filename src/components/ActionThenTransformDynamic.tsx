@@ -206,7 +206,6 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
 
   return (
     <>
-    <button onClick={()=>console.log(imgSource)}>logger</button>
       {isOpen && (
         <AlertModal
           title={errorModalMessage}

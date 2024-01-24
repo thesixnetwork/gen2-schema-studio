@@ -22,7 +22,7 @@ const getImgUrlAction6 = async (schema_code:string) => {
     //   if (response.data.data.image_url.postfix !== null) {
     //     setPostfix(response.data.data.image_url.postfix);
     //   }
-      console.log(":: res ::", response);
+      // console.log(":: res ::", response);
       return response.data
     } catch (error) {
       console.error("Error:", error);

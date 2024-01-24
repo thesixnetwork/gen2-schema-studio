@@ -19,7 +19,7 @@ export const getDynamicImage = async (schemaCode:string) => {
         });
 
         const dynamicImagePath = req.data.data.image_url
-        console.log(dynamicImagePath)
+        // console.log(dynamicImagePath)
         return dynamicImagePath
     }catch(error){
         return error;

@@ -7,12 +7,10 @@ const postAction7 = async (
   schema_code: string,
   status: string
 ) => {
-    console.log("posting...")
-    console.log(">>",status)
+    // console.log("posting...")
+    // console.log(">>",status)
   const cookieStore = cookies()
   const token = cookieStore.get('token')
-  console.log(token)
-  console.log(schema_code)
   const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
   const requestData = {
     payload: {
@@ -30,14 +28,14 @@ const postAction7 = async (
     });
     const res = req.data;
     if (res.statusCode === "V:0001") {
-        console.log(JSON.stringify(res.data, null, 2))
+        // console.log(JSON.stringify(res.data, null, 2))
       return true;
     } else {
-        console.log(res)
+        // console.log(res)
       return false;
     }
   } catch (error) {
-  console.log(error)
+  // console.log(error)
     return false;
   }
 };

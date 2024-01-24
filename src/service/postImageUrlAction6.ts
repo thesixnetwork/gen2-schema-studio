@@ -11,11 +11,6 @@ const postImageUrlAction6 = async (
   imgFormat: string,
   isEdit: string
 ) => {
-  console.log(postfix)
-  console.log(prefix)
-  console.log(imgFormat)
-  console.log(imgSource)
-  console.log(schemaCode)
   const apiUrl = `${ENV.API_URL}schema/set_image_url`;
   const cookieStore = cookies();
   const token = cookieStore.get("token");
@@ -29,10 +24,9 @@ const postImageUrlAction6 = async (
     isEdit: isEdit
   };
 
-  console.log(requestData)
 
   try {
-    console.log("posting...")
+    // console.log("posting...")
     const req = await axios.post(apiUrl, requestData, {
       headers: {
         "Content-Type": "application/json",
@@ -40,16 +34,15 @@ const postImageUrlAction6 = async (
       },
     });
     const res = req.data;
-    console.log(">",res)
     if (res.statusCode === "V:0001") {
-      console.log(JSON.stringify(res.data, null, 2));
+      // console.log(JSON.stringify(res.data, null, 2));
       return true;
     } else {
-      console.log(res)
+      // console.log(res)
       return false;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };

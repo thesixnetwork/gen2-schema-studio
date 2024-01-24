@@ -39,7 +39,7 @@ export async function saveState3(originAttributes : IOriginAttributes[], schemaC
         // const schema_info:ISchemaInfo = req.data.data.schema_info
         return req.data
     } catch (error) {
-        console.log("error ", error)
+        // console.log("error ", error)
         return null;
     }
 }

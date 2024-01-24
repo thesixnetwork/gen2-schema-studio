@@ -53,7 +53,7 @@ function ConnectButton(props:Props) {
       // saveCosmosAddress(keplrAccounts[0].address);
       setCosmosAddress(keplrAccounts[0].address);
       // await UpdateSession({address:keplrAccounts[0].address})
-      console.log("Keplr connect :", keplrAccounts[0].address);
+      // console.log("Keplr connect :", keplrAccounts[0].address);
     } else {
       alert("Keplr extension is not installed.");
     }

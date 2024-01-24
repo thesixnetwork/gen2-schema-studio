@@ -8,9 +8,6 @@ const postUpdateAction6 = async (
   allAction: Array<any>,
 ) => {
 
-  console.log(">>", allAction) 
-
-    console.log("post...zz")
   const cookieStore = cookies()
   const token = cookieStore.get('token')
   const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
@@ -35,7 +32,7 @@ const postUpdateAction6 = async (
     });
     const res = req.data;
     if (res.statusCode === "V:0001") {
-        console.log(JSON.stringify(res.data, null, 2))
+        // console.log(JSON.stringify(res.data, null, 2))
       return true;
     } else {
       return false;

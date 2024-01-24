@@ -180,7 +180,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       parentNodeId: string | null,
       parentPositionY = 0
     ) => {
-      console.log("log herre", node);
       const nodeId = `${nodeIdCounter++}`;
       const outputNode = {
         id: nodeId,
@@ -214,9 +213,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         },
       };
 
-      console.log("node==>", node);
-
-      console.log("value", node.value);
 
       if (
         node.type === "meta_function" &&
@@ -291,7 +287,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       }
 
       if (node.value1 && node.value1.type !== "math_operation") {
-        console.log("<---", node.value1);
         edgesArr.push(
           {
             id: `e${nodeId}-${parseInt(nodeId) + 1}`,
@@ -339,7 +334,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
     processNode(obj, null, 0);
     setEdges(edgesArr);
-    console.log("this 1");
     setNodes(outputArray);
   };
 
@@ -453,7 +447,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             NODE_HEIGHT
           )
         ) {
-          console.log("f**k");
           updatedNodes.push(node as NodeProps);
         } else {
           if (
@@ -501,7 +494,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             }
           }
           updatedNodes.push(updateNode(node as NodeProps, type));
-          console.log("this 2");
 
           setNodes(sortNode(updatedNodes));
         }
@@ -553,9 +545,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     changes.forEach((element) => {
       if (element.type === "remove") {
         const nodeIndex = nodes.findIndex((node) => node.id === element.id);
-        console.log("-------------here", element);
-        console.log("--1", element.id);
-        console.log("--2", element.id);
         if (element.id === "1") {
           setModalErrorMessage(
             "You can't delete the first node(Select your attribute)."
@@ -592,7 +581,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     if (nodes.length > 1) {
       getDataFromNode();
     }
-    console.log("this 4");
   }, [nodes, setNodes]);
 
   useEffect(() => {
@@ -627,7 +615,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         },
       ];
 
-      console.log("this 5");
       setNodes([...nodes, nodeOnAdd]);
       setEdges([...edges, ...edgesOnAdd]);
     }
@@ -641,7 +628,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       firstMetaFunction.startsWith("meta.SetNumber") ||
       firstMetaFunction.startsWith("meta.SetFloat")
     ) {
-      console.log("it's work");
       convertObjectToNode(parser_then.parse(firstMetaFunction));
       setMetaFunction(props.metaFunction);
     }
@@ -808,9 +794,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     const object = Factory.createObject(
       transformData(nodes as NodeProps[])
     ).toString();
-    console.log("nodes>>", nodes);
-    console.log("it's work 2");
-    console.log("obj", object);
+
     setMetaFunction(object);
     props.setMetaFunction(object);
     return object;
@@ -869,13 +853,11 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       });
 
       tempArr = updatedArray;
-      console.log("temp", tempArr);
     };
 
     if (metaFunction.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
-        console.log("///===>", parsedCookieData);
         updateActionThenByName(
           parsedCookieData,
           props.actionName,
@@ -914,7 +896,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
 
-      console.log("::==>", tempArr);
 
       localStorage.setItem("action", JSON.stringify(tempArr));
       setCookie("action-then", metaFunction);
@@ -1049,7 +1030,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
             updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
             setNodes(updatedNodes);
-            console.log("this 6");
           }
         }
       }
@@ -1061,25 +1041,18 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
   useEffect(() => {
     if (isGenerateGPT) {
-      // console.log(`"${metaData.toString()}"`);
       convertObjectToNode(parser_then.parse(metaFunction.toString()));
       setIsGenerateGPT(false);
     }
   }, [isGenerateGPT]);
 
   useEffect(() => {
-    console.log("logger>", metaFunction);
-    console.log("logger>>", props.metaFunction);
-
-    console.log("node>>>", nodes);
   }, [metaFunction, props.metaFunction]);
 
   useEffect(() => {
 
-    console.log("destroyed")
     return () => {
       setNodes(mockNode);
-      console.log("des",nodes)
     };
   }, []);
 
@@ -1093,10 +1066,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           setIsOpen={setIsOpen}
         />
       )}
-      <button onClick={() => console.log(initialNodes)} className="text-red-500">
-        {" "}
-        logger
-      </button>
       <div className="flex flex-col w-[64vw] mr-12 h-full">
         <ActionHeader
           type="then"

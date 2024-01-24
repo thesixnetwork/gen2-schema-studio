@@ -12,12 +12,6 @@ const postCreateAction6 = async (
 ) => {
 
 
-    console.log("post...!")
-    console.log(schema_code)
-    console.log(actionName)
-    console.log(description)
-    console.log(when)
-    console.log(then)
   const cookieStore = cookies()
   const token = cookieStore.get('token')
   const apiUrl = `${ENV.API_URL}schema/set_actions`;
@@ -43,7 +37,7 @@ const postCreateAction6 = async (
     });
     const res = req.data;
     if (res.statusCode === "V:0001") {
-        console.log(JSON.stringify(res.data, null, 2))
+        // console.log(JSON.stringify(res.data, null, 2))
       return true;
     } else {
       return false;

@@ -71,7 +71,7 @@ const refreshAccessToken = async () => {
       return Promise.reject(error);
     }
   );
-  console.log("refreshAccessToken");
+  // console.log("refreshAccessToken");
 };
 
 export default api;
