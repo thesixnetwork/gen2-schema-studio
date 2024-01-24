@@ -20,7 +20,6 @@ import Flowbar from "./Flowbar";
 import InputNode from "./CustomNode/InputNode";
 import { IActions } from "@/type/Nftmngr";
 import parser_then from "@/function/ConvertMetadataToObject/action_then";
-// import { saveSCHEMA_CODE } from "@/helpers/AuthService";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Link from "next/link";
@@ -91,6 +90,21 @@ const initialNodes: Node[] = [
   },
 ];
 
+const mockNode: Node[] = [
+  {
+    id: "1",
+    type: "customInputNode",
+    position: { x: 0, y: 0 },
+    draggable: false,
+    data: {
+      showType: "selectAttributeNode",
+      id: "1",
+      parentNode: "root",
+      label: { x: 0, y: 0 },
+    },
+  },
+];
+
 let id = 2;
 
 const getId = () => `${id++}`;
@@ -106,7 +120,6 @@ const nodeTypes = {
 };
 
 const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
-  // const param = useParams();
   const router = useRouter();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
@@ -126,9 +139,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     props.metaFunction
   );
 
-  console.log("--nodeOrigin--", nodeOrigin);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [metaData, setMetaData] = useState("");
+  const [metaFunction, setMetaFunction] = useState("");
   const { setCenter, project } = useReactFlow();
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
@@ -159,7 +171,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   };
 
   const convertObjectToNode = (obj: any) => {
-    console.log("log tong nee", obj);
     let nodeIdCounter = 1;
     const outputArray: any[] = [];
     const edgesArr: any[] = [];
@@ -222,6 +233,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           outputNode.data.dataType = "string";
         } else if (node.functionName === "SetBoolean") {
           outputNode.data.dataType = "boolean";
+        } else if (node.functionName === "SetFloat") {
+          outputNode.data.dataType = "float";
         }
         setSelectedAttribute(node.attributeName.dataType);
       } else if (
@@ -326,6 +339,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
     processNode(obj, null, 0);
     setEdges(edgesArr);
+    console.log("this 1");
     setNodes(outputArray);
   };
 
@@ -487,6 +501,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             }
           }
           updatedNodes.push(updateNode(node as NodeProps, type));
+          console.log("this 2");
+
           setNodes(sortNode(updatedNodes));
         }
       }
@@ -555,6 +571,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
               showType: "addNode",
             },
           };
+          console.log("this 3");
           setNodes(cloneUpdatedNodes);
         }
       }
@@ -575,6 +592,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     if (nodes.length > 1) {
       getDataFromNode();
     }
+    console.log("this 4");
   }, [nodes, setNodes]);
 
   useEffect(() => {
@@ -609,25 +627,23 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         },
       ];
 
+      console.log("this 5");
       setNodes([...nodes, nodeOnAdd]);
       setEdges([...edges, ...edgesOnAdd]);
     }
   }, [createFirstNode, edges, nodes, setEdges, setNodes]);
 
   useEffect(() => {
-    // saveSCHEMA_CODE(props.schemaRevision);
-
-    const firstMetaData = props.metaFunction;
+    const firstMetaFunction = props.metaFunction;
     if (
-      firstMetaData.startsWith("meta.SetString") ||
-      firstMetaData.startsWith("meta.SetBoolean") ||
-      firstMetaData.startsWith("meta.SetNumber") ||
-      firstMetaData.startsWith("meta.SetFloat")
+      firstMetaFunction.startsWith("meta.SetString") ||
+      firstMetaFunction.startsWith("meta.SetBoolean") ||
+      firstMetaFunction.startsWith("meta.SetNumber") ||
+      firstMetaFunction.startsWith("meta.SetFloat")
     ) {
       console.log("it's work");
-      convertObjectToNode(parser_then.parse(firstMetaData));
-      setMetaData(props.metaFunction);
-      console.log("metaData", metaData);
+      convertObjectToNode(parser_then.parse(firstMetaFunction));
+      setMetaFunction(props.metaFunction);
     }
   }, []);
 
@@ -715,20 +731,40 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           nodes[i].data.showType === "valueNode" &&
           nodes[i].data.isSet === true
         ) {
-          result.value1 = {
-            type: "constant",
-            dataType: nodes[i].data.dataType,
-            value: nodes[i].data.value,
-          };
+          if (nodes[i].data.dataType === "float") {
+            result.value1 = {
+              type: "constant",
+              dataType: nodes[i].data.dataType,
+              value: nodes[i].data.value.toString().includes(".")
+                ? nodes[i].data.value
+                : nodes[i].data.value + ".0",
+            };
+          } else {
+            result.value1 = {
+              type: "constant",
+              dataType: nodes[i].data.dataType,
+              value: nodes[i].data.value,
+            };
+          }
         } else if (
           nodes[i].data.showType === "valueNode" &&
           nodes[i].data.isSet === false
         ) {
-          result.value1.right = {
-            type: "constant",
-            dataType: nodes[i].data.dataType,
-            value: nodes[i].data.value,
-          };
+          if (nodes[i].data.dataType === "float") {
+            result.value1.right = {
+              type: "constant",
+              dataType: nodes[i].data.dataType,
+              value: nodes[i].data.value.toString().includes(".")
+                ? nodes[i].data.value
+                : nodes[i].data.value + ".0",
+            };
+          } else {
+            result.value1.right = {
+              type: "constant",
+              dataType: nodes[i].data.dataType,
+              value: nodes[i].data.value,
+            };
+          }
         } else if (nodes[i].data.showType === "paramNode") {
           result.value1 = {
             type: "param_function",
@@ -772,7 +808,10 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
     const object = Factory.createObject(
       transformData(nodes as NodeProps[])
     ).toString();
-    setMetaData(object);
+    console.log("nodes>>", nodes);
+    console.log("it's work 2");
+    console.log("obj", object);
+    setMetaFunction(object);
     props.setMetaFunction(object);
     return object;
   };
@@ -833,7 +872,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       console.log("temp", tempArr);
     };
 
-    if (metaData.startsWith("meta")) {
+    if (metaFunction.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
         console.log("///===>", parsedCookieData);
@@ -841,7 +880,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           parsedCookieData,
           props.actionName,
           originalMetaFunction,
-          metaData
+          metaFunction
         );
       }
 
@@ -850,15 +889,17 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
           : [];
 
-        const metaDataToAdd =
-          typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+        const metaFunctionToAdd =
+          typeof metaFunction === "string"
+            ? metaFunction
+            : JSON.stringify(metaFunction);
 
         let updatedTempArrCookie;
         if (getActionThenIndexCookie) {
           updatedTempArrCookie = tempArrCookie.map(
             (item: string, index: number) =>
               index === parseInt(getActionThenIndexCookie)
-                ? metaDataToAdd
+                ? metaFunctionToAdd
                 : item
           );
         }
@@ -866,7 +907,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         if (getIsCreateNewThenFromCookie === "true") {
           if (!tempArrCookie.includes(originalMetaFunction)) {
             updatedTempArrCookie = tempArrCookie;
-            updatedTempArrCookie.push(metaDataToAdd);
+            updatedTempArrCookie.push(metaFunctionToAdd);
           }
         }
 
@@ -876,7 +917,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
       console.log("::==>", tempArr);
 
       localStorage.setItem("action", JSON.stringify(tempArr));
-      setCookie("action-then", metaData);
+      setCookie("action-then", metaFunction);
       setCookie("isEditAction", "true");
       router.push(
         isCreateNewActionCookie === "true"
@@ -1008,6 +1049,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
 
             updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
             setNodes(updatedNodes);
+            console.log("this 6");
           }
         }
       }
@@ -1020,10 +1062,26 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
   useEffect(() => {
     if (isGenerateGPT) {
       // console.log(`"${metaData.toString()}"`);
-      convertObjectToNode(parser_then.parse(metaData.toString()));
+      convertObjectToNode(parser_then.parse(metaFunction.toString()));
       setIsGenerateGPT(false);
     }
   }, [isGenerateGPT]);
+
+  useEffect(() => {
+    console.log("logger>", metaFunction);
+    console.log("logger>>", props.metaFunction);
+
+    console.log("node>>>", nodes);
+  }, [metaFunction, props.metaFunction]);
+
+  useEffect(() => {
+
+    console.log("destroyed")
+    return () => {
+      setNodes(mockNode);
+      console.log("des",nodes)
+    };
+  }, []);
 
   return (
     <div className="flex justify-between px-8 h-full" id="then">
@@ -1035,6 +1093,10 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           setIsOpen={setIsOpen}
         />
       )}
+      <button onClick={() => console.log(initialNodes)} className="text-red-500">
+        {" "}
+        logger
+      </button>
       <div className="flex flex-col w-[64vw] mr-12 h-full">
         <ActionHeader
           type="then"
@@ -1048,6 +1110,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         <div className="h-full w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
+              zoomOnDoubleClick={false}
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
@@ -1090,8 +1153,8 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
         selectedAttribute={selectedAttribute}
         actionName={props.actionName}
         setIsGenerateGPT={setIsGenerateGPT}
-        setMetaData={setMetaData}
-        metaData={metaData}
+        setMetaData={setMetaFunction}
+        metaData={metaFunction}
         type="attribute"
         handleDoubleClickAddNode={handleDoubleClickAddNode}
       ></Flowbar>

@@ -132,7 +132,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
-  const [metaData, setMetaData] = useState("");
+  const [metaFunction, setMetaFunction] = useState("");
   const { setCenter, project } = useReactFlow();
   // const navigate = useNavigate();
   const [isDraft, setIsDraft] = useState(false);
@@ -500,9 +500,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     changes.forEach((element) => {
       if (element.type === "remove") {
         const nodeIndex = nodes.findIndex((node) => node.id === element.id);
-        console.log("-------------here", element);
-        console.log("--1", element.id);
-        console.log("--2", element.id);
         if (element.id === "1") {
           setModalErrorMessage(
             "You can't delete the first node(Select your attribute)."
@@ -612,7 +609,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         }
       }
 
-      console.log("----result", result);
       return result;
     };
 
@@ -620,7 +616,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       transformData(nodes as NodeProps[])
     ).toString();
     console.log(">", object);
-    setMetaData(object);
+    setMetaFunction(object);
     props.setMetaFunction(object);
     return object;
   };
@@ -678,14 +674,14 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
       tempArr = updatedArray;
     };
-    if (metaData.startsWith("meta")) {
+    if (metaFunction.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = JSON.parse(decodeURIComponent(getCookieData));
         updateActionThenByName(
           parsedCookieData,
           props.actionName,
           originalMetaFunction,
-          metaData
+          metaFunction
         );
       }
 
@@ -694,15 +690,15 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           ? convertStringToArray(decodeURIComponent(getActionThanArrCookie))
           : [];
 
-        const metaDataToAdd =
-          typeof metaData === "string" ? metaData : JSON.stringify(metaData);
+        const metaFunctionToAdd =
+          typeof metaFunction === "string" ? metaFunction : JSON.stringify(metaFunction);
 
         let updatedTempArrCookie;
         if (getActionThenIndexCookie) {
           updatedTempArrCookie = tempArrCookie.map(
             (item: string, index: number) =>
               index === parseInt(getActionThenIndexCookie)
-                ? metaDataToAdd
+                ? metaFunctionToAdd
                 : item
           );
         }
@@ -710,14 +706,14 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         if (getIsCreateNewThenFromCookie === "true") {
           if (!tempArrCookie.includes(originalMetaFunction)) {
             updatedTempArrCookie = tempArrCookie;
-            updatedTempArrCookie.push(metaDataToAdd);
+            updatedTempArrCookie.push(metaFunctionToAdd);
           }
         }
 
         setCookie("action-then-arr", JSON.stringify(updatedTempArrCookie));
       }
       localStorage.setItem("action", JSON.stringify(tempArr));
-      setCookie("action-then", metaData);
+      setCookie("action-then", metaFunction);
       setCookie("isEditAction", "true");
       router.push(
         isCreateNewActionCookie === "true"
@@ -732,7 +728,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   const convertObjectToNode = (outputObj: any) => {
     setIsDraft(true);
-    console.log("-->out", outputObj);
     const tempNodeArray: NodeProps[] = [];
     const tempEdgeArray: any[] = [];
     const processNode = (node: any, parentNode = null, parentPositionY = 0) => {
@@ -905,7 +900,6 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     };
 
     processNode(outputObj);
-    console.log("-->nodes", tempNodeArray);
     setNodes(tempNodeArray);
     setEdges(tempEdgeArray);
     return tempNodeArray;
@@ -993,13 +987,12 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   useEffect(() => {
     // saveSCHEMA_CODE(props.schemaRevision);
-    const firstMetaData = props.metaFunction;
-    console.log("firstMetaData", firstMetaData);
-    if (firstMetaData.startsWith("meta.TransferNumber")) {
+    const firstMetaFunction = props.metaFunction;
+    console.log("firstMetaData", firstMetaFunction);
+    if (firstMetaFunction.startsWith("meta.TransferNumber")) {
       console.log("it's work");
-      convertObjectToNode(parser_then.parse(firstMetaData));
-      setMetaData(props.metaFunction);
-      console.log("metaData", metaData);
+      convertObjectToNode(parser_then.parse(firstMetaFunction));
+      setMetaFunction(props.metaFunction);
     }
   }, []);
 
@@ -1012,15 +1005,15 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   useEffect(() => {
     if (isGenerateGPT) {
-      console.log(`"${metaData.toString()}"`);
-      convertObjectToNode(parser_then.parse(metaData.toString()));
+      console.log(`"${metaFunction.toString()}"`);
+      convertObjectToNode(parser_then.parse(metaFunction.toString()));
       setSelectedAttribute("none");
       setIsGenerateGPT(false);
     }
   }, [isGenerateGPT]);
 
   return (
-    <div className="flex justify-between px-8 h-full" id ="then2">
+    <div className="flex justify-between px-8 h-full" id="then2">
       {isOpen && (
         <AlertModal
           title={errorModalMessage}
@@ -1042,6 +1035,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         <div className="h-full  w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
+              zoomOnDoubleClick={false}
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
@@ -1083,8 +1077,8 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
         selectedAttribute={selectedAttribute}
         actionName={props.actionName}
         setIsGenerateGPT={setIsGenerateGPT}
-        setMetaData={setMetaData}
-        metaData={metaData}
+        setMetaData={setMetaFunction}
+        metaData={metaFunction}
         type="transfer"
         handleDoubleClickAddNode={handleDoubleClickAddNode}
       ></Flowbar>

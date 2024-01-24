@@ -18,8 +18,8 @@ const HomeSidebar = () => {
     <aside className={`flex justify-end items-end w-full `}>
       <div className="border bg-white border-Act7 w-96 h-full text-[#878CA8] rounded-lg p-4 mx-8">
         <div>
-          {detail.map((item: any) => (
-            <div key={item.title}>
+          {detail.map((item: any,index:number) => (
+            <div key={index}>
               {item.title !== "none" &&<h2 className="font-bold text-xl text-main2">{item.title}</h2>}
               <p className="pt-2 pb-4 text-main2">{item.description}</p>
             </div>

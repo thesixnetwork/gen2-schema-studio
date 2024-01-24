@@ -105,7 +105,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   const [errorModalMessage, setModalErrorMessage] = useState(
     "Something went wrong"
   );
-  const [metaData, setMetaData] = useState("");
+  const [metaFunction, setMetaFunction] = useState("");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
@@ -140,170 +140,173 @@ const WhenFlow = (props: WhenFlowProps) => {
   };
 
   let id = findLastedId() + 1;
-  const getId = useCallback(() => `${id++}`,[id]);
+  const getId = useCallback(() => `${id++}`, [id]);
 
   const onConnect = (params: Connection | Edge) =>
     setEdges((eds) => addEdge(params, eds));
   const onInit = (rfi: ReactFlowInstance) => setReactFlowInstance(rfi);
 
-  const convertObject = useCallback((obj: any) => {
-    const outputArray: any = [];
-    const edgesArr: any = [];
-    let nodeIdCounter = 1;
-    const processNode = (
-      node: any,
-      parentNodeId: null | string = null,
-      parentPositionY = 0
-    ) => {
-      console.log(">..", node);
-      const nodeId = `${nodeIdCounter++}`;
-      console.log("---node>", node);
-      const outputNode = {
-        id: nodeId,
-        type: "customInputNode",
-        position: { x: 0, y: parentPositionY },
-        draggable: false,
-        data: {
-          showType: "",
+  const convertObject = useCallback(
+    (obj: any) => {
+      const outputArray: any = [];
+      const edgesArr: any = [];
+      let nodeIdCounter = 1;
+      const processNode = (
+        node: any,
+        parentNodeId: null | string = null,
+        parentPositionY = 0
+      ) => {
+        console.log(">..", node);
+        const nodeId = `${nodeIdCounter++}`;
+        console.log("---node>", node);
+        const outputNode = {
           id: nodeId,
-          parentNode: parentNodeId,
-          label: { x: 0, y: parentPositionY },
-          width: 150,
-          height: 57,
-          value: "",
-          dataType: "",
-          isFetch: true,
-        },
+          type: "customInputNode",
+          position: { x: 0, y: parentPositionY },
+          draggable: false,
+          data: {
+            showType: "",
+            id: nodeId,
+            parentNode: parentNodeId,
+            label: { x: 0, y: parentPositionY },
+            width: 150,
+            height: 57,
+            value: "",
+            dataType: "",
+            isFetch: true,
+          },
+        };
+
+        if (node.type === "condition_oper" && node.value === "AND") {
+          outputNode.data.showType = "andNode";
+          outputNode.data.value = "and";
+        } else if (node.type === "condition_oper" && node.value === "OR") {
+          outputNode.data.showType = "orNode";
+          outputNode.data.value = "or";
+        } else if (
+          (node.type === "string_compare_oper" ||
+            node.type === "boolean_compare_oper" ||
+            node.type === "number_compare_oper" ||
+            node.type === "float_compare_oper") &&
+          node.value === "=="
+        ) {
+          outputNode.data.showType = "equalNode";
+          outputNode.data.value = "equal";
+        } else if (
+          (node.type === "string_compare_oper" ||
+            node.type === "boolean_compare_oper" ||
+            node.type === "number_compare_oper" ||
+            node.type === "float_compare_oper") &&
+          node.value === "!="
+        ) {
+          outputNode.data.showType = "notEqualNode";
+          outputNode.data.value = "notequal";
+        } else if (
+          (node.type === "string_compare_oper" ||
+            node.type === "boolean_compare_oper" ||
+            node.type === "number_compare_oper" ||
+            node.type === "float_compare_oper") &&
+          node.value === ">"
+        ) {
+          outputNode.data.showType = "moreThanNode";
+          outputNode.data.value = "morethan";
+        } else if (
+          (node.type === "string_compare_oper" ||
+            node.type === "boolean_compare_oper" ||
+            node.type === "number_compare_oper" ||
+            node.type === "float_compare_oper") &&
+          node.value === ">="
+        ) {
+          outputNode.data.showType = "moreThanAndEqualNode";
+          outputNode.data.value = "morethanandequal";
+        } else if (
+          (node.type === "string_compare_oper" ||
+            node.type === "boolean_compare_oper" ||
+            node.type === "number_compare_oper" ||
+            node.type === "float_compare_oper") &&
+          node.value === "<"
+        ) {
+          outputNode.data.showType = "lessThanNode";
+          outputNode.data.value = "lessthan";
+        } else if (
+          (node.type === "string_compare_oper" ||
+            node.type === "boolean_compare_oper" ||
+            node.type === "number_compare_oper" ||
+            node.type === "float_compare_oper") &&
+          node.value === "<="
+        ) {
+          outputNode.data.showType = "lessThanAndEqualNode";
+          outputNode.data.value = "lessthanandequal";
+        } else if (
+          node.type === "meta_function" &&
+          node.attributeName.type === "param_function"
+        ) {
+          outputNode.data.showType = "paramNode";
+          outputNode.data.dataType = node.attributeName.attributeName.dataType;
+          outputNode.data.value = node.attributeName.attributeName.value;
+        } else if (node.type === "meta_function") {
+          outputNode.data.showType = "attributeNode";
+          outputNode.data.value = node.attributeName.value;
+          if (node.functionName === "GetString") {
+            outputNode.data.dataType = "string";
+          } else if (node.functionName === "GetNumber") {
+            outputNode.data.dataType = "number";
+          } else if (node.functionName === "GetBoolean") {
+            outputNode.data.dataType = "boolean";
+          } else if (node.functionName === "GetFloat") {
+            outputNode.data.dataType = "float";
+          }
+        } else if (node.type === "constant") {
+          outputNode.data.showType = "valueNode";
+          outputNode.data.value = node.value;
+        }
+
+        console.log("here ja", outputNode);
+
+        outputArray.push(outputNode);
+
+        if (node.left) {
+          const edgeId = `e${nodeId}-${node.left.type}`;
+          edgesArr.push({
+            id: edgeId,
+            source: nodeId,
+            target: processNode(node.left, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#79A0EF" },
+            type: "smoothstep",
+          });
+        }
+
+        if (node.right) {
+          const edgeId = `e${nodeId}-${node.right.type}`;
+          edgesArr.push({
+            id: edgeId,
+            source: nodeId,
+            target: processNode(node.right, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#79A0EF" },
+            type: "smoothstep",
+          });
+        }
+
+        return outputNode;
       };
 
-      if (node.type === "condition_oper" && node.value === "AND") {
-        outputNode.data.showType = "andNode";
-        outputNode.data.value = "and";
-      } else if (node.type === "condition_oper" && node.value === "OR") {
-        outputNode.data.showType = "orNode";
-        outputNode.data.value = "or";
-      } else if (
-        (node.type === "string_compare_oper" ||
-          node.type === "boolean_compare_oper" ||
-          node.type === "number_compare_oper" ||
-          node.type === "float_compare_oper") &&
-        node.value === "=="
-      ) {
-        outputNode.data.showType = "equalNode";
-        outputNode.data.value = "equal";
-      } else if (
-        (node.type === "string_compare_oper" ||
-          node.type === "boolean_compare_oper" ||
-          node.type === "number_compare_oper" ||
-          node.type === "float_compare_oper") &&
-        node.value === "!="
-      ) {
-        outputNode.data.showType = "notEqualNode";
-        outputNode.data.value = "notequal";
-      } else if (
-        (node.type === "string_compare_oper" ||
-          node.type === "boolean_compare_oper" ||
-          node.type === "number_compare_oper" ||
-          node.type === "float_compare_oper") &&
-        node.value === ">"
-      ) {
-        outputNode.data.showType = "moreThanNode";
-        outputNode.data.value = "morethan";
-      } else if (
-        (node.type === "string_compare_oper" ||
-          node.type === "boolean_compare_oper" ||
-          node.type === "number_compare_oper" ||
-          node.type === "float_compare_oper") &&
-        node.value === ">="
-      ) {
-        outputNode.data.showType = "moreThanAndEqualNode";
-        outputNode.data.value = "morethanandequal";
-      } else if (
-        (node.type === "string_compare_oper" ||
-          node.type === "boolean_compare_oper" ||
-          node.type === "number_compare_oper" ||
-          node.type === "float_compare_oper") &&
-        node.value === "<"
-      ) {
-        outputNode.data.showType = "lessThanNode";
-        outputNode.data.value = "lessthan";
-      } else if (
-        (node.type === "string_compare_oper" ||
-          node.type === "boolean_compare_oper" ||
-          node.type === "number_compare_oper" ||
-          node.type === "float_compare_oper") &&
-        node.value === "<="
-      ) {
-        outputNode.data.showType = "lessThanAndEqualNode";
-        outputNode.data.value = "lessthanandequal";
-      } else if (
-        node.type === "meta_function" &&
-        node.attributeName.type === "param_function"
-      ) {
-        outputNode.data.showType = "paramNode";
-        outputNode.data.dataType = node.attributeName.attributeName.dataType;
-        outputNode.data.value = node.attributeName.attributeName.value;
-      } else if (node.type === "meta_function") {
-        outputNode.data.showType = "attributeNode";
-        outputNode.data.value = node.attributeName.value;
-        if (node.functionName === "GetString") {
-          outputNode.data.dataType = "string";
-        } else if (node.functionName === "GetNumber") {
-          outputNode.data.dataType = "number";
-        } else if (node.functionName === "GetBoolean") {
-          outputNode.data.dataType = "boolean";
-        } else if (node.functionName === "GetFloat") {
-          outputNode.data.dataType = "float";
-        }
-      } else if (node.type === "constant") {
-        outputNode.data.showType = "valueNode";
-        outputNode.data.value = node.value;
-      }
-
-      console.log("here ja", outputNode);
-
-      outputArray.push(outputNode);
-
-      if (node.left) {
-        const edgeId = `e${nodeId}-${node.left.type}`;
-        edgesArr.push({
-          id: edgeId,
-          source: nodeId,
-          target: processNode(node.left, nodeId, parentPositionY + 150).id,
-          animated: true,
-          style: { stroke: "#79A0EF" },
-          type: "smoothstep",
-        });
-      }
-
-      if (node.right) {
-        const edgeId = `e${nodeId}-${node.right.type}`;
-        edgesArr.push({
-          id: edgeId,
-          source: nodeId,
-          target: processNode(node.right, nodeId, parentPositionY + 150).id,
-          animated: true,
-          style: { stroke: "#79A0EF" },
-          type: "smoothstep",
-        });
-      }
-
-      return outputNode;
-    };
-
-    processNode(obj);
-    setNodes(outputArray);
-    setEdges(edgesArr);
-  },[setEdges, setNodes]);
+      processNode(obj);
+      setNodes(outputArray);
+      setEdges(edgesArr);
+    },
+    [setEdges, setNodes]
+  );
 
   const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = "move";
     }
-  };  
+  };
 
-  const onDrop = async (event:  React.DragEvent<HTMLDivElement>) => {
+  const onDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (reactFlowInstance) {
       const type = event.dataTransfer?.getData("application/reactflow");
@@ -642,18 +645,18 @@ const WhenFlow = (props: WhenFlowProps) => {
       return updatedArray;
     };
 
-    if (metaData.startsWith("meta")) {
+    if (metaFunction.startsWith("meta")) {
       if (getCookieData) {
         const parsedCookieData = Array.from(
           JSON.parse(getCookieData)
         ) as IActions[];
         const newAction = JSON.stringify(
-          updateActionWhenByName(parsedCookieData, props.actionName, metaData)
+          updateActionWhenByName(parsedCookieData, props.actionName, metaFunction)
         );
         localStorage.setItem("action", newAction);
       }
       setCookie("isEditAction", "true");
-      setCookie("action-when", metaData);
+      setCookie("action-when", metaFunction);
       router.push(
         isCreateNewActionCookie === "true"
           ? `/newdraft/6/${schemacode}/action-form/create-new-action`
@@ -883,9 +886,9 @@ const WhenFlow = (props: WhenFlowProps) => {
     if (props.metaFunction !== "create-new-when" && props.metaFunction !== "") {
       setRedraw(true);
       // saveSCHEMA_CODE(props.schemaCode);
-      const firstMetaData = props.metaFunction;
-      convertObject(parser_when.parse(firstMetaData));
-      setMetaData(props.metaFunction);
+      const firstMetaFunction = props.metaFunction;
+      convertObject(parser_when.parse(firstMetaFunction));
+      setMetaFunction(props.metaFunction);
     }
   }, []);
 
@@ -894,12 +897,12 @@ const WhenFlow = (props: WhenFlowProps) => {
       // console.log(">",metaData)
       // console.log(">>", parser_when.parse(metaData));
       setRedraw(true);
-      console.log(`"${metaData.toString()}"`);
-      console.log(convertObject(parser_when.parse(metaData.toString())));
+      console.log(`"${metaFunction.toString()}"`);
+      console.log(convertObject(parser_when.parse(metaFunction.toString())));
       // convertObject(parser_when.parse("meta.GetNumber('points') > 0"));
       setIsGenerateGPT(false);
     }
-  }, [convertObject, isGenerateGPT, metaData]);
+  }, [convertObject, isGenerateGPT, metaFunction]);
 
   useEffect(() => {
     if (redraw && nodes.length > 0) {
@@ -938,12 +941,12 @@ const WhenFlow = (props: WhenFlowProps) => {
         positionX.push(nodes[i].position.x);
         positionY.push(nodes[i].position.y);
       }
-  
+
       minMax.minX = Math.min(...positionX);
       minMax.maxX = Math.max(...positionX);
       minMax.minY = Math.min(...positionY);
       minMax.maxY = Math.max(...positionY);
-  
+
       const x = (minMax.minX + minMax.maxX) / 2;
       const y = (minMax.minY + minMax.maxY) / 2;
       let zoom = 1;
@@ -1156,7 +1159,7 @@ const WhenFlow = (props: WhenFlowProps) => {
       const result = Factory.createObject(generateObject).toString();
       console.log("!!!", generateObject);
       console.log("-->obj", result);
-      setMetaData(result);
+      setMetaFunction(result);
       props.setMetaFunction(result);
       console.log("wtf!!", props.metaFunction);
     };
@@ -1184,6 +1187,7 @@ const WhenFlow = (props: WhenFlowProps) => {
         <div className="h-full w-full border rounded-3xl bg-white p-2 mt-4">
           <div ref={reactFlowWrapper} className="h-full">
             <ReactFlow
+              zoomOnDoubleClick={false}
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
@@ -1219,8 +1223,8 @@ const WhenFlow = (props: WhenFlowProps) => {
         </div>
       </div>
       <Flowbar
-        metaData={metaData}
-        setMetaData={setMetaData}
+        metaData={metaFunction}
+        setMetaData={setMetaFunction}
         actionName={props.actionName}
         setIsGenerateGPT={setIsGenerateGPT}
         handleDoubleClickAddNode={handleDoubleClickAddNode}

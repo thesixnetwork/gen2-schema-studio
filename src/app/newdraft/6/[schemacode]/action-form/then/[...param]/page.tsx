@@ -21,7 +21,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   const actionName = params.param[1];
   const dataFromCookie = getCookie("action-then");
   const isCreateNewActionCookie = getCookie("isCreateNewAction");
-  const [isActionThenTypeChange, setIsActionThenTypeChange ] = useState(false);
+  const [isActionThenTypeChange, setIsActionThenTypeChange] = useState(false);
   const [metaFunction, setMetaFunction] = useState(
     params.param[2]?.startsWith("meta.SetImage")
       ? decodeURIComponent(dataFromCookie ?? "")
@@ -45,17 +45,17 @@ const Page = ({ params }: { params: { param: string } }) => {
 
     return () => {
       deleteCookie("isTransformImage");
-    }
+    };
   }, [metaFunction]);
 
   const handleActionThenTypeChange = (newActionThenType: string) => {
     if (newActionThenType === "transform") {
       setCookie("isTransformImage", "true");
-    }else{
+    } else {
       setCookie("isTransformImage", "false");
     }
     setActionThenType(newActionThenType);
-    setIsActionThenTypeChange(true)
+    setIsActionThenTypeChange(true);
   };
 
   const handleTransformTypeChange = (transformType: string) => {
@@ -67,16 +67,30 @@ const Page = ({ params }: { params: { param: string } }) => {
   // },[actionThenType])
 
   useEffect(() => {
-    if(isActionThenTypeChange){
-      setMetaFunction("")
-      setIsActionThenTypeChange(false)
+    if (isActionThenTypeChange) {
+      setMetaFunction("");
+      setIsActionThenTypeChange(false);
     }
+    console.log("metaFunction", metaFunction);
+    console.log("mafak", isActionThenTypeChange);
   }, [actionThenType, isActionThenTypeChange]);
 
+  useEffect(() => {
+    console.log(">log<", metaFunction);
+  }, [metaFunction]);
 
+  useEffect(() => {
+    "log here";
+  }, [setMetaFunction]);
 
   return (
-    <section className={`text-black ${actionThenType === "transform"  && transformType === "dynamic" ? "h-full" : "h-[75vh]"}`}>
+    <section
+      className={`text-black ${
+        actionThenType === "transform" && transformType === "dynamic"
+          ? "h-full"
+          : "h-[75vh]"
+      }`}
+    >
       {actionThenType === "create-new-then" && (
         <div className="px-8">
           <ActionHeader
