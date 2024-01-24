@@ -12,6 +12,7 @@ dotenv.config();
 // }
 
 const ENV = {
+  CHAINID: process.env.NEXT_PUBLIC_CHAIN_NAME  || "fivenet",
   API_URL: process.env.API_ENDPOINT_SCHEMA_INFO_2 || "",
   Client_API_URL: process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO || "",
   API_FIVENET: process.env.NEXT_PUBLIC__API_ENDPOINT_SIX_FIVENET || "",

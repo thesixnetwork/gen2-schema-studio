@@ -48,7 +48,7 @@ export default function Page({
   const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [stepDraft, setStepDraft] = useState(2);
-  const [chainId, setChainId] = useState("");
+  const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME!);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
