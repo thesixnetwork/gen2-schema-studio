@@ -2,6 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
 import { getCookie } from "@/service/getCookie";
+import {
+  NumberInput,
+  NumberInputStepper,
+  NumberInputField,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from "@chakra-ui/react";
 
 interface CircleNodeProps {
   data: {
@@ -57,13 +64,17 @@ const DynamicNode = (props: CircleNodeProps) => {
     setHovered(false);
   };
 
-  const onChange = (e: EventProps) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement> | string) => {
     const { nodeInternals } = store.getState();
-    setInputValue(e.target.value);
+
+    const value = typeof e === "string" ? e : e.target.value;
+
+    setInputValue(value);
+
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
         if (node.id === props.data.id) {
-          node.data.value = e.target.value;
+          node.data.value = value;
         }
         return node;
       })
@@ -163,6 +174,17 @@ const DynamicNode = (props: CircleNodeProps) => {
       setNodes(
         Array.from(nodeInternals.values()).map((node) => {
           props.data.value = 0;
+          return node;
+        })
+      );
+    } else if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "float" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = (0).toFixed(1);
           return node;
         })
       );
@@ -271,6 +293,59 @@ const DynamicNode = (props: CircleNodeProps) => {
               </div>
             </div>
           </>
+        ) : valueNodeType === "float" ? (
+          <>
+            <p
+              className={`font-bold ${
+                hovered ? "text-indigo-600" : "text-Act6"
+              }`}
+            >
+              {" "}
+              V:&nbsp;{" "}
+            </p>
+            <NumberInput
+              ref={inputRef}
+              value={inputValue as string | number | undefined}
+              border={"white"}
+              variant="unstyled"
+              className="w-20 rounded-sm pl-1 bg-white text-main2"
+              precision={1}
+              step={0.1}
+              onChange={(e) => onChange(e)}
+            >
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper className="text-Act7" />
+                <NumberDecrementStepper className="text-Act7" />
+              </NumberInputStepper>
+            </NumberInput>
+          </>
+        ) : valueNodeType === "number" ? (
+          <>
+            <p
+              className={`font-bold ${
+                hovered ? "text-indigo-600" : "text-Act6"
+              }`}
+            >
+              {" "}
+              V:&nbsp;{" "}
+            </p>
+            <NumberInput
+              ref={inputRef}
+              value={inputValue as string | number | undefined}
+              border={"white"}
+              variant="unstyled"
+              className="w-20 rounded-sm pl-1 bg-white text-main2"
+              step={1}
+              onChange={(e) => onChange(e)}
+            >
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper className="text-Act7" />
+                <NumberDecrementStepper className="text-Act7" />
+              </NumberInputStepper>
+            </NumberInput>
+          </>
         ) : (
           <>
             <p
@@ -329,7 +404,14 @@ const DynamicNode = (props: CircleNodeProps) => {
           onChange={handleSelect}
           value={selectValue.name !== undefined ? String(selectValue.name) : ""}
         >
-          <option value={selectValue.name !== undefined ? String(selectValue.name) : ""} disabled selected hidden>
+          <option
+            value={
+              selectValue.name !== undefined ? String(selectValue.name) : ""
+            }
+            disabled
+            selected
+            hidden
+          >
             {selectValue.name === "" || selectValue.name === undefined
               ? "-- select --"
               : selectValue.name}

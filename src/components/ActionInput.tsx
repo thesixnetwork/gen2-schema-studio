@@ -85,7 +85,7 @@ const ActionInput = (props: ActionInputProps) => {
     props.setIsError(false);
 
     if (checkDuplicateActionName(str)) {
-      setErrorMessage("Name can't be duplicate!");
+      setErrorMessage("Name can't be duplicate");
       setIsError(true);
       props.setIsError(true);
     } else if (containsSpecialChars(str)) {
@@ -129,7 +129,7 @@ const ActionInput = (props: ActionInputProps) => {
               isError
                 ? "border-red-500 focus:border-red-500 text-red-500"
                 : "border-Act6 focus:border-Act6"
-            } placeholder-gray-300 border-dashed p-1 focus:outline-none w-24 sm-32 lg:w-60 xl:w-96 h-10`}
+            } placeholder-gray-300 border-dashed p-1 focus:outline-none w-48 lg:w-60 xl:w-96 h-10`}
             value={value}
             onChange={(e) => {
               handleValueChange(e);

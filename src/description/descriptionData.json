@@ -115,15 +115,15 @@
       "description": "Dynamic image path will transform each token to its unique image. Base on its token_id"
     },
     {
-      "title": "",
+      "title": "none",
       "description": "Path of image might need postfix format to locate it"
     },
     {
-      "title": "",
+      "title": "none",
       "description": "Original path: https://path/1.png"
     },
     {
-      "title": "",
+      "title": "none",
       "description": "Transformed path: https://path/1-transformed.png"
     }
   ],

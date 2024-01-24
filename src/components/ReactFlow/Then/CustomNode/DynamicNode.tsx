@@ -2,6 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
 import { getCookie } from "@/service/getCookie";
+import {
+  NumberInput,
+  NumberInputStepper,
+  NumberInputField,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from "@chakra-ui/react";
 
 interface CircleNodeProps {
   data: {
@@ -49,7 +56,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     dataType: props.data.dataType,
   });
 
-  console.log(":: valueNodeType :: ", valueNodeType);
   const handleDragEnter = () => {
     setHovered(true);
   };
@@ -62,14 +68,17 @@ const DynamicNode = (props: CircleNodeProps) => {
     setHovered(false);
   };
 
-  const onChange = (e: EventProps) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement> | string) => {
     const { nodeInternals } = store.getState();
-    setInputValue(e.target.value);
+
+    const value = typeof e === "string" ? e : e.target.value;
+
+    setInputValue(value);
 
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
         if (node.id === props.data.id) {
-          node.data.value = e.target.value;
+          node.data.value = value;
         }
         return node;
       })
@@ -96,6 +105,7 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   const handleSelectAttribute = (e: EventProps) => {
+    console.log("has selected")
     const selectedOption = JSON.parse(e.target.value);
     props.data.value = selectedOption.name;
     props.data.dataType = selectedOption.dataType;
@@ -128,7 +138,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     const { nodeInternals } = store.getState();
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
-        console.log("props.data.id", props.data);
         if (node.id === props.data.id) {
           props.data.dataType = selectedOption.dataType;
         }
@@ -158,11 +167,6 @@ const DynamicNode = (props: CircleNodeProps) => {
       name: props.data.value,
       dataType: props.data.dataType,
     });
-    console.log(
-      "Select Attribute Value:",
-      selectAttributeValue,
-      props.data.value
-    );
   }, [props.data.value]);
 
   useEffect(() => {
@@ -206,7 +210,6 @@ const DynamicNode = (props: CircleNodeProps) => {
   }, [props.data.value, props.data.showType, props.data.dataType]);
 
   useEffect(() => {
-    console.log("props.data.datatype: ", props.data.dataType);
     setValueNodeType(props.data.dataType);
     const { nodeInternals } = store.getState();
     if (
@@ -228,6 +231,17 @@ const DynamicNode = (props: CircleNodeProps) => {
       setNodes(
         Array.from(nodeInternals.values()).map((node) => {
           props.data.value = 0;
+          return node;
+        })
+      );
+    } else if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "float" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = (0).toFixed(1);
           return node;
         })
       );
@@ -360,78 +374,135 @@ const DynamicNode = (props: CircleNodeProps) => {
       <Handle type="source" position={Position.Bottom} id="a" /> */}
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
-        {valueNodeType === "boolean" ? (
-          <>
-            <p
-              className={`font-bold ${
-                hovered ? "text-indigo-600" : "text-Act6"
-              }`}
-            >
-              {" "}
-              V:&nbsp;{" "}
-            </p>
-            <div className="flex w-full  space-evenly">
-              <div
-                onClick={(e) => handleClickValueNode(e)}
-                id="yes"
-                className={`cursor-pointer rounded-l-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-center border border-Act6 text-Act6 ${
-                  selectedValueNode === "yes"
-                    ? "bg-Act6 text-white"
-                    : "bg-white"
+        <>
+          {valueNodeType === "boolean" ? (
+            <>
+              <p
+                className={`font-bold ${
+                  hovered ? "text-indigo-600" : "text-Act6"
                 }`}
               >
-                <span
+                {" "}
+                V:&nbsp;{" "}
+              </p>
+              <div className="flex w-full  space-evenly">
+                <div
                   onClick={(e) => handleClickValueNode(e)}
                   id="yes"
-                  className={
-                    selectedValueNode === "yes" ? "font-bold" : "font-normal"
-                  }
+                  className={`cursor-pointer rounded-l-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-center border border-Act6 text-Act6 ${
+                    selectedValueNode === "yes"
+                      ? "bg-Act6 text-white"
+                      : "bg-white"
+                  }`}
                 >
-                  Yes
-                </span>
-              </div>
-              <div
-                onClick={(e) => handleClickValueNode(e)}
-                id="no"
-                className={`cursor-pointer rounded-r-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-centerborder border-Act6 text-Act6 ${
-                  selectedValueNode === "no" ? "bg-Act6 text-white" : "bg-white"
-                }`}
-              >
-                <span
+                  <span
+                    onClick={(e) => handleClickValueNode(e)}
+                    id="yes"
+                    className={
+                      selectedValueNode === "yes" ? "font-bold" : "font-normal"
+                    }
+                  >
+                    Yes
+                  </span>
+                </div>
+                <div
                   onClick={(e) => handleClickValueNode(e)}
                   id="no"
-                  className={
-                    selectedValueNode === "no" ? "font-bold" : "font-normal"
-                  }
+                  className={`cursor-pointer rounded-r-sm hover:scale-110 duration-500 w-14 h-6  flex justify-center items-centerborder border-Act6 text-Act6 ${
+                    selectedValueNode === "no"
+                      ? "bg-Act6 text-white"
+                      : "bg-white"
+                  }`}
                 >
-                  No
-                </span>
+                  <span
+                    onClick={(e) => handleClickValueNode(e)}
+                    id="no"
+                    className={
+                      selectedValueNode === "no" ? "font-bold" : "font-normal"
+                    }
+                  >
+                    No
+                  </span>
+                </div>
               </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <p
-              className={`font-bold ${
-                hovered ? "text-indigo-600" : "text-Act6"
-              }`}
-            >
-              {" "}
-              V:&nbsp;{" "}
-            </p>
-            <input
-              type="text"
-              name=""
-              id=""
-              ref={inputRef}
-              className="w-16 rounded-sm pl-1 bg-white text-main2"
-              onChange={(e) => {
-                onChange(e);
-              }}
-              value={inputValue}
-            />
-          </>
-        )}
+            </>
+          ) : valueNodeType === "number" ? (
+            <>
+              <p
+                className={`font-bold ${
+                  hovered ? "text-indigo-600" : "text-Act6"
+                }`}
+              >
+                {" "}
+                V:&nbsp;{" "}
+              </p>
+              <NumberInput
+                ref={inputRef}
+                value={inputValue as string | number | undefined}
+                border={"white"}
+                variant="unstyled"
+                className="w-20 rounded-sm pl-1 bg-white text-main2"
+                step={1}
+                onChange={(e) => onChange(e)}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper className="text-Act7" />
+                  <NumberDecrementStepper className="text-Act7" />
+                </NumberInputStepper>
+              </NumberInput>
+            </>
+          ) : valueNodeType === "float" ? (
+            <>
+              <p
+                className={`font-bold ${
+                  hovered ? "text-indigo-600" : "text-Act6"
+                }`}
+              >
+                {" "}
+                V:&nbsp;{" "}
+              </p>
+              <NumberInput
+                ref={inputRef}
+                value={inputValue as string | number | undefined}
+                border={"white"}
+                variant="unstyled"
+                className="w-20 rounded-sm pl-1 bg-white text-main2"
+                precision={1}
+                step={0.1}
+                onChange={(e) => onChange(e)}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper className="text-Act7" />
+                  <NumberDecrementStepper className="text-Act7" />
+                </NumberInputStepper>
+              </NumberInput>
+            </>
+          ) : (
+            <>
+              <p
+                className={`font-bold ${
+                  hovered ? "text-indigo-600" : "text-Act6"
+                }`}
+              >
+                {" "}
+                V:&nbsp;{" "}
+              </p>
+              <input
+                type="text"
+                name=""
+                id=""
+                ref={inputRef}
+                className="w-16 rounded-sm pl-1 bg-white text-main2"
+                onChange={(e) => {
+                  onChange(e);
+                }}
+                value={inputValue}
+              />
+            </>
+          )}
+        </>
       </div>
     </div>
   ) : props.data.showType === "attributeNode" ? (
@@ -458,7 +529,14 @@ const DynamicNode = (props: CircleNodeProps) => {
           onChange={handleSelect}
           value={selectValue.name !== undefined ? String(selectValue.name) : ""}
         >
-          <option value={selectValue.name !== undefined ? String(selectValue.name) : ""} disabled selected hidden>
+          <option
+            value={
+              selectValue.name !== undefined ? String(selectValue.name) : ""
+            }
+            disabled
+            selected
+            hidden
+          >
             {selectValue.name === "" || selectValue.name === undefined
               ? "-- select type --"
               : selectValue.name}

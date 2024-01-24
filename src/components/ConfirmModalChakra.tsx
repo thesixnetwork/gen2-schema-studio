@@ -49,7 +49,6 @@ const ConfirmModalChakra = (props: Props) => {
 
   useEffect(() => {
     props.isOpen && onOpen();
-    console.log("props.isOpen", props.isOpen)
   }, [props.isOpen]);
 
 
