@@ -180,7 +180,7 @@ const ActionThenTransformDynamic = (props: ActionThenTransformDynamicProps) => {
       try {
         setLoading(true);
         const response = await getImgUrlAction6(props.schemaRevision);
-        console.log(response)
+        // console.log(response)
         setImgSource(response.data.image_url.path);
         setImgFormat("."+response.data.image_url.format);
         setPrefix(response.data.image_url.prefix);

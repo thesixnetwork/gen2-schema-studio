@@ -552,7 +552,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
           setIsOpen(true);
         } else {
           const cloneUpdatedNodes = [...nodes];
-          console.log(cloneUpdatedNodes);
+          // console.log(cloneUpdatedNodes);
           cloneUpdatedNodes[nodeIndex] = {
             ...nodes[nodeIndex],
             data: {
@@ -560,7 +560,7 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
               showType: "addNode",
             },
           };
-          console.log("this 3");
+          // console.log("this 3");
           setNodes(cloneUpdatedNodes);
         }
       }

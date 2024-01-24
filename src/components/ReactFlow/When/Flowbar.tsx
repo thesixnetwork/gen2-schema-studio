@@ -85,7 +85,7 @@ export default function Flowbar(props: MetaDataProps) {
         presence_penalty: 0,
       });
 
-      console.log(response);
+      // console.log(response);
 
       setOutputFromGPT(removeLeadingTrailingSpace(response.choices[0].text));
     } catch (error) {
@@ -102,7 +102,7 @@ export default function Flowbar(props: MetaDataProps) {
       props.setMetaData(outputFromGPT);
       props.setIsGenerateGPT(true);
     }
-    console.log(">>", props.metaData);
+    // console.log(">>", props.metaData);
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {

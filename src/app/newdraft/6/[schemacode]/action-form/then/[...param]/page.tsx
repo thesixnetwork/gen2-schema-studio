@@ -71,8 +71,8 @@ const Page = ({ params }: { params: { param: string } }) => {
       setMetaFunction("");
       setIsActionThenTypeChange(false);
     }
-    console.log("metaFunction", metaFunction);
-    console.log("mafak", isActionThenTypeChange);
+    // console.log("metaFunction", metaFunction);
+    // console.log("mafak", isActionThenTypeChange);
   }, [actionThenType, isActionThenTypeChange]);
 
   useEffect(() => {

@@ -51,7 +51,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   const [metaData, setMetaData] = useState<string>("");
 
   const convertFromBase64 = (str: string) => {
-    console.log("str: ", str);
+    // console.log("str: ", str);
     return atob(str);
   };
 
@@ -61,7 +61,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
   };
 
   const getImgFromParam = (string: string) => {
-    console.log("input: ", string);
+    // console.log("input: ", string);
     const firstQuoteIndex = string.indexOf("'");
     if (firstQuoteIndex === -1) {
       return null;
@@ -182,7 +182,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
 
   useEffect(() => {
     if (metaFunction.startsWith("meta.SetImage('https")) {
-      console.log("imgSource", metaFunction);
+      // console.log("imgSource", metaFunction);
       if (
         getImgFromParam(metaFunction) !== ".png" &&
         getImgFromParam(metaFunction) !== ".jpg" &&
@@ -212,7 +212,7 @@ const ActionThenTransformStatic = (props: ActionThenTransformStaticProps) => {
 
     const index = actionThenArr.indexOf(metaFunction);
     setActionThenIndex(index);
-    console.log("actionThenArr: ", actionThenArr);
+    // console.log("actionThenArr: ", actionThenArr);
   }, [actionData, actionThenArr, metaFunction, props.actionName]);
 
   useEffect(() => {

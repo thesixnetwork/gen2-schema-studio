@@ -87,7 +87,7 @@ export default function Layout({
     }
 
     useEffect(()=>{
-        console.log("checker",checkIsThenOrWhen)
+        // console.log("checker",checkIsThenOrWhen)
     },[checkIsThenOrWhen])
 
     return (

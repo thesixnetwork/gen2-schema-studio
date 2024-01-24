@@ -141,14 +141,14 @@ export default function Page({
 
   const getDraftInfo = () => {
     if (isDaft) {
-      console.log(
-        "isDaft:",
-        isDaft,
-        "initialDaft:",
-        initialDaft,
-        "isEqual:",
-        isDaft === initialDaft
-      );
+    //   console.log(
+    //     "isDaft:",
+    //     isDaft,
+    //     "initialDaft:",
+    //     initialDaft,
+    //     "isEqual:",
+    //     isDaft === initialDaft
+    //   );
       setSchemaCode(isDaft.schema_info.code);
       setStepDraft(isDaft.current_state);
     }
@@ -168,7 +168,7 @@ export default function Page({
           contractAddres,
           chainId
         );
-        console.log("originAttribute", originAttribute);
+        // console.log("originAttribute", originAttribute);
 
         // Assuming originAttribute is an array of attributes
         const updatedAttributes = [
@@ -428,7 +428,7 @@ export default function Page({
       isDaft!.schema_info.origin_data.origin_attributes,
       schemacode
     );
-    console.log("saveState1_status :", saveState3_status);
+    // console.log("saveState1_status :", saveState3_status);
     router.push(`/newdraft/4/${schemacode}`);
     setIsLoadingSaveState3(false);
   };
@@ -448,7 +448,7 @@ export default function Page({
   //------------------------Post data to base --------------------------------------------//
 
   useEffect(() => {
-    console.log("isNewAttribute", isNewAttribute);
+    // console.log("isNewAttribute", isNewAttribute);
   }, [isNewAttribute]);
   return (
     <>

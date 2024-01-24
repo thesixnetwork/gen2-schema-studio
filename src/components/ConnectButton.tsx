@@ -83,7 +83,7 @@ function ConnectButton(props:Props) {
       const balanceAsCoin = await client.getBalance(address, token);
       const balance = (parseFloat(balanceAsCoin.amount) * 1) / exponent;
       setBalance(balance);
-      console.log(balance);
+      // console.log(balance);
     } else {
       console.error("Cosmos address is null.");
       // Handle the case where cosmosAddress is null, maybe show an error message or take appropriate action.

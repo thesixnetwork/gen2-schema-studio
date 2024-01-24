@@ -484,7 +484,7 @@ const CaradEditDaft: React.FC<{
 
       if (errorMessage || errorMessageI || errorMessageII) {
         // await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
-        console.log("Have error validate");
+        // console.log("Have error validate");
         return;
       }
 

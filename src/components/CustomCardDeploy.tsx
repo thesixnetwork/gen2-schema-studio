@@ -77,13 +77,13 @@ const CustomCardDeploy: React.FC<Props> = ({
   };
 
   const deploy = async () => {
-    console.log(">>", schemacode)
+    // console.log(">>", schemacode)
     let msgArray: Array<EncodeObject> = [];
     setLoading(true);
     const encodeBase64Schema = Buffer.from(
       JSON.stringify(isDaft?.schema_info)
     ).toString("base64");
-    console.log("schemaInfo", isDaft);
+    // console.log("schemaInfo", isDaft);
 
     if (!isDaft) {
       await Swal.fire({
@@ -129,7 +129,7 @@ const CustomCardDeploy: React.FC<Props> = ({
         }
       );
 
-      console.log("rpcClient", rpcClient);
+      // console.log("rpcClient", rpcClient);
       msgArray.push(msgCreateNFTSchemaEndcode);
 
       try {
@@ -139,7 +139,7 @@ const CustomCardDeploy: React.FC<Props> = ({
           "auto",
           ``
         );
-        console.log("tx-----", txResponse);
+        // console.log("tx-----", txResponse);
         // const apiUrl = `${ENV.API_URL}schema/set_schema_info`;
         // console.log("url",apiUrl)
         // const requestData = {
@@ -176,14 +176,14 @@ const CustomCardDeploy: React.FC<Props> = ({
 
         await postAction7(schemacode, "Testnet")
           .then((response) => {
-            console.log("API Response Deploy :", response);
-            console.log("success ja");
+            // console.log("API Response Deploy :", response);
+            // console.log("success ja");
             setShowAlert("success");
             setIsOpen(true);
             setLoading(false);
           })
           .catch((error) => {
-            console.log("fail ja");
+            // console.log("fail ja");
             setShowAlert("success");
             setIsOpen(true);
             console.error("API Error:", error);
@@ -192,10 +192,10 @@ const CustomCardDeploy: React.FC<Props> = ({
 
         // router.push("/home");
       } catch (error) {
-        console.log("fail ja");
+        // console.log("fail ja");
         setShowAlert("fail");
         setIsOpen(true);
-        console.log("showAlert", showAlert);
+        // console.log("showAlert", showAlert);
         console.error(error);
         setLoading(false);
       }
@@ -211,7 +211,7 @@ const CustomCardDeploy: React.FC<Props> = ({
   useEffect(() => {
     if (showAlert === "success" || showAlert === "fail") {
       // Display AlertModal or take other actions
-      console.log("showAlert changed:", showAlert);
+      // console.log("showAlert changed:", showAlert);
     }
   }, [showAlert]);
 

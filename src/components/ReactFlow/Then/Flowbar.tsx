@@ -84,7 +84,7 @@ export default function Flowbar(props: FlowbarProps) {
         presence_penalty: 0,
       });
 
-      console.log(response);
+      // console.log(response);
 
       setOutputFromGPT(removeLeadingTrailingSpace(response.choices[0].text));
     } catch (error) {

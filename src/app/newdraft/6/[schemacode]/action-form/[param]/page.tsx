@@ -89,7 +89,7 @@ const Page = ({ params }: { params: { param: string } }) => {
           "false"
         );
       }else if (getIsTransformDynamicFromCookie === "true") {
-        console.log("post transform")
+        // console.log("post transform")
         await postImageUrlAction6(
           schemacode,
           decodeURIComponent(getImgSourceFromCookie),
@@ -121,7 +121,7 @@ const Page = ({ params }: { params: { param: string } }) => {
           if (actions) {
             if (getIsEdited !== "true") {
               await setAction(actions);
-              console.log("getting");
+              // console.log("getting");
               await localStorage.setItem("action", JSON.stringify(actions));
               setCookie("isEditAction", "false");
             } else {
@@ -129,7 +129,7 @@ const Page = ({ params }: { params: { param: string } }) => {
               setCookie("isEditAction", "false");
             }
             setIsEdit(true);
-            console.log("success");
+            // console.log("success");
           } else {
             console.error("error");
           }
@@ -156,7 +156,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     if (params.param === "create-new-action") {
       setIsCreateNewAction(true);
       setCookie("isCreateNewAction", "true");
-      console.log("this>>", getActionThenFromCookie);
+      // console.log("this>>", getActionThenFromCookie);
       setCreateNewAction((prev) => [
         {
           ...prev[0],
@@ -183,8 +183,8 @@ const Page = ({ params }: { params: { param: string } }) => {
       ]);
       setLoading(false);
     } else {
-      // console.log("--->1", updatedAction);
-      console.log("--->2", getActionFromCookie);
+      // // console.log("--->1", updatedAction);
+      // console.log("--->2", getActionFromCookie);
       // console.log("--->3", typeof getActionFromCookie)
       // console.log("--->4",(JSON.parse(getActionFromCookie)))
 
@@ -210,7 +210,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   }, []);
 
   useEffect(() => {
-    console.log("work");
+    // console.log("work");
     if (
       (params.param === "create-new-action" &&
         createNewAction[0].name === "") ||
@@ -223,7 +223,7 @@ const Page = ({ params }: { params: { param: string } }) => {
     } else {
       setIsNameEmpty(false);
       setNameRequired(false);
-      console.log("not empty");
+      // console.log("not empty");
     }
 
     if (

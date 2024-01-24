@@ -263,7 +263,7 @@ const CreateAttribute: React.FC<{
     const checkAtt = await checkNewAttributes();
     if (errorMessage || errorMessageI || errorMessageII || !checkAtt) {
       // await ConfirmModal(errorMessage ? errorMessage : errorMessageI ? errorMessageI : errorMessageII, "Error");
-      console.log("Have error validate");
+      // console.log("Have error validate");
       return;
     }
     await setIsAttributes([...isAttributes, newAttributes]);

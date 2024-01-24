@@ -105,7 +105,7 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   const handleSelectAttribute = (e: EventProps) => {
-    console.log("has selected")
+    // console.log("has selected")
     const selectedOption = JSON.parse(e.target.value);
     props.data.value = selectedOption.name;
     props.data.dataType = selectedOption.dataType;

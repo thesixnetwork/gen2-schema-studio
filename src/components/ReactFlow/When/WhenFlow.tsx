@@ -156,9 +156,9 @@ const WhenFlow = (props: WhenFlowProps) => {
         parentNodeId: null | string = null,
         parentPositionY = 0
       ) => {
-        console.log(">..", node);
+        // console.log(">..", node);
         const nodeId = `${nodeIdCounter++}`;
-        console.log("---node>", node);
+        // console.log("---node>", node);
         const outputNode = {
           id: nodeId,
           type: "customInputNode",
@@ -261,7 +261,7 @@ const WhenFlow = (props: WhenFlowProps) => {
           outputNode.data.value = node.value;
         }
 
-        console.log("here ja", outputNode);
+        // console.log("here ja", outputNode);
 
         outputArray.push(outputNode);
 
@@ -488,8 +488,8 @@ const WhenFlow = (props: WhenFlowProps) => {
             node.data.height
           )
         ) {
-          console.log(type);
-          console.log("f**k");
+          // console.log(type);
+          // console.log("f**k");
           updatedNodes.push(node);
         } else {
           if (!dropped) {
@@ -572,7 +572,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                 updatedNodes.push(rightNode);
               }
             }
-            console.log(">>", type);
+            // console.log(">>", type);
             if (
               node.id === "1" &&
               (type == "valueNode" ||
@@ -620,7 +620,7 @@ const WhenFlow = (props: WhenFlowProps) => {
             showType: "addNode",
           },
         };
-        console.log("clone", cloneUpdatedNodes);
+        // console.log("clone", cloneUpdatedNodes);
         setNodes(cloneUpdatedNodes);
       }
       if (element.type !== "remove") {
@@ -635,7 +635,7 @@ const WhenFlow = (props: WhenFlowProps) => {
       name: string,
       newWhen: string
     ) => {
-      console.log("::1", array);
+      // console.log("::1", array);
       const updatedArray = array.map((action) => {
         if (action.name === name) {
           return { ...action, when: newWhen };
@@ -692,15 +692,15 @@ const WhenFlow = (props: WhenFlowProps) => {
         const highestNodeId = parseInt(
           addNodes[addNodes.length - 1].data.parentNode
         );
-        console.log("::lowerstId", lowestNodeId);
-        console.log("::highestId", highestNodeId);
+        // console.log("::lowerstId", lowestNodeId);
+        // console.log("::highestId", highestNodeId);
         const lowestParentNode = addNodes.filter(
           (node) => parseInt(node.data.parentNode) === highestNodeId
         );
         lowestParentNode.sort(
           (a, b) => parseInt(a.data.parentNode) - parseInt(b.data.parentNode)
         );
-        console.log("::parent", lowestParentNode);
+        // console.log("::parent", lowestParentNode);
         let updatedNode: any;
         if (nodes.length > 1) {
           updatedNode = lowestParentNode[0];
@@ -710,9 +710,9 @@ const WhenFlow = (props: WhenFlowProps) => {
           );
         }
 
-        console.log(":: add nodes ::", addNodes);
-        console.log(":: 1 ::", lowestNodeId);
-        console.log("updatedNode", updatedNode);
+        // console.log(":: add nodes ::", addNodes);
+        // console.log(":: 1 ::", lowestNodeId);
+        // console.log("updatedNode", updatedNode);
         if (updatedNode) {
           if (
             type === "orNode" ||
@@ -881,7 +881,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   );
 
   const handleNodesLeave = () => {};
-  console.log("log naja", props.metaFunction);
+  // console.log("log naja", props.metaFunction);
   useEffect(() => {
     if (props.metaFunction !== "create-new-when" && props.metaFunction !== "") {
       setRedraw(true);
@@ -894,11 +894,11 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   useEffect(() => {
     if (isGenerateGPT) {
-      // console.log(">",metaData)
-      // console.log(">>", parser_when.parse(metaData));
+      // // console.log(">",metaData)
+      // // console.log(">>", parser_when.parse(metaData));
       setRedraw(true);
-      console.log(`"${metaFunction.toString()}"`);
-      console.log(convertObject(parser_when.parse(metaFunction.toString())));
+      // console.log(`"${metaFunction.toString()}"`);
+      // console.log(convertObject(parser_when.parse(metaFunction.toString())));
       // convertObject(parser_when.parse("meta.GetNumber('points') > 0"));
       setIsGenerateGPT(false);
     }
@@ -906,11 +906,11 @@ const WhenFlow = (props: WhenFlowProps) => {
 
   useEffect(() => {
     if (redraw && nodes.length > 0) {
-      console.log("==>", nodes);
+      // console.log("==>", nodes);
       const treeNodes = generateTreeFromReactFlow(nodes, edges);
-      console.log(treeNodes);
+      // console.log(treeNodes);
       const tree = new Tree(treeNodes);
-      console.log("tree=>", tree);
+      // console.log("tree=>", tree);
       tree.root.setBox(nodes.filter((node) => node.id === tree.root.id)[0]);
       // log tree
 
@@ -1019,8 +1019,8 @@ const WhenFlow = (props: WhenFlowProps) => {
               nodes[j].data.showType === "valueNode"
             ) {
               const dataType = nodes[j].data.value;
-              console.log("1", nodes[i].data);
-              console.log("logjuf", dataType);
+              // console.log("1", nodes[i].data);
+              // console.log("logjuf", dataType);
               if (dataType.toString().includes(".")) {
                 nodes[i].data.dataTypeFromValue = "float";
                 nodes[j].data.dataType = "float";
@@ -1157,11 +1157,11 @@ const WhenFlow = (props: WhenFlowProps) => {
       };
       const generateObject = transformData(tempArr, "1");
       const result = Factory.createObject(generateObject).toString();
-      console.log("!!!", generateObject);
-      console.log("-->obj", result);
+      // console.log("!!!", generateObject);
+      // console.log("-->obj", result);
       setMetaFunction(result);
       props.setMetaFunction(result);
-      console.log("wtf!!", props.metaFunction);
+      // console.log("wtf!!", props.metaFunction);
     };
     if (nodes.length > 1) {
       getDataFromNode();

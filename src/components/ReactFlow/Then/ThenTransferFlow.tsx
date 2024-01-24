@@ -285,7 +285,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
             NODE_HEIGHT
           )
         ) {
-          console.log("f**k");
+          // console.log("f**k");
           updatedNodes.push(node);
         } else {
           if (
@@ -513,7 +513,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           setIsOpen(true);
         } else {
           const cloneUpdatedNodes = [...nodes];
-          console.log(cloneUpdatedNodes);
+          // console.log(cloneUpdatedNodes);
           cloneUpdatedNodes[nodeIndex] = {
             ...nodes[nodeIndex],
             data: {
@@ -538,11 +538,11 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
       for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].data.showType === "valueNode") {
           nodes[i].data.dataType = nodes[0].data.dataType;
-          console.log("1", nodes[i].data.dataType);
+          // console.log("1", nodes[i].data.dataType);
         }
 
         if (nodes[i].data.showType === "paramNode") {
-          console.log("1", nodes[i].data.dataType);
+          // console.log("1", nodes[i].data.dataType);
         }
 
         if (nodes[i].data.showType === "selectAttributeNode") {
@@ -615,7 +615,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
     const object = Factory.createObject(
       transformData(nodes as NodeProps[])
     ).toString();
-    console.log(">", object);
+    // console.log(">", object);
     setMetaFunction(object);
     props.setMetaFunction(object);
     return object;
@@ -918,9 +918,9 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
           (node) => parseInt(node.id) === lowestNodeId
         );
 
-        console.log(":: add nodes ::", addNodes);
-        console.log(":: 1 ::", lowestNodeId);
-        console.log("updatedNode", updatedNode);
+        // console.log(":: add nodes ::", addNodes);
+        // console.log(":: 1 ::", lowestNodeId);
+        // console.log("updatedNode", updatedNode);
         if (updatedNode) {
           if (
             type === "valueNode" ||
@@ -988,9 +988,9 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
   useEffect(() => {
     // saveSCHEMA_CODE(props.schemaRevision);
     const firstMetaFunction = props.metaFunction;
-    console.log("firstMetaData", firstMetaFunction);
+    // console.log("firstMetaData", firstMetaFunction);
     if (firstMetaFunction.startsWith("meta.TransferNumber")) {
-      console.log("it's work");
+      // console.log("it's work");
       convertObjectToNode(parser_then.parse(firstMetaFunction));
       setMetaFunction(props.metaFunction);
     }
@@ -1005,7 +1005,7 @@ const ThenTransferFlow = (props: ThenTransferFlowProps) => {
 
   useEffect(() => {
     if (isGenerateGPT) {
-      console.log(`"${metaFunction.toString()}"`);
+      // console.log(`"${metaFunction.toString()}"`);
       convertObjectToNode(parser_then.parse(metaFunction.toString()));
       setSelectedAttribute("none");
       setIsGenerateGPT(false);

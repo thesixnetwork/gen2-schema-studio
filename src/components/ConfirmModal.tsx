@@ -11,7 +11,7 @@ interface ConfirmModalProps {
 // import { ISchemaInfo, ItokenAttributes } from "@/type/Nftmngr";
 //// action  {"Dploy Testnet","Dploy Mainnet", "Save"}
 export async function ConfirmModal(Texthead: string, action: string) {
-  console.log(action);
+  // console.log(action);
   if (action === "Deploy Testnet") {
     const result = await Swal.fire({
       customClass: {

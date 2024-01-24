@@ -22,19 +22,19 @@ const ActionInput = (props: ActionInputProps) => {
       : null;
 
   const handleValueChange = (e: any) => {
-    console.log(
-      "input ==>",
-      props.actionIndex,
-      "= ",
-      props.value,
-      ", ",
-      props.value[props.actionIndex]
-    );
+    // console.log(
+    //   "input ==>",
+    //   props.actionIndex,
+    //   "= ",
+    //   props.value,
+    //   ", ",
+    //   props.value[props.actionIndex]
+    // );
     const newValue = e.target.value;
     setValue(newValue);
 
     props.setValue((prevState: IActions[]) => {
-      console.log("prevState ==>", prevState);
+      // console.log("prevState ==>", prevState);
       const updatedActions = prevState.map((action: IActions, index: number) =>
         index === props.actionIndex
           ? {
@@ -136,7 +136,7 @@ const ActionInput = (props: ActionInputProps) => {
               props.name === "Name" && checkActionNameError(e.target.value);
             }}
             onBlur={(e) => {
-              console.log(e);
+              // console.log(e);
             }}
           ></input>
           <span className="text-red-500 text-xs absolute mt-12">

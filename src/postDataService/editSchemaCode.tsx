@@ -32,7 +32,7 @@ export async function editSchemaCode(schemaCode: string,newSchemaCode: string, c
                 // Add any other headers your API requires
             }
         },);
-        console.log(req.data.data)
+        // console.log(req.data.data)
         // const schema_info:ISchemaInfo = req.data.data.schema_info
         return req.data
     } catch (error) {
