@@ -25,6 +25,7 @@ import { IOriginAttributes } from "@/type/Nftmngr";
 import AttributeCardAndDelete from "@/components/state3/AttributeCardAndDelete";
 import ConfirmModalChakra from "@/components/ConfirmModalChakra";
 import { ISchemaInfo } from "@/type/Nftmngr";
+import ENV from "@/utils/ENV";
 
 export default function Page({
   params: { schemacode },
@@ -48,7 +49,7 @@ export default function Page({
   const [isLoadingSaveState3, setIsLoadingSaveState3] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [stepDraft, setStepDraft] = useState(2);
-  const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME!);
+  const [chainId, setChainId] = useState(ENV.CHAINID);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 

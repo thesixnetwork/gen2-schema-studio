@@ -15,12 +15,13 @@ import Loading from "./Loading";
 
 import { setCookie } from "@/service/setCookie";
 import { signIn } from "next-auth/react";
+import ENV  from "@/utils/ENV"
 interface Props {
     setLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 function ConnectButton(props:Props) {
-  const [chainId, setChainId] = useState(process.env.NEXT_PUBLIC_CHAIN_NAME);
+  const [chainId, setChainId] = useState(ENV.CHAINID);
   const [token, setToken] = useState("usix");
   const [balance, setBalance] = useState(0);
   const [cosmosAddress, setCosmosAddress] = useState("");

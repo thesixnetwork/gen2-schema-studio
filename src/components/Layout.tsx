@@ -13,6 +13,7 @@ import HomeSidebar from "@/components/HomeSidebar";
 // import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from "@/helpers/AuthService";
 import CloseDetailButton from "./CloseDetailButton";
 import Loading from "./Loading";
+import ENV from "@/utils/ENV";
 
 export default function Layout({
     children,
@@ -25,7 +26,7 @@ export default function Layout({
     const [childrenHeight, setChildrenHeight] = useState(800)
 
     //--------------------------------------Authen Refresh Token----------------------------------------//
-    const [chainId, setChainId] = useState("fivenet");
+    const [chainId, setChainId] = useState(ENV.CHAINID);
     const [token, setToken] = useState("usix");
     const [cosmosAddress, setCosmosAddress] = useState("");
     const [rpcEndpoint, setRpcEndpoint] = useState<string>(
