@@ -1,14 +1,28 @@
+"use server"
 import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 import { reToken } from "@/service/reToken";
 
 // import type { NextRequest } from 'next/server'
+interface IToken {
+  sub?: string;
+  user?: {
+    id: string;
+    accessToken: string;
+    address: string;
+    balance: string;
+    expToken: string;
+  };
+  iat?: number;
+  exp?: number;
+  jti?: string;
+}
 export default withAuth(function middleware(request: NextRequestWithAuth) {
   // const user: any = request.nextauth.token?.user;
-  const user: any = request.nextauth.token;
+  // const user: IToken| null = request.nextauth.token;
+  const user: IToken | null = request.nextauth.token;
   if (user) {
-    // const exp = user.exp - 120;
-    // const time = Date.now()/1000;
+    // console.log(user.user?.accessToken)
     // const token = await reToken(user.user)
     // const expirationTimestamp = user.exp // Convert to milliseconds
     // // console.log(expirationTimestamp)

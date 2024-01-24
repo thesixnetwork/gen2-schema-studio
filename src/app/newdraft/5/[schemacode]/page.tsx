@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import TapState from "@/components/TapState";
 import {
@@ -25,6 +25,8 @@ import NextPageButton from "@/components/NextPageButton";
 import { useRouter } from "next/navigation";
 import Stepmenu from "@/components/Stepmenu";
 import Loading from "@/components/Loading";
+import { DefaultSession } from "@/type/DefaultSession";
+
 
 // import { testFunc  } from './action'
 // import { cookies } from 'next/headers'
@@ -34,8 +36,9 @@ export default function Page({
 }: {
   params: { schemacode: string };
 }) {
-  // const { data: session } = useSession();
-  // // console.log("session", session)
+  // const sessions = useSession();
+  // const session:DefaultSession| null = sessions.data
+  // console.log("session", session?.expires)
   //   // setIsClient(true);
   const [isDaft, setIsDaft] = useState<ISchemaInfo | null>(null);
   const [loading, setLoading] = useState(true);

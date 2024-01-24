@@ -153,6 +153,7 @@ function ConnectButton(props:Props) {
           accessToken: response.data.data.access_token,
           address: cosmosAddress,
           balance: balance,
+          expToken: Math.floor(Date.now() / 1000) + 60 * 60 * 1 + 60 * 50
         });
         localStorage.setItem("time_out", Math.floor(Date.now()/1000 + 1400).toString());
         router.push("/home");
