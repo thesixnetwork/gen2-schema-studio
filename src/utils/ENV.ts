@@ -17,7 +17,7 @@ const ENV = {
   Client_API_URL: process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO || "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/",
   API_FIVENET: process.env.NEXT_PUBLIC__API_ENDPOINT_SIX_FIVENET || "https://api1.fivenet.sixprotocol.net/",
   RPC_FIVENET2: process.env.NEXT_PUBLIC__RPC2_ENDPOINT_SIX_FIVENET || "",
-  SIGN_MESSAGE: process.env.NEXT_PUBLIC__RPC2_ENDPOINT_SIX_FIVENET || "My Message",
+  SIGN_MESSAGE: process.env.NEXT_PUBLIC__SIGN_MESSAGE || "My Message",
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "3lVCslvPDrIe4Coab77UTh1e/FmdSDL1RYNneEKF2Yk=",
   SIXSCAN_FIVENET: process.env.NEXT_PUBLIC__SIXSCAN_FIVENET || "https://v2.fivenet.sixscan.io/",
 //   RPC_URL: process.env.RPC_URL || "https://rpc2.fivenet.sixprotocol.net",

@@ -34,7 +34,6 @@ env:
 jobs:
   build-and-deploy:
     name: Setup, Build, and Deploy
-    environment: FIVENET
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
