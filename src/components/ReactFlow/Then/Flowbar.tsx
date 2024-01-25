@@ -23,6 +23,9 @@ import GenerateGPTimg from "../../../../public/pic/GenerateGPT.png";
 import GenerateGPTimgWhite from "../../../../public/pic/GenerateGPT-white.png";
 import Image from "next/image";
 import AlertModal from "../../AlertModal";
+import ENV from "@/utils/ENV";
+
+import { handdleProcessGPT } from "@/service/processGPT"
 
 interface FlowbarProps {
   metaData: string;
@@ -54,42 +57,8 @@ export default function Flowbar(props: FlowbarProps) {
     } else if (props.type === "transfer") {
       prompt = `I want to transform from statement text into programming condition comparison. For example the statement is then transfer points to tokenId amount 200 the result will be meta.TransferNumber('points', params['tokenId'].GetString(), 200)  and the another example is transfer points to tokenId amount points the result will be meta.TransferNumber('points', params['token_id'].GetString(), meta.GetNumber('points')) and the answer should be only meta function do not provide any guideline if the statement is\n\"${inputValue}\"\n\n\n\nWhat would be the answer ===>`;
     }
-    const openai = new OpenAI({
-      apiKey: process.env.NEXT_APP_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true,
-    });
-
-    const removeLeadingTrailingSpace = (text: string) => {
-      let startIndex = 0;
-      while (startIndex < text.length && text[startIndex].trim() === "") {
-        startIndex++;
-      }
-
-      let endIndex = text.length - 1;
-      while (endIndex >= 0 && text[endIndex].trim() === "") {
-        endIndex--;
-      }
-
-      return text.substring(startIndex, endIndex + 1);
-    };
-
-    try {
-      const response = await openai.completions.create({
-        model: "gpt-3.5-turbo-instruct-0914",
-        prompt: prompt ?? "",
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
-
-      // console.log(response);
-
-      setOutputFromGPT(removeLeadingTrailingSpace(response.choices[0].text));
-    } catch (error) {
-      console.log(error);
-    }
+    const resText = await handdleProcessGPT(prompt,"Then");
+    setOutputFromGPT(resText!)
   };
 
   const handleCreate = () => {

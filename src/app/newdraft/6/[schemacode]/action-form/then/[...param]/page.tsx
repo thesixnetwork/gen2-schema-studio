@@ -76,7 +76,7 @@ const Page = ({ params }: { params: { param: string } }) => {
   }, [actionThenType, isActionThenTypeChange]);
 
   useEffect(() => {
-    console.log(">log<", metaFunction);
+    // console.log(">log<", metaFunction);
   }, [metaFunction]);
 
   useEffect(() => {

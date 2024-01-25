@@ -25,7 +25,7 @@ const Page = ({ params }: { params: { schemacode: string } }) => {
   const [nftAttributes, setNftAttributes] = useState<INftAttributes[]>([]);
 
   const schemacode = params.schemacode;
-
+  
   const handleDelete = async (index: number) => {
     const newAction = [...action];
     newAction.splice(index, 1);

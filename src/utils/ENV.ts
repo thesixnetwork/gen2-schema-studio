@@ -20,6 +20,7 @@ const ENV = {
   SIGN_MESSAGE: process.env.NEXT_PUBLIC__SIGN_MESSAGE || "My Message",
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "3lVCslvPDrIe4Coab77UTh1e/FmdSDL1RYNneEKF2Yk=",
   SIXSCAN_FIVENET: process.env.NEXT_PUBLIC__SIXSCAN_FIVENET || "https://v2.fivenet.sixscan.io/",
+  NEXT_APP_OPENAI_API_KEY: process.env.NEXT_APP_OPENAI_API_KEY || "",
 //   RPC_URL: process.env.RPC_URL || "https://rpc2.fivenet.sixprotocol.net",
 };
 

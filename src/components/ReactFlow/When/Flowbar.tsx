@@ -24,6 +24,8 @@ import { useState, useRef } from "react";
 import GenerateGPTimg from "../../../../public/pic/GenerateGPT.png";
 import GenerateGPTimgWhite from "../../../../public/pic/GenerateGPT-white.png";
 import Image from "next/image";
+import { handdleProcessGPT } from "@/service/processGPT"
+
 
 const style = {
   position: "absolute" as "absolute",
@@ -55,42 +57,9 @@ export default function Flowbar(props: MetaDataProps) {
   const [errorModalMessage, setErrorModalMessage] = useState("");
 
   const processGPT = async () => {
-    const openai = new OpenAI({
-      apiKey: process.env.NEXT_APP_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true,
-    });
-
-    const removeLeadingTrailingSpace = (text: string) => {
-      let startIndex = 0;
-      while (startIndex < text.length && text[startIndex].trim() === "") {
-        startIndex++;
-      }
-
-      let endIndex = text.length - 1;
-      while (endIndex >= 0 && text[endIndex].trim() === "") {
-        endIndex--;
-      }
-
-      return text.substring(startIndex, endIndex + 1);
-    };
-
-    try {
-      const response = await openai.completions.create({
-        model: "gpt-3.5-turbo-instruct-0914",
-        prompt: `I want to transform from statement text into programming condition comparison. For example the statement is when points are more than 100 the result will be "meta.GetNumber('points') > 100.\nWhere meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules.\n- If the attribute data type is boolean , result will be meta.GetBoolean('attributeName') == true \n- more than one comparison join together. For example statement when points are more than 100 and already check in , the result will be meta.GetNumber('points') > 100 && meta.GetBoolean('checked_in') == true\n- These are the symbol which cannot be used '!' for example if not check in the output can't be !meta.GetBoolean('checked_in') the output must be meta.GetBoolean('checked_in') == false and the answer must be only meta function do not provide any guideline \n\nWhat if the statement is\n${inputValue}\n\n\n\nWhat would be the answer ===>`,
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
-
-      // console.log(response);
-
-      setOutputFromGPT(removeLeadingTrailingSpace(response.choices[0].text));
-    } catch (error) {
-      console.log(error);
-    }
+    const prompt = `I want to transform from statement text into programming condition comparison. For example the statement is when points are more than 100 the result will be "meta.GetNumber('points') > 100.\nWhere meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules.\n- If the attribute data type is boolean , result will be meta.GetBoolean('attributeName') == true \n- more than one comparison join together. For example statement when points are more than 100 and already check in , the result will be meta.GetNumber('points') > 100 && meta.GetBoolean('checked_in') == true\n- These are the symbol which cannot be used '!' for example if not check in the output can't be !meta.GetBoolean('checked_in') the output must be meta.GetBoolean('checked_in') == false and the answer must be only meta function do not provide any guideline \n\nWhat if the statement is\n${inputValue}\n\n\n\nWhat would be the answer ===>`
+    const resText = await handdleProcessGPT(prompt,"When");
+    setOutputFromGPT(resText!);
   };
 
   const handleCreate = () => {
