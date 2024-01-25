@@ -6,7 +6,7 @@ on:
       - develop
 
 env:
-  CLOUD_RUN_PROJECT_ID: ${{ secrets.FIVENET_CLOUD_RUN_PROJECT_NAME }}
+  # CLOUD_RUN_PROJECT_ID: ${{ secrets.FIVENET_CLOUD_RUN_PROJECT_NAME }}
   CLOUD_RUN_REGION: asia-northeast1
   # project-name but it can be anything you want
   REPO_NAME: ${{ github.event.repository.name }}
@@ -34,6 +34,7 @@ env:
 jobs:
   build-and-deploy:
     name: Setup, Build, and Deploy
+    environment: FIVENET
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
