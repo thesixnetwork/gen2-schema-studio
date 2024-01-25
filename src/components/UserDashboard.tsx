@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import ConfirmModalChakra from "./ConfirmModalChakra";
 import { Tooltip } from "@chakra-ui/react";
 import { DefaultSession } from "@/type/DefaultSession";
+import ENV from "@/utils/ENV";
 
 
 type Props = {};
@@ -23,7 +24,7 @@ function UserDashboard({}: Props) {
   // const [balance,setBalance]= useState(getBalanceCoin())
   const sessions = useSession();
   const session:DefaultSession| null = sessions.data
-  const fiveNet = process.env.NEXT_APP_FIVENET_SCAN;
+  const fiveNet = ENV.SIXSCAN_FIVENET;
 
   const copyToClipboard = (value: string) => {
     navigator.clipboard.writeText(value);

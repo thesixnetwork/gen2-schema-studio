@@ -42,7 +42,7 @@ export default function HomeCard({}: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoading2, setIsLoading2] = useState(true);
   const [testDraft, setTestDraft] = useState([]);
-  const fivenetScan = process.env.NEXT_PUBLIC__SIXSCAN_FIVENET;
+  const fivenetScan = ENV.SIXSCAN_FIVENET;
   //   console.log(listDraft)
 
   // const getListDraft = async () => {
@@ -107,10 +107,10 @@ export default function HomeCard({}: Props) {
         },
       });
       const res = req.data;
-      console.log(res);
+    //   console.log(res);
 
       if (res.statusCode === "V:0001") {
-        console.log("Deleted");
+        // console.log("Deleted");
         return;
       } else {
         return;
