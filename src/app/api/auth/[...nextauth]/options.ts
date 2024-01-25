@@ -146,7 +146,7 @@ export const authOptions: AuthOptions = {
   jwt: {
     maxAge: 1400,
   },
-  secret: process.env.NEXTAUTH_SECRET, // store this in a .env file
+  secret: ENV.NEXTAUTH_SECRET, // store this in a .env file
 };
 
 // export authOptions;

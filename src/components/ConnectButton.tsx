@@ -26,10 +26,10 @@ function ConnectButton(props:Props) {
   const [balance, setBalance] = useState(0);
   const [cosmosAddress, setCosmosAddress] = useState("");
   const [rpcEndpoint, setRpcEndpoint] = useState<string>(
-    process.env.NEXT_PUBLIC__RPC2_ENDPOINT_SIX_FIVENET ||
+    ENV.RPC_FIVENET2 ||
       "default-fallback-value"
   );
-  const message = process.env.NEXT_PUBLIC__SIGN_MESSAGE;
+  const message = ENV.SIGN_MESSAGE;
   const [exponent, setExponent] = useState(1e6);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -129,7 +129,7 @@ function ConnectButton(props:Props) {
       message
     );
     // DB request
-    const apiUrl = `${process.env.NEXT_PUBLIC__API_ENDPOINT_SCHEMA_INFO}auth/login`; // Replace with your API endpoint
+    const apiUrl = `${ENV.Client_API_URL}auth/login`; // Replace with your API endpoint
     const requestData = {
       channel: "Keply",
       ssoID: `${keplrAccounts[0].address}`,
